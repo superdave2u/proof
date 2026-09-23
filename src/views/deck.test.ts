@@ -8,6 +8,8 @@ import { filterDeck, renderDeckView, type DeckRecords } from "./deck";
  * random ritual, the concealed/unconcealed boundary, territory and lifecycle
  * filters, and the unfiltered lived count so UI changes preserve the game's
  * no-reroll promise without turning the deck into a score or losing cards.
+ * They also protect the evidence entry action from disappearing on drawn cards
+ * and make the date/note/photo requirements and photo cap visible to players.
  */
 describe("deck view", () => {
   it("shows all 52 cards as territory-marked backs without leaking undiscovered names", () => {
@@ -87,6 +89,19 @@ describe("deck view", () => {
     expect(html).toContain('for="deck-filter-territory"');
     expect(html).toContain('for="deck-filter-state"');
     expect(html).not.toContain(DECK[0]?.name);
+  });
+
+  it("offers an evidence form only for a Drawn card with optional capped photo input", () => {
+    const card = DECK[0]!;
+    const html = renderDeckView({ [card.id]: { state: "drawn" } }, undefined, undefined, undefined, card.id);
+
+    expect(html).toContain('data-action="open-evidence" data-card-id="pleasure-01"');
+    expect(html).toContain('data-evidence-form="pleasure-01"');
+    expect(html).toContain('name="date" type="date"');
+    expect(html).toContain('name="note" rows="3" required');
+    expect(html).toContain('name="artifact" type="file" accept="image/png,image/jpeg,image/webp,image/gif"');
+    expect(html).toContain("512 KiB");
+    expect(renderDeckView().includes('data-evidence-form=')).toBe(false);
   });
 
   it("renders a clear empty state when a state filter has no matching cards", () => {

@@ -1,5 +1,6 @@
 import { DECK, type Card } from "../data/cards";
 import type { CardFaceRecord } from "../components/cardFace";
+import { isValidEvidence, type Evidence } from "./evidence";
 
 export const DECK_STORAGE_KEY = "proof-of-life:deck:v1";
 
@@ -15,6 +16,7 @@ export interface DeckStore {
   getDailyDraw(): Card | undefined;
   drawDaily(): Card | undefined;
   draw(): Card | undefined;
+  submitEvidence(cardId: string, evidence: Evidence): boolean;
 }
 
 interface PersistedDeck {
@@ -35,28 +37,19 @@ function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function parseEvidence(value: unknown): CardFaceRecord["evidence"] | undefined {
-  if (!isObject(value) || typeof value.date !== "string" || typeof value.note !== "string") return undefined;
-  if (value.artifact !== undefined && typeof value.artifact !== "string") return undefined;
-
-  return value.artifact === undefined
-    ? { date: value.date, note: value.note }
-    : { date: value.date, note: value.note, artifact: value.artifact };
-}
-
 function parseCardRecord(value: unknown): CardFaceRecord | undefined {
   if (!isObject(value) || (value.state !== "undiscovered" && value.state !== "drawn" && value.state !== "lived")) {
     return undefined;
   }
   if (value.drawnAt !== undefined && typeof value.drawnAt !== "string") return undefined;
   if (value.livedAt !== undefined && typeof value.livedAt !== "string") return undefined;
-  if (value.evidence !== undefined && !parseEvidence(value.evidence)) return undefined;
+  if (value.state === "lived" && !isValidEvidence(value.evidence)) return undefined;
+  if (value.state !== "lived" && value.evidence !== undefined) return undefined;
 
   const record: CardFaceRecord = { state: value.state };
   if (typeof value.drawnAt === "string") record.drawnAt = value.drawnAt;
   if (typeof value.livedAt === "string") record.livedAt = value.livedAt;
-  const evidence = parseEvidence(value.evidence);
-  if (evidence) record.evidence = evidence;
+  if (value.state === "lived") record.evidence = value.evidence as Evidence;
   return record;
 }
 
@@ -101,8 +94,8 @@ function saveDeckRecords(
   storage: KeyValueStorage | undefined,
   records: DeckRecords,
   dailyDraw?: DailyDrawRecord,
-): void {
-  if (!storage) return;
+): boolean {
+  if (!storage) return true;
 
   try {
     const state: PersistedDeck = { version: 1, cards: {} };
@@ -111,8 +104,11 @@ function saveDeckRecords(
     }
     if (dailyDraw) state.dailyDraw = dailyDraw;
     storage.setItem(DECK_STORAGE_KEY, JSON.stringify(state));
+    return true;
   } catch {
-    // A storage denial or quota limit must not prevent the in-memory draw ritual.
+    // Draws remain usable in memory; evidence submissions use false to avoid
+    // claiming that a record was archived when durable storage rejected it.
+    return false;
   }
 }
 
@@ -129,7 +125,7 @@ export function createDeckStore(
   let records = loadedState.records;
   let dailyDraw = loadedState.dailyDraw;
 
-  const persist = (): void => saveDeckRecords(storage, records, dailyDraw);
+  const persist = (): boolean => saveDeckRecords(storage, records, dailyDraw);
   const dateFor = (date: Date): string => {
     const year = String(date.getFullYear()).padStart(4, "0");
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -193,6 +189,25 @@ export function createDeckStore(
         persist();
       }
       return card;
+    },
+    submitEvidence: (cardId, evidence) => {
+      if (!deckIds.has(cardId) || records[cardId]?.state !== "drawn" || !isValidEvidence(evidence)) return false;
+
+      const previousRecords = records;
+      records = {
+        ...records,
+        [cardId]: {
+          state: "lived",
+          ...(previousRecords[cardId]?.drawnAt ? { drawnAt: previousRecords[cardId].drawnAt } : {}),
+          livedAt: now().toISOString(),
+          evidence: evidence.artifact === undefined
+            ? { date: evidence.date, note: evidence.note.trim() }
+            : { date: evidence.date, note: evidence.note.trim(), artifact: evidence.artifact },
+        },
+      };
+      if (persist()) return true;
+      records = previousRecords;
+      return false;
     },
   };
 }

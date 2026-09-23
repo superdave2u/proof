@@ -60,6 +60,11 @@ Legend: `[ ]` incomplete · `[x]` done (verified) — prune `[x]` items periodic
 - A saved same-day selection survives reload and remains stable if its card later becomes Lived; the UI locks the reveal for the day and refreshes at local midnight.
 - Verification passed: `npx tsc --noEmit && npx vitest run` (6 files, 41 tests).
 
+### Learnings — evidence flow pass
+
+- The evidence API only allows DRAWN → LIVED; it validates dates, notes, data URLs, and a 512 KiB decoded-image cap. Evidence persists and reloads from `proof-of-life:deck:v1`; a storage write failure leaves the card DRAWN.
+- Verification passed: `npx tsc --noEmit && npx vitest run` (7 files, 49 tests).
+
 - [x] Deck integrity pass: 52 cards verified — numbering 01–52 no gaps/duplicates, unique titles/ids, complete anatomy, 7 canon anchors exact, no placeholder content (durable audit: src/data/specDeck.test.ts + src/data/specDeck.ts)
 - [x] Data pipeline: `src/data/cards.ts` — transcribe all 52 specs into typed `Card[]`; assign rarity per SPEC §3 (5 common / 3 uncommon / 2 rare per territory; wilds canon legendary/mythic)
 - [x] Schema tests: exactly 52, 10 per territory + 2 wilds, unique ids/numbers/names, anatomy completeness, frozen card text verbatim, no placeholder content; independent canon baselines and parser validation tests
@@ -68,6 +73,6 @@ Legend: `[ ]` incomplete · `[x]` done (verified) — prune `[x]` items periodic
 - [x] Deck view: grid, card backs w/ territory glint, filters (territory, state), lived counts
 - [x] Draw ritual: deal/flip animation (reduced-motion aware), UNDISCOVERED → DRAWN
 - [x] Daily draw: date-seeded, deterministic, shown once per day
-- [ ] Evidence flow: date + note + optional artifact photo (dataURL, size-capped) → LIVED; forward-only state machine in store. README claims deck state persists, so verify actual localStorage persistence.
+- [x] Evidence flow: date + note + optional artifact photo (dataURL, size-capped) → LIVED; forward-only state machine in store. README claims deck state persists, so verify actual localStorage persistence.
 - [ ] Archive view: the collected-evidence gallery with Lived cards, dates, notes, artifacts — clean presentation, no weathering (operator decision)
 - [ ] App shell: hash router, territory design tokens, typography, a11y (contrast, keyboard, 320px, reduced motion)

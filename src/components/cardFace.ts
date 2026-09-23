@@ -1,14 +1,11 @@
 import { territories, type Card } from "../data/cards";
+import { isValidArtifactDataUrl, type Evidence } from "../state/evidence";
 
 export interface CardFaceRecord {
   state: "undiscovered" | "drawn" | "lived";
   drawnAt?: string;
   livedAt?: string;
-  evidence?: {
-    date: string;
-    note: string;
-    artifact?: string;
-  };
+  evidence?: Evidence;
 }
 
 const sceneKinds = [
@@ -62,7 +59,7 @@ function rarityLabel(rarity: Card["rarity"]): string {
 }
 
 function renderArtifact(artifact: string | undefined): string {
-  if (!artifact || !/^data:image\/(?:png|jpeg|webp|gif);base64,[a-z\d+/]+=*$/i.test(artifact)) {
+  if (!artifact || !isValidArtifactDataUrl(artifact)) {
     return "";
   }
 

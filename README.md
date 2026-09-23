@@ -31,7 +31,7 @@ Draw an adventure, live it in the real world, deposit your evidence in the **Arc
 
 ## Tech
 
-TypeScript + Vite, vanilla DOM, vitest. No backend, no accounts — deck state persists in `localStorage`. The deck data is typed in `src/data/` and held to contract by schema tests (exactly 52 cards, uniqueness, complete anatomy, frozen canon text).
+TypeScript + Vite, vanilla DOM, vitest. No backend, no accounts — when browser storage is available, draws and Lived evidence (including optional photos) persist in versioned `localStorage`. The deck data is typed in `src/data/` and held to contract by schema tests (exactly 52 cards, uniqueness, complete anatomy, frozen canon text).
 
 ## Getting started
 
@@ -89,6 +89,7 @@ Each loop is logged to `logs/`. Rules of the house: search the codebase before a
 - [x] Baseline spec + design (`SPEC.md`, `DESIGN.md`)
 - [x] Complete 52-card deck seeded and **frozen** (operator content)
 - [ ] Data pipeline + schema tests
-- [ ] App: deck view, draw ritual, daily draw, card detail, evidence flow, Archive
+- [x] App: deck view, draw ritual, daily draw, evidence flow
+- [ ] App: card detail, Archive
 
 Content rules: the 52 cards in `specs/cards/` are frozen — code transcribes them, never rewrites them.

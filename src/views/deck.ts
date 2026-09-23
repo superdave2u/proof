@@ -1,5 +1,6 @@
 import { DECK, territories, type Card, type Territory } from "../data/cards";
 import { renderCardFace, type CardFaceRecord } from "../components/cardFace";
+import { isValidEvidence, MAX_ARTIFACT_BYTES, type Evidence } from "../state/evidence";
 import { browserDeckStorage, createDeckStore, type DeckStore } from "../state/store";
 
 export type DeckStateFilter = "all" | CardFaceRecord["state"];
@@ -31,7 +32,46 @@ export function filterDeck(
   });
 }
 
-function renderCardTile(card: Card, records: DeckRecords): string {
+interface EvidenceDraft {
+  date: string;
+  note: string;
+  fileName?: string;
+}
+
+function renderEvidenceForm(card: Card, error?: string, draft?: EvidenceDraft): string {
+  const formId = `evidence-form-${card.id}`;
+  const today = localDateValue(new Date());
+  return `<section class="evidence-entry" aria-labelledby="${formId}-title">
+    <h3 id="${formId}-title" tabindex="-1">Deposit your Proof of Life</h3>
+    <p>Keep the evidence of the life that happened. A note is required; a photo is optional.</p>
+    <form data-evidence-form="${card.id}">
+      <label for="${formId}-date">Date lived
+        <input id="${formId}-date" name="date" type="date" value="${escapeHtml(draft?.date || today)}" required>
+      </label>
+      <label for="${formId}-note">Evidence note
+        <textarea id="${formId}-note" name="note" rows="3" required placeholder="A sentence, a recipe, a list of names…">${escapeHtml(draft?.note ?? "")}</textarea>
+      </label>
+      ${draft?.fileName ? `<p class="evidence-entry__file">Selected artifact: ${escapeHtml(draft.fileName)}</p>` : ""}
+      <label for="${formId}-artifact">Artifact photo <span>(optional)</span>
+        <input id="${formId}-artifact" name="artifact" type="file" accept="image/png,image/jpeg,image/webp,image/gif">
+      </label>
+      <p class="evidence-entry__hint">Images up to ${Math.floor(MAX_ARTIFACT_BYTES / 1024)} KiB are stored with this card in this browser.</p>
+      ${error ? `<p class="evidence-entry__error" role="alert">${escapeHtml(error)}</p>` : ""}
+      <div class="evidence-entry__actions">
+        <button type="submit">Deposited my Proof of Life</button>
+        <button type="button" data-action="cancel-evidence">Keep this card drawn</button>
+      </div>
+    </form>
+  </section>`;
+}
+
+function renderCardTile(
+  card: Card,
+  records: DeckRecords,
+  evidenceCardId?: string,
+  evidenceError?: string,
+  evidenceDraft?: EvidenceDraft,
+): string {
   const record = records[card.id];
   const state = stateFor(card, records);
   const collectorNumber = String(card.number).padStart(2, "0");
@@ -48,18 +88,36 @@ function renderCardTile(card: Card, records: DeckRecords): string {
     </article>`;
   }
 
+  const evidenceControls = state === "drawn"
+    ? `<button class="evidence-entry__open" type="button" data-action="open-evidence" data-card-id="${card.id}">Deposit my Proof of Life</button>${evidenceCardId === card.id ? renderEvidenceForm(card, evidenceError, evidenceDraft) : ""}`
+    : "";
+
   return `<div class="deck-card-revealed" data-card-id="${card.id}" data-state="${state}">
     <p class="deck-card-revealed__state">${state === "lived" ? "Lived · in the Archive" : "Drawn"}</p>
     ${renderCardFace(card, record)}
+    ${evidenceControls}
   </div>`;
 }
 
-function renderCards(cards: readonly Card[], records: DeckRecords): string {
+function renderCards(
+  cards: readonly Card[],
+  records: DeckRecords,
+  evidenceCardId?: string,
+  evidenceError?: string,
+  evidenceDraft?: EvidenceDraft,
+): string {
   if (cards.length === 0) {
     return '<p class="deck-empty">No cards match these filters. The rest of the deck is still here when you are ready.</p>';
   }
 
-  return cards.map((card) => renderCardTile(card, records)).join("");
+  return cards.map((card) => renderCardTile(card, records, evidenceCardId, evidenceError, evidenceDraft)).join("");
+}
+
+function localDateValue(date: Date): string {
+  const year = String(date.getFullYear()).padStart(4, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
 function escapeHtml(value: string): string {
@@ -157,6 +215,10 @@ export function renderDeckView(
   filters: DeckFilters = DEFAULT_FILTERS,
   lastDrawnCardId?: string,
   dailyDrawCardId?: string,
+  evidenceCardId?: string,
+  evidenceError?: string,
+  evidenceMessage?: string,
+  evidenceDraft?: EvidenceDraft,
 ): string {
   const livedCount = DECK.filter((card) => stateFor(card, records) === "lived").length;
   const visibleCards = filterDeck(DECK, records, filters);
@@ -180,8 +242,9 @@ export function renderDeckView(
         <select id="deck-filter-state" name="state">${renderStateOptions(filters.state)}</select>
       </label>
     </div>
-    <p class="deck-results" id="deck-result-summary" aria-live="polite">${resultSummary(visibleCards.length, livedCount)}</p>
-    <div class="deck-grid" id="deck-grid" aria-label="Adventure cards">${renderCards(visibleCards, records)}</div>
+     <p class="deck-results" id="deck-result-summary" aria-live="polite">${resultSummary(visibleCards.length, livedCount)}</p>
+     ${evidenceMessage ? `<p class="evidence-entry__success" role="status" tabindex="-1">${escapeHtml(evidenceMessage)}</p>` : ""}
+     <div class="deck-grid" id="deck-grid" aria-label="Adventure cards">${renderCards(visibleCards, records, evidenceCardId, evidenceError, evidenceDraft)}</div>
   </section>`;
 }
 
@@ -205,9 +268,16 @@ export function mountDeckView(
   let filters = { ...DEFAULT_FILTERS };
   let lastDrawnCardId: string | undefined;
   let dailyDrawCardId = store.getDailyDraw()?.id;
+  let evidenceCardId: string | undefined;
+  let evidenceError: string | undefined;
+  let evidenceMessage: string | undefined;
+  let evidenceDraft: EvidenceDraft | undefined;
+  let evidenceDraftFile: File | undefined;
   const render = (): void => {
     dailyDrawCardId = store.getDailyDraw()?.id;
-    container.innerHTML = renderDeckView(store.getRecords(), filters, lastDrawnCardId, dailyDrawCardId);
+    container.innerHTML = renderDeckView(
+      store.getRecords(), filters, lastDrawnCardId, dailyDrawCardId, evidenceCardId, evidenceError, evidenceMessage, evidenceDraft,
+    );
   };
   render();
 
@@ -232,6 +302,25 @@ export function mountDeckView(
       container.querySelector<HTMLElement>(".daily-draw__face")?.focus();
       return;
     }
+    const openEvidenceButton = target.closest<HTMLButtonElement>('[data-action="open-evidence"]');
+    if (openEvidenceButton) {
+      evidenceCardId = openEvidenceButton.dataset.cardId;
+      evidenceError = undefined;
+      evidenceMessage = undefined;
+      evidenceDraft = undefined;
+      evidenceDraftFile = undefined;
+      render();
+      container.querySelector<HTMLInputElement>(`#evidence-form-${evidenceCardId}-date`)?.focus();
+      return;
+    }
+    if (target.closest('[data-action="cancel-evidence"]')) {
+      evidenceCardId = undefined;
+      evidenceError = undefined;
+      evidenceDraft = undefined;
+      evidenceDraftFile = undefined;
+      render();
+      return;
+    }
     if (!target.closest('[data-action="draw"]')) return;
 
     const card = store.draw();
@@ -253,10 +342,78 @@ export function mountDeckView(
     const cards = filterDeck(DECK, records, filters);
     const grid = container.querySelector<HTMLElement>("#deck-grid");
     const summary = container.querySelector<HTMLElement>("#deck-result-summary");
-    if (grid) grid.innerHTML = renderCards(cards, records);
+    if (grid) grid.innerHTML = renderCards(cards, records, evidenceCardId, evidenceError, evidenceDraft);
     if (summary) {
       const livedCount = DECK.filter((card) => stateFor(card, records) === "lived").length;
       summary.textContent = resultSummary(cards.length, livedCount);
     }
+  });
+
+  container.addEventListener("submit", (event: Event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLFormElement) || !target.matches("[data-evidence-form]")) return;
+    event.preventDefault();
+    const dateInput = target.elements.namedItem("date");
+    const noteInput = target.elements.namedItem("note");
+    const artifactInput = target.elements.namedItem("artifact");
+    if (!(dateInput instanceof HTMLInputElement) || !(noteInput instanceof HTMLTextAreaElement)
+      || !(artifactInput instanceof HTMLInputElement)) return;
+
+    const cardId = target.dataset.evidenceForm;
+    if (!cardId || !target.reportValidity()) return;
+    const file = artifactInput.files?.[0] ?? evidenceDraftFile;
+    evidenceDraft = {
+      date: dateInput.value,
+      note: noteInput.value,
+      ...(file ? { fileName: file.name } : {}),
+    };
+    evidenceDraftFile = file;
+    target.querySelectorAll<HTMLButtonElement>("button").forEach((button) => { button.disabled = true; });
+    void (async () => {
+      try {
+        let evidence: Evidence = { date: dateInput.value, note: noteInput.value };
+        if (file) {
+          if (!/^image\/(png|jpeg|webp|gif)$/i.test(file.type)) {
+            throw new Error("Choose a PNG, JPEG, WebP, or GIF image.");
+          }
+          if (file.size <= 0 || file.size > MAX_ARTIFACT_BYTES) {
+            throw new Error(`Choose an image no larger than ${Math.floor(MAX_ARTIFACT_BYTES / 1024)} KiB.`);
+          }
+          const artifact = await readArtifact(file);
+          evidence = { ...evidence, artifact };
+        }
+        if (!isValidEvidence(evidence)) {
+          throw new Error("Enter a valid date and a note describing the evidence of this adventure.");
+        }
+        if (!store.submitEvidence(cardId, evidence)) {
+          throw new Error("This card could not be saved in this browser. Your card remains Drawn; free storage space and try again.");
+        }
+        const card = DECK.find((item) => item.id === cardId);
+        evidenceCardId = undefined;
+        evidenceError = undefined;
+        evidenceMessage = card ? `${card.name} is now Lived. Your evidence is in the Archive.` : "Your evidence is in the Archive.";
+        evidenceDraft = undefined;
+        evidenceDraftFile = undefined;
+        render();
+        container.querySelector<HTMLElement>(".evidence-entry__success")?.focus();
+      } catch (error) {
+        evidenceError = error instanceof Error ? error.message : "The artifact could not be read. Try another image.";
+        render();
+        container.querySelector<HTMLElement>(`#evidence-form-${cardId}-title`)?.focus();
+      }
+    })();
+  });
+}
+
+function readArtifact(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => {
+      if (typeof reader.result === "string") resolve(reader.result);
+      else reject(new Error("The selected image could not be read."));
+    }, { once: true });
+    reader.addEventListener("error", () => reject(new Error("The selected image could not be read.")), { once: true });
+    reader.addEventListener("abort", () => reject(new Error("Reading the selected image was cancelled.")), { once: true });
+    reader.readAsDataURL(file);
   });
 }

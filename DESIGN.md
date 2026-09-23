@@ -44,7 +44,7 @@ interface Card {
   flavor: string;
 }
 
-interface Evidence { date: string; note: string; artifact?: string /* dataURL, size-capped */ }
+interface Evidence { date: string; note: string; artifact?: string /* image dataURL, decoded size ≤ 512 KiB */ }
 interface CardRecord { state: CardState; drawnAt?: string; livedAt?: string; evidence?: Evidence }
 interface DeckState { version: 1; cards: Record<string, CardRecord>; dailyDraw?: { date: string; cardId: string } }
 ```
