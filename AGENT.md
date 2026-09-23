@@ -8,9 +8,8 @@ Brief instructions for any agent working here. Keep this file brief and current.
 
 ## Content rules
 
-- `specs/cards/*.md` cards marked **CANON** are operator-authored — never edit them; match their voice for new cards.
-- `specs/cards/wilds.md` is complete (cards 51–52). Do not touch it.
-- Rarity is assigned in the data pass, not in specs (SPEC §3).
+- **The 52-card deck in `specs/cards/*.md` is frozen operator content** — never edit card text; code transcribes it.
+- Rarity is assigned in the data pass, not in specs (SPEC §3: 5 common / 3 uncommon / 2 rare per territory; wilds canon legendary/mythic).
 
 ## Commands
 
