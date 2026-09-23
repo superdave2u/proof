@@ -1,39 +1,17 @@
-import { DECK, territories, type Card, type Territory } from "../data/cards";
-import { renderCardFace, type CardFaceRecord } from "../components/cardFace";
-import { browserDeckStorage, createDeckStore, DeckStorageError, type DeckStore } from "../state/store";
-
-export type DeckStateFilter = "all" | CardFaceRecord["state"];
-export type DeckTerritoryFilter = "all" | Territory;
-
-export interface DeckFilters {
-  territory: DeckTerritoryFilter;
-  state: DeckStateFilter;
-}
-
-export type DeckRecords = Readonly<Record<string, CardFaceRecord | undefined>>;
-
-const DEFAULT_FILTERS: DeckFilters = { territory: "all", state: "all" };
-
-function stateFor(card: Card, records: DeckRecords): CardFaceRecord["state"] {
-  return records[card.id]?.state ?? "undiscovered";
-}
-
-function territoryLabel(card: Card): string {
-  return card.territory.charAt(0).toUpperCase() + card.territory.slice(1);
-}
-
-/** Keep filtering independent of the browser so its combinations stay auditable. */
-export function filterDeck(
-  cards: readonly Card[],
-  records: DeckRecords,
-  filters: DeckFilters = DEFAULT_FILTERS,
-): Card[] {
-  return cards.filter((card) => {
-    const matchesTerritory = filters.territory === "all" || card.territory === filters.territory;
-    const matchesState = filters.state === "all" || stateFor(card, records) === filters.state;
-    return matchesTerritory && matchesState;
-  });
-}
+import { DECK, territories, type Card } from "../data/cards";
+import { renderCardFace } from "../components/cardFace";
+import { DeckStorageError, type DeckStore } from "../state/store";
+import {
+  DEFAULT_FILTERS,
+  escapeHtml,
+  filterDeck,
+  stateFor,
+  territoryLabel,
+  type DeckFilters,
+  type DeckRecords,
+  type DeckStateFilter,
+  type DeckTerritoryFilter,
+} from "./deckShared";
 
 function renderCardTile(card: Card, records: DeckRecords): string {
   const record = records[card.id];
@@ -73,19 +51,6 @@ function renderCards(cards: readonly Card[], records: DeckRecords): string {
   return cards.map((card) => renderCardTile(card, records)).join("");
 }
 
-function escapeHtml(value: string): string {
-  return value.replace(/[&<>"']/g, (character) => {
-    switch (character) {
-      case "&": return "&amp;";
-      case "<": return "&lt;";
-      case ">": return "&gt;";
-      case '"': return "&quot;";
-      case "'": return "&#39;";
-      default: return character;
-    }
-  });
-}
-
 function renderDrawRitual(records: DeckRecords, lastDrawnCardId?: string, drawError?: string): string {
   const card = lastDrawnCardId ? DECK.find((item) => item.id === lastDrawnCardId) : undefined;
   const hasEligibleCard = DECK.some((item) => records[item.id]?.state !== "lived");
@@ -108,31 +73,6 @@ function renderDrawRitual(records: DeckRecords, lastDrawnCardId?: string, drawEr
     <p class="draw-ritual__message" role="status" aria-live="polite">${escapeHtml(message)}</p>
     ${drawError ? `<p class="draw-storage-error" data-draw-error="random" role="alert" tabindex="-1">${escapeHtml(drawError)}</p>` : ""}
     ${revealedCard ? `<div class="draw-reveal">${revealedCard}</div>` : ""}
-  </section>`;
-}
-
-function renderDailyDraw(records: DeckRecords, dailyDrawCardId?: string, drawError?: string): string {
-  const card = dailyDrawCardId ? DECK.find((item) => item.id === dailyDrawCardId) : undefined;
-  const hasEligibleCard = DECK.some((item) => records[item.id]?.state !== "lived");
-  const message = card
-    ? `Today's adventure: ${card.name}.`
-    : hasEligibleCard
-      ? "A date-seeded card, chosen once for today."
-      : "Every adventure in this deck has been Lived.";
-  const revealedCard = card
-    ? `<div class="daily-draw__face" data-draw-animation="true" role="group" tabindex="-1" aria-label="Today's card: ${escapeHtml(card.name)}">${renderCardFace(card, records[card.id])}<button class="card-detail__open" type="button" data-action="open-card" data-card-id="${card.id}">Open card details</button></div>`
-    : "";
-
-  return `<section class="daily-draw" aria-labelledby="daily-draw-title">
-    <div class="daily-draw__intro">
-      <p class="daily-draw__eyebrow">The card of the day</p>
-      <h2 id="daily-draw-title">One adventure, chosen for today.</h2>
-      <p>The date decides the card. Once revealed, today's deal stays yours across reloads.</p>
-    </div>
-    <button class="daily-draw__button" type="button" data-action="daily-draw"${card || !hasEligibleCard ? " disabled" : ""}>${card ? "Today's card is revealed" : "Reveal today's adventure"}</button>
-    <p class="daily-draw__message" role="status" aria-live="polite">${escapeHtml(message)}</p>
-    ${drawError ? `<p class="draw-storage-error" data-draw-error="daily" role="alert" tabindex="-1">${escapeHtml(drawError)}</p>` : ""}
-    ${revealedCard ? `<div class="daily-draw__reveal">${revealedCard}</div>` : ""}
   </section>`;
 }
 
@@ -164,32 +104,41 @@ function renderStateOptions(selected: DeckStateFilter): string {
   ).join("");
 }
 
-/** Render the home-screen deck; absent records intentionally remain face-down. */
-export function renderDeckView(
+function territoryFilter(value: string): DeckTerritoryFilter {
+  return value === "all" || territories.some((item) => item.territory === value)
+    ? value as DeckTerritoryFilter
+    : "all";
+}
+
+function stateFilter(value: string): DeckStateFilter {
+  return value === "all" || value === "undiscovered" || value === "drawn" || value === "lived"
+    ? value
+    : "all";
+}
+
+/** Render the dedicated gallery page: the random deal plus the whole deck. */
+export function renderGalleryView(
   records: DeckRecords = {},
   filters: DeckFilters = DEFAULT_FILTERS,
   lastDrawnCardId?: string,
-  dailyDrawCardId?: string,
   randomDrawError?: string,
-  dailyDrawError?: string,
 ): string {
   const livedCount = DECK.filter((card) => stateFor(card, records) === "lived").length;
   const visibleCards = filterDeck(DECK, records, filters);
 
-  return `${renderDailyDraw(records, dailyDrawCardId, dailyDrawError)}
-  ${renderDrawRitual(records, lastDrawnCardId, randomDrawError)}
-  <section class="deck-view" aria-labelledby="deck-title">
+  return `<section class="deck-view" aria-labelledby="gallery-title">
     <div class="deck-view__heading">
       <div>
-        <p class="deck-view__eyebrow">The deck</p>
-        <h2 id="deck-title" tabindex="-1">Your next adventure is in here.</h2>
+        <p class="deck-view__eyebrow">The Gallery</p>
+        <h2 id="gallery-title" tabindex="-1">Every adventure waits in here.</h2>
         <p class="deck-view__description">A card is an invitation, not an obligation. The evidence is the life that happens along the way.</p>
       </div>
       <div class="deck-view__actions">
         <p class="deck-view__lived-count" aria-label="${livedCount} of ${DECK.length} cards lived"><span>${livedCount}</span> / ${DECK.length}<small>lived</small></p>
-        <button class="archive-open" type="button" data-action="open-archive">Open the Archive</button>
+        <button class="archive-view__back" type="button" data-action="back-to-deck">Return to the deck</button>
       </div>
     </div>
+    ${renderDrawRitual(records, lastDrawnCardId, randomDrawError)}
     <div class="deck-controls" role="group" aria-label="Filter the deck">
       <label for="deck-filter-territory">Territory
         <select id="deck-filter-territory" name="territory">${renderTerritoryOptions(filters.territory)}</select>
@@ -203,98 +152,32 @@ export function renderDeckView(
   </section>`;
 }
 
-function territoryFilter(value: string): DeckTerritoryFilter {
-  return value === "all" || territories.some((item) => item.territory === value)
-    ? value as DeckTerritoryFilter
-    : "all";
-}
-
-function stateFilter(value: string): DeckStateFilter {
-  return value === "all" || value === "undiscovered" || value === "drawn" || value === "lived"
-    ? value
-    : "all";
-}
-
-/** Mount a responsive, accessible deck and update only its results when filters change. */
-export function mountDeckView(
+/** Mount the gallery page and return its refresh hook. */
+export function mountGalleryView(
   container: HTMLElement,
-  store: DeckStore = createDeckStore(browserDeckStorage()),
-  onOpenArchive: () => void = () => undefined,
-  onOpenCard: (cardId: string) => void = () => undefined,
-): void {
+  store: DeckStore,
+  onBackToDeck: () => void,
+  onOpenCard: (cardId: string) => void,
+): () => void {
   let filters = { ...DEFAULT_FILTERS };
   let lastDrawnCardId: string | undefined;
-  let dailyDrawCardId = store.getDailyDraw()?.id;
   let randomDrawError: string | undefined;
-  let dailyDrawError: string | undefined;
   const render = (): void => {
-    dailyDrawCardId = store.getDailyDraw()?.id;
-    container.innerHTML = renderDeckView(
-      store.getRecords(), filters, lastDrawnCardId, dailyDrawCardId, randomDrawError, dailyDrawError,
-    );
+    container.innerHTML = renderGalleryView(store.getRecords(), filters, lastDrawnCardId, randomDrawError);
   };
   render();
-  store.subscribe(() => {
-    const focusedElement = container.contains(document.activeElement)
-      ? document.activeElement as HTMLElement
-      : undefined;
-    const focusedId = focusedElement?.id;
-    const focusedAction = focusedElement?.dataset.action;
-    const focusedCardId = focusedElement?.dataset.cardId;
-    render();
-    if (focusedId) {
-      Array.from(container.querySelectorAll<HTMLElement>("[id]")).find((element) => element.id === focusedId)
-        ?.focus({ preventScroll: true });
-    } else if (focusedAction) {
-      const cardSelector = focusedCardId ? `[data-card-id="${focusedCardId}"]` : "";
-      container.querySelector<HTMLElement>(`[data-action="${focusedAction}"]${cardSelector}`)
-        ?.focus({ preventScroll: true });
-    }
-  });
-
-  const scheduleDailyRefresh = (): void => {
-    const now = new Date();
-    const nextLocalMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-    window.setTimeout(() => {
-      render();
-      scheduleDailyRefresh();
-    }, nextLocalMidnight.getTime() - now.getTime() + 25);
-  };
-  scheduleDailyRefresh();
 
   container.addEventListener("click", (event: Event) => {
     const target = event.target;
     if (!(target instanceof Element)) return;
 
-    if (target.closest('[data-action="open-archive"]')) {
-      onOpenArchive();
+    if (target.closest('[data-action="back-to-deck"]')) {
+      onBackToDeck();
       return;
     }
-
     const openCardButton = target.closest<HTMLButtonElement>('[data-action="open-card"]');
     if (openCardButton?.dataset.cardId) {
       onOpenCard(openCardButton.dataset.cardId);
-      return;
-    }
-
-    if (target.closest('[data-action="daily-draw"]')) {
-      dailyDrawError = undefined;
-      void (async () => {
-        try {
-          const card = await store.drawDaily();
-          if (!card) {
-            render();
-            return;
-          }
-          render();
-          container.querySelector<HTMLElement>(".daily-draw__face")?.focus();
-        } catch (error) {
-          if (!(error instanceof DeckStorageError)) throw error;
-          dailyDrawError = error.message;
-          render();
-          container.querySelector<HTMLElement>('[data-draw-error="daily"]')?.focus();
-        }
-      })();
       return;
     }
     if (!target.closest('[data-action="draw"]')) return;
@@ -337,4 +220,6 @@ export function mountDeckView(
       summary.textContent = resultSummary(cards.length, livedCount);
     }
   });
+
+  return render;
 }

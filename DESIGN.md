@@ -62,11 +62,12 @@ interface DeckState { version: 1; cards: Record<string, CardRecord>; dailyDraw?:
 
 ## 5. Screens / UX flow
 
-1. **Deck** (home) — grid of card backs (pristine, territory-glint) and fronts by state; filters by territory and state; counts (X/52 lived). Slow shuffle shimmer on hover.
-2. **Draw ritual** — deck cut animation → card flips to reveal → lands in hand. This must feel like being *dealt an adventure*. Honors `prefers-reduced-motion`.
-3. **Card detail** — full anatomy; actions: `Draw` (undiscovered → drawn), `Deposited my Proof of Life` (opens evidence form: date, note, optional artifact photo → lived). Flavor moment of quiet: the flavor text reveals inside the atmosphere panel with a gentle fade.
-4. **Daily draw** — date-seeded card of the day, deterministic; shown once per day.
-5. **Archive** — Lived cards with their evidence; the collected-evidence gallery. The emotional payoff screen.
+1. **Home** (`#/deck`) — the daily card only: the date-seeded reveal (deterministic, shown once per day) plus small links to the Gallery and the Archive. Nothing else lives here.
+2. **Gallery** (`#/gallery`) — the whole deck on its own page, modeled on the Archive: the random deal ritual, all 52 cards (backs pristine, fronts by state) with territory/state filters and the deck-wide lived count.
+3. **Card detail** (`#/card/<id>`) — full anatomy; actions: `Draw` (undiscovered → drawn), `Deposited my Proof of Life` (opens evidence form: date, note, optional artifact photo → lived), `View in the Archive` (lived). Flavor moment of quiet: the flavor text reveals inside the atmosphere panel with a gentle fade.
+4. **Archive** (`#/archive`) — Lived cards with their evidence; the collected-evidence gallery. The emotional payoff screen.
+
+The draw ritual lives on the Gallery page (it deals from the deck); the home page stays a single daily card.
 
 ## 6. Lived presentation — no weathering (operator decision)
 
@@ -76,19 +77,28 @@ The physical deck weathers (SPEC §6); **the digital app does not simulate wear*
 
 ```
 src/
-├── main.ts            # bootstrap, screen router (hash-based)
+├── main.ts            # bootstrap, screen router (hash-based: deck/gallery/archive/card)
+├── router.ts          # hash router + route resolution
 ├── app.ts             # app title/metadata
 ├── style.css          # design tokens, territory palette, card face, lived overlays
 ├── data/
 │   ├── cards.ts       # DECK: Card[] (52)
-│   └── cards.test.ts  # schema: 52 cards, 10/territory + 2 wild, unique, complete anatomy, canon preserved
+│   ├── specDeck.ts    # parser for the frozen specs/cards/*.md (integrity source)
+│   └── *.test.ts      # schema/integrity tests
 ├── state/
 │   ├── store.ts       # DeckState load/save, state machine, daily draw (date-seeded)
-│   └── store.test.ts  # transitions forward-only, determinism, persistence round-trip
+│   ├── evidence.ts    # evidence validation + artifact caps
+│   └── *.test.ts
 ├── views/
-│   ├── deck.ts, cardDetail.ts, drawRitual.ts, archive.ts, dailyDraw.ts
+│   ├── deckShared.ts  # deck domain types, filterDeck, shared view helpers
+│   ├── home.ts        # home page: daily card + links to Gallery/Archive
+│   ├── gallery.ts     # gallery page: random deal + full deck grid + filters
+│   ├── cardDetail.ts  # card detail page: full face + the only deposit flow
+│   ├── archive.ts     # archive page: Lived evidence collection
+│   └── *.test.ts
 └── components/
-    └── cardFace.ts    # renders Card + CardRecord (lived overlays, no wear effects)
+    ├── cardFace.ts    # renders Card + CardRecord (preview + full faces)
+    └── evidenceForm.ts # deposit form markup + evidence assembly/validation
 ```
 
 Vanilla TS + template literals (fast wheel). Framework adoption is a deliberate later decision, not a default.

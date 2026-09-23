@@ -5,7 +5,7 @@ export interface CardRoute {
   cardId: string;
 }
 
-export type AppRoute = "deck" | "archive" | CardRoute;
+export type AppRoute = "deck" | "gallery" | "archive" | CardRoute;
 
 export interface HashRouterHost {
   location: { hash: string };
@@ -29,7 +29,7 @@ function isCardId(cardId: string): boolean {
 }
 
 function routePath(route: AppRoute): string {
-  if (route === "deck" || route === "archive") return route;
+  if (route === "deck" || route === "gallery" || route === "archive") return route;
   return isCardId(route.cardId) ? `card/${route.cardId}` : "deck";
 }
 
@@ -42,6 +42,7 @@ function routesEqual(left: AppRoute, right: AppRoute): boolean {
 export function routeFromHash(hash: string): AppRoute {
   const route = hash.replace(/^#\/?/, "");
   if (route === "archive") return "archive";
+  if (route === "gallery") return "gallery";
   const cardMatch = /^card\/([a-z]+-\d{2})$/.exec(route);
   const cardId = cardMatch?.[1];
   if (cardId && isCardId(cardId)) return { type: "card", cardId };

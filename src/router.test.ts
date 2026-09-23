@@ -48,6 +48,7 @@ class MemoryHashHost implements HashRouterHost {
 describe("app hash router", () => {
   it("resolves only known screens and falls back to the deck", () => {
     expect(routeFromHash("#/archive")).toBe("archive");
+    expect(routeFromHash("#/gallery")).toBe("gallery");
     expect(routeFromHash("#deck")).toBe("deck");
     expect(routeFromHash("#/card/pleasure-07")).toEqual({ type: "card", cardId: "pleasure-07" });
     expect(routeFromHash("")).toBe("deck");
@@ -101,13 +102,13 @@ describe("app hash router", () => {
     const opened: Array<[AppRoute, boolean]> = [];
     const router = mountHashRouter(host, (route, shouldFocus) => opened.push([route, shouldFocus]));
 
-    router.navigate("archive");
-    expect(host.location.hash).toBe("#/archive");
-    host.setHash("#/archive");
+    router.navigate("gallery");
+    expect(host.location.hash).toBe("#/gallery");
+    host.setHash("#/gallery");
     host.setHash("#/deck");
     host.setHash("#/deck");
 
-    expect(opened).toEqual([["deck", false], ["archive", true], ["deck", true]]);
+    expect(opened).toEqual([["deck", false], ["gallery", true], ["deck", true]]);
     router.destroy();
     host.setHash("#/archive");
     expect(opened).toHaveLength(3);

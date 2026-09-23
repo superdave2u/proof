@@ -1,6 +1,7 @@
 import { describeApp } from "./app";
 import { DECK } from "./data/cards";
-import { mountDeckView } from "./views/deck";
+import { mountHomeView } from "./views/home";
+import { mountGalleryView } from "./views/gallery";
 import { mountArchiveView } from "./views/archive";
 import { mountCardDetail, type CardDetailAction, type EvidenceEntryState } from "./views/cardDetail";
 import { mountHashRouter, type AppRoute } from "./router";
@@ -15,17 +16,21 @@ if (app) {
       <h1>Proof of Life</h1>
       <p class="app-intro__copy">${describeApp()}. A pristine deck holds the life you could live; each card is an invitation to bring back evidence of the life that happened.</p>
     </header>
-    <div id="deck-view"></div>
+    <div id="home-view"></div>
+    <div id="gallery-view" hidden></div>
     <div id="archive-view" hidden></div>
     <div id="card-detail-view" hidden></div>
   </main>`;
 
-  const deckView = app.querySelector<HTMLElement>("#deck-view");
+  const homeView = app.querySelector<HTMLElement>("#home-view");
+  const galleryView = app.querySelector<HTMLElement>("#gallery-view");
   const archiveView = app.querySelector<HTMLElement>("#archive-view");
   const cardDetailView = app.querySelector<HTMLElement>("#card-detail-view");
-  if (deckView && archiveView && cardDetailView) {
+  if (homeView && galleryView && archiveView && cardDetailView) {
     const store = createDeckStore(browserDeckStorage());
     let refreshArchive = (): void => undefined;
+    let refreshHome = (): void => undefined;
+    let refreshGallery = (): void => undefined;
     let removeCardDetailActions = (): void => undefined;
     let navigate = (_route: AppRoute): void => undefined;
     let activeRoute: AppRoute = "deck";
@@ -74,43 +79,60 @@ if (app) {
 
     const showRoute = (route: AppRoute, shouldFocus: boolean): void => {
       activeRoute = route;
+      const showHome = route === "deck";
+      const showGallery = route === "gallery";
       const showArchive = route === "archive";
       const showCard = typeof route !== "string";
       if (showArchive) refreshArchive();
+      if (showGallery) refreshGallery();
       if (!showCard) detailEvidence.open = false;
-      deckView.hidden = showArchive || showCard;
+      homeView.hidden = !showHome;
+      galleryView.hidden = !showGallery;
       archiveView.hidden = !showArchive;
       cardDetailView.hidden = !showCard;
-      if (typeof route !== "string") showCardDetail(route.cardId, shouldFocus);
-      else {
-        removeCardDetailActions();
-        removeCardDetailActions = (): void => undefined;
-        if (shouldFocus) {
-          const heading = showArchive ? "#archive-title" : "#deck-title";
-          (showArchive ? archiveView : deckView).querySelector<HTMLElement>(heading)?.focus();
-        }
+      if (typeof route !== "string") {
+        showCardDetail(route.cardId, shouldFocus);
+        return;
+      }
+      removeCardDetailActions();
+      removeCardDetailActions = (): void => undefined;
+      if (shouldFocus) {
+        const heading = showArchive ? "#archive-title" : showGallery ? "#gallery-title" : "#home-title";
+        (showArchive ? archiveView : showGallery ? galleryView : homeView).querySelector<HTMLElement>(heading)?.focus();
       }
     };
 
     refreshArchive = mountArchiveView(archiveView, store, () => navigate("deck"));
-    mountDeckView(
-      deckView,
+    refreshHome = mountHomeView(homeView, store, {
+      onOpenGallery: () => navigate("gallery"),
+      onOpenArchive: () => navigate("archive"),
+      onOpenCard: (cardId) => navigate({ type: "card", cardId }),
+    });
+    refreshGallery = mountGalleryView(
+      galleryView,
       store,
-      () => navigate("archive"),
+      () => navigate("deck"),
       (cardId) => navigate({ type: "card", cardId }),
     );
     navigate = mountHashRouter(window, showRoute).navigate;
+
     store.subscribe(() => {
-      const archiveFocus = archiveView.contains(document.activeElement)
-        ? document.activeElement as HTMLElement
-        : undefined;
-      const archiveFocusId = archiveFocus?.id;
-      const archiveFocusAction = archiveFocus?.dataset.action;
-      refreshArchive();
-      if (archiveView.contains(document.activeElement) || archiveFocusId || archiveFocusAction) {
-        if (archiveFocusId) archiveView.querySelector<HTMLElement>(`#${archiveFocusId}`)?.focus({ preventScroll: true });
-        else if (archiveFocusAction) archiveView.querySelector<HTMLElement>(`[data-action="${archiveFocusAction}"]`)?.focus({ preventScroll: true });
+      // Archive and gallery re-render on every deck change; preserve focus
+      // within whichever one the user is interacting with.
+      for (const [view, refresh] of [[archiveView, refreshArchive], [galleryView, refreshGallery]] as const) {
+        const focusedElement = view.contains(document.activeElement)
+          ? document.activeElement as HTMLElement
+          : undefined;
+        const focusedId = focusedElement?.id;
+        const focusedAction = focusedElement?.dataset.action;
+        refresh();
+        if (focusedId) {
+          view.querySelector<HTMLElement>(`#${focusedId}`)?.focus({ preventScroll: true });
+        } else if (focusedAction) {
+          view.querySelector<HTMLElement>(`[data-action="${focusedAction}"]`)?.focus({ preventScroll: true });
+        }
       }
+      refreshHome();
       if (typeof activeRoute === "string") return;
 
       const focusedAction = cardDetailView.querySelector<HTMLElement>("button:focus[data-action]")?.dataset.action;
