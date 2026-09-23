@@ -44,7 +44,7 @@ export const territories: TerritoryMeta[] = [
 export const DECK: Card[] = [
   {
     id: "pleasure-01", number: 1, territory: "pleasure", name: "The Ridiculous Dessert",
-    typeLine: "Adventure • Indulgence", rarity: "common",
+    typeLine: "Indulgence", rarity: "common",
     quest: ["Find a dessert you would normally talk yourself out of ordering.", "Order it.", "No sharing required.", "Eat it slowly enough to actually experience it."],
     proof: "Keep the receipt, wrapper, menu, or photograph the first bite.",
     reward: "Place your evidence in the Archive. This card is now Lived.",
@@ -53,7 +53,7 @@ export const DECK: Card[] = [
   },
   {
     id: "pleasure-02", number: 2, territory: "pleasure", name: "The Slow Morning",
-    typeLine: "Adventure • Indulgence", rarity: "common",
+    typeLine: "Indulgence", rarity: "common",
     quest: ["Take one morning with no alarm.", "Wake when your body decides.", "Make the breakfast you actually want — not the fast one.", "Eat it slowly, somewhere with light."],
     proof: "Photograph the plate, and write down the hour you woke.",
     ability: { name: "No Clocks", text: "you may not check the time until you have finished eating." },
@@ -63,7 +63,7 @@ export const DECK: Card[] = [
   },
   {
     id: "pleasure-03", number: 3, territory: "pleasure", name: "The Wine You Were Saving",
-    typeLine: "Adventure • Indulgence", rarity: "common",
+    typeLine: "Indulgence", rarity: "common",
     quest: ["Open the bottle you have been saving for a special occasion.", "Tonight is the occasion.", "Pour it properly, in a proper glass.", "Drink it slowly enough to taste the year."],
     proof: "Keep the cork and the label, together.",
     ability: { name: "Someday Is Now", text: "you may not name a \"better time.\" This is it." },
@@ -73,7 +73,7 @@ export const DECK: Card[] = [
   },
   {
     id: "pleasure-04", number: 4, territory: "pleasure", name: "The Nap Without Permission",
-    typeLine: "Adventure • Indulgence", rarity: "common",
+    typeLine: "Indulgence", rarity: "common",
     quest: ["Take a nap in full daylight.", "Blankets drawn. Alarm off.", "No apology before. No penance after."],
     proof: "A photograph of the bed at the strange bright hour you rose.",
     ability: { name: "No Penance", text: "you may not \"make up\" the lost hours." },
@@ -83,7 +83,7 @@ export const DECK: Card[] = [
   },
   {
     id: "pleasure-05", number: 5, territory: "pleasure", name: "A Table for One",
-    typeLine: "Adventure • Creation", rarity: "common",
+    typeLine: "Creation", rarity: "common",
     quest: ["Cook one proper meal for yourself, alone.", "Set the table: the good plate, the cloth napkin, the candle.", "Sit down while it is still hot."],
     proof: "Photograph the set table before the first bite.",
     ability: { name: "Company of One", text: "no screens at the table." },
@@ -93,7 +93,7 @@ export const DECK: Card[] = [
   },
   {
     id: "pleasure-06", number: 6, territory: "pleasure", name: "The Matinee for One",
-    typeLine: "Adventure • Indulgence", rarity: "uncommon",
+    typeLine: "Indulgence", rarity: "uncommon",
     quest: ["Go see a film alone on a weekday afternoon.", "Buy the good popcorn.", "Sit anywhere you like — you have the theater to almost yourself."],
     proof: "Keep the ticket stub.",
     ability: { name: "No Second Screen", text: "the phone stays dark through the credits." },
@@ -103,7 +103,7 @@ export const DECK: Card[] = [
   },
   {
     id: "pleasure-07", number: 7, territory: "pleasure", name: "The Everyday Upgrade",
-    typeLine: "Adventure • Offering", rarity: "uncommon",
+    typeLine: "Offering", rarity: "uncommon",
     quest: ["Choose one shabby object you use every day — towel, sheets, mug, socks.", "Replace it with the beautiful version.", "Use it today, for something ordinary."],
     proof: "Photograph the retired old one beside the new one at work.",
     ability: { name: "Everyday Sacred", text: "the beautiful version may be used for ordinary moments only." },
@@ -113,7 +113,7 @@ export const DECK: Card[] = [
   },
   {
     id: "pleasure-08", number: 8, territory: "pleasure", name: "The Warm Bread Run",
-    typeLine: "Adventure • Pilgrimage", rarity: "uncommon",
+    typeLine: "Pilgrimage", rarity: "uncommon",
     quest: ["Find a bakery and arrive while the bread is still warm.", "Buy more than you need.", "Eat the heel on the walk home, tearing it as you go."],
     proof: "Keep the paper bag with the bakery's stamp.",
     ability: { name: "No Toast", text: "the first bite happens on the street, not at home." },
@@ -123,7 +123,7 @@ export const DECK: Card[] = [
   },
   {
     id: "pleasure-09", number: 9, territory: "pleasure", name: "The Hour of Nothing",
-    typeLine: "Adventure • Indulgence", rarity: "rare",
+    typeLine: "Indulgence", rarity: "rare",
     quest: ["Block one hour.", "Lie on the bed, the floor, or the grass.", "Do nothing. No podcast. No scrolling. No plan.", "Let the mind drift where it wants."],
     proof: "Write one line titled \"What drifted through.\"",
     ability: { name: "The Empty Hour", text: "you may not fill the hour with content." },
@@ -133,7 +133,7 @@ export const DECK: Card[] = [
   },
   {
     id: "pleasure-10", number: 10, territory: "pleasure", name: "The Ritual Bath",
-    typeLine: "Adventure • Indulgence", rarity: "rare",
+    typeLine: "Indulgence", rarity: "rare",
     quest: ["Draw a bath like a ceremony: hot water, salts or oil, low light, music or silence.", "Stay until your fingers suggest it is time."],
     proof: "Photograph the steam-lit bathroom, or keep the candle stub.",
     ability: { name: "No Multi-Tasking", text: "the bath may not become a shower with extra steps." },
@@ -144,7 +144,7 @@ export const DECK: Card[] = [
 
   {
     id: "curiosity-11", number: 11, territory: "curiosity", name: "The Other Line",
-    typeLine: "Adventure • Discovery", rarity: "common",
+    typeLine: "Discovery", rarity: "common",
     quest: ["At a menu or a counter, order the thing you always skip — the unpronounceable, the unfamiliar, the one you always talk past.", "You may ask what it is.", "You may not ask for the safe alternative."],
     proof: "Keep the receipt and write one honest sentence of review.",
     ability: { name: "No Translating", text: "you may not look it up until after the first bite." },
@@ -154,7 +154,7 @@ export const DECK: Card[] = [
   },
   {
     id: "curiosity-12", number: 12, territory: "curiosity", name: "Ask the Shelf",
-    typeLine: "Adventure • Encounter", rarity: "common",
+    typeLine: "Encounter", rarity: "common",
     quest: ["Go to a bookshop.", "Ask the person who works there: \"What's the best thing you've read this year that almost nobody buys?\"", "Buy or borrow it.", "Read the first chapter on a bench nearby, the same day."],
     proof: "Keep the receipt and copy the first sentence by hand.",
     ability: { name: "No Covers Judged", text: "you may not reject the recommendation by genre." },
@@ -164,7 +164,7 @@ export const DECK: Card[] = [
   },
   {
     id: "curiosity-13", number: 13, territory: "curiosity", name: "The Bus Window Lottery",
-    typeLine: "Adventure • Pilgrimage", rarity: "common",
+    typeLine: "Pilgrimage", rarity: "common",
     quest: ["Board the first bus or train that arrives.", "Ride twenty minutes.", "Get off wherever you are. Find one thing worth walking to.", "Ride back."],
     proof: "Keep the ticket and one artifact from the stop.",
     ability: { name: "Terminal Rule", text: "if you land somewhere you already know, go one stop further." },
@@ -174,7 +174,7 @@ export const DECK: Card[] = [
   },
   {
     id: "curiosity-14", number: 14, territory: "curiosity", name: "The Museum of One Thing",
-    typeLine: "Adventure • Pursuit", rarity: "common",
+    typeLine: "Pursuit", rarity: "common",
     quest: ["Visit a museum, gallery, or historic site.", "Look at exactly one exhibit.", "Stay with it as long as it holds you.", "Skip everything else without guilt."],
     proof: "Sketch it, badly, by hand — the sketch is the artifact.",
     ability: { name: "Single Room", text: "you may visit one room only." },
@@ -184,7 +184,7 @@ export const DECK: Card[] = [
   },
   {
     id: "curiosity-15", number: 15, territory: "curiosity", name: "The Master's Hands",
-    typeLine: "Adventure • Discovery", rarity: "common",
+    typeLine: "Discovery", rarity: "common",
     quest: ["Find someone doing skilled physical work — potter, butcher, tailor, blacksmith, baker.", "Watch, silently, for twenty minutes.", "Notice what only hands know."],
     proof: "Photograph their hands mid-work, and write down one detail you would have missed at a glance.",
     ability: { name: "Apprentice Eyes", text: "you may not ask questions until you have watched first." },
@@ -194,7 +194,7 @@ export const DECK: Card[] = [
   },
   {
     id: "curiosity-16", number: 16, territory: "curiosity", name: "The Tourist at Home",
-    typeLine: "Adventure • Pilgrimage", rarity: "uncommon",
+    typeLine: "Pilgrimage", rarity: "uncommon",
     quest: ["Do the thing visitors travel here to do — the lookout, the oldest café, the historic plaque you have walked past a hundred times.", "Do it as if it were your first day in this city."],
     proof: "Keep a ticket, postcard, or photograph from it.",
     ability: { name: "Souvenir Rules", text: "you must buy the tackiest souvenir available." },
@@ -204,7 +204,7 @@ export const DECK: Card[] = [
   },
   {
     id: "curiosity-17", number: 17, territory: "curiosity", name: "Follow the Stranger's Map",
-    typeLine: "Adventure • Discovery", rarity: "uncommon",
+    typeLine: "Discovery", rarity: "uncommon",
     quest: ["Ask someone: \"If I had one free hour around here, where would you send me?\"", "If their answer is safe and reasonably possible, go.", "You may not research it first."],
     proof: "Return with one artifact from the destination.",
     ability: { name: "Unknown Territory", text: "if you've never heard of the place they recommend, the card gains +1 Wonder." },
@@ -214,7 +214,7 @@ export const DECK: Card[] = [
   },
   {
     id: "curiosity-18", number: 18, territory: "curiosity", name: "The Foreign Shelf",
-    typeLine: "Adventure • Creation", rarity: "uncommon",
+    typeLine: "Creation", rarity: "uncommon",
     quest: ["In a market, buy one ingredient you have never cooked.", "Ask someone — a clerk, a grandmother, an old recipe — how it wants to be treated.", "Cook it tonight."],
     proof: "Keep the label or empty package beside a photograph of the dish.",
     ability: { name: "First Taste", text: "you must taste it raw before cooking." },
@@ -224,7 +224,7 @@ export const DECK: Card[] = [
   },
   {
     id: "curiosity-19", number: 19, territory: "curiosity", name: "What Most People Get Wrong",
-    typeLine: "Adventure • Discovery", rarity: "rare",
+    typeLine: "Discovery", rarity: "rare",
     quest: ["Find someone who does work you don't understand — tailor, farrier, organist, crane operator.", "Ask: \"What do most people get wrong about what you do?\"", "Listen until they forget you are a stranger."],
     proof: "Write the one sentence you will repeat to someone else.",
     ability: { name: "No Small Talk", text: "the conversation may not end on weather." },
@@ -234,7 +234,7 @@ export const DECK: Card[] = [
   },
   {
     id: "curiosity-20", number: 20, territory: "curiosity", name: "The Map You Draw",
-    typeLine: "Adventure • Creation", rarity: "rare",
+    typeLine: "Creation", rarity: "rare",
     quest: ["From memory, draw a map of a place you know well — a childhood street, your neighborhood, a grandmother's house.", "Then walk it.", "Mark what memory moved, invented, or erased."],
     proof: "Keep the drawn map beside a photograph of the real place.",
     ability: { name: "Cartographer's Honesty", text: "you may not check reality before the ink dries." },
@@ -245,7 +245,7 @@ export const DECK: Card[] = [
 
   {
     id: "beauty-21", number: 21, territory: "beauty", name: "The Golden Hour",
-    typeLine: "Adventure • Pursuit", rarity: "common",
+    typeLine: "Pursuit", rarity: "common",
     quest: ["Learn today's sunset time.", "Arrive somewhere beautiful forty minutes before — a bridge, a rooftop, a field's edge, a west-facing window.", "Stay until the light is gone."],
     proof: "Keep one photograph of the last light.",
     ability: { name: "Stay for Blue", text: "you may not leave at sunset; the best color comes after." },
@@ -255,7 +255,7 @@ export const DECK: Card[] = [
   },
   {
     id: "beauty-22", number: 22, territory: "beauty", name: "The Window as a Frame",
-    typeLine: "Adventure • Creation", rarity: "common",
+    typeLine: "Creation", rarity: "common",
     quest: ["Find the best window in your home or your street.", "Frame what it shows. Compose it deliberately: what is in, what is out, what is lit.", "Title it like a museum piece."],
     proof: "The photograph, printed or pinned, with a hand-written gallery label beneath it.",
     ability: { name: "Museum Label", text: "you must give it a title and a one-line provenance." },
@@ -265,7 +265,7 @@ export const DECK: Card[] = [
   },
   {
     id: "beauty-23", number: 23, territory: "beauty", name: "Flowers for No Occasion",
-    typeLine: "Adventure • Offering", rarity: "common",
+    typeLine: "Offering", rarity: "common",
     quest: ["Buy flowers.", "There may be no birthday.", "No anniversary.", "No dinner party.", "No reason.", "Choose entirely by beauty."],
     proof: "Press one petal and preserve it with this card.",
     ability: { name: "Useless Beauty", text: "you may not explain or justify the purchase." },
@@ -275,7 +275,7 @@ export const DECK: Card[] = [
   },
   {
     id: "beauty-24", number: 24, territory: "beauty", name: "The Slow Look",
-    typeLine: "Adventure • Pursuit", rarity: "common",
+    typeLine: "Pursuit", rarity: "common",
     quest: ["Choose one thing — a painting, a building's facade, a tree, a face in a photograph.", "Look at it for ten uninterrupted minutes."],
     proof: "Sketch three details you would have sworn were not there.",
     ability: { name: "Ten Minutes Is Forever", text: "no phone, no pacing; if your mind wanders, bring it back like a stray cat." },
@@ -285,7 +285,7 @@ export const DECK: Card[] = [
   },
   {
     id: "beauty-25", number: 25, territory: "beauty", name: "The Fallen Collection",
-    typeLine: "Adventure • Creation", rarity: "common",
+    typeLine: "Creation", rarity: "common",
     quest: ["Walk one street or shoreline slowly.", "Gather only what the ground offers freely — leaves, sea glass, tickets, feathers, one good stone.", "Assemble them on your table like a museum of the overlooked."],
     proof: "Photograph the collection as a whole; keep it in a dish.",
     ability: { name: "Only What Falls", text: "you may not pick anything still attached." },
@@ -295,7 +295,7 @@ export const DECK: Card[] = [
   },
   {
     id: "beauty-26", number: 26, territory: "beauty", name: "Three Faces of Light",
-    typeLine: "Adventure • Discovery", rarity: "uncommon",
+    typeLine: "Discovery", rarity: "uncommon",
     quest: ["Photograph the same subject three times in one day — at dawn, at noon, at dusk.", "Keep all three.", "Notice which one is telling the truth."],
     proof: "The three photographs, kept together in order.",
     ability: { name: "No Choosing Sides", text: "all three stay." },
@@ -305,7 +305,7 @@ export const DECK: Card[] = [
   },
   {
     id: "beauty-27", number: 27, territory: "beauty", name: "The Beauty Tax",
-    typeLine: "Adventure • Offering", rarity: "uncommon",
+    typeLine: "Offering", rarity: "uncommon",
     quest: ["Take the ugliest errand on your list.", "Route it past one beautiful thing — a mural, a garden gate, a good window.", "Stop for five minutes. Pay yourself in beauty."],
     proof: "Photograph the beautiful stop and keep the errand's receipt together.",
     ability: { name: "No Skipping", text: "the detour is not optional; the errand is not done without it." },
@@ -315,7 +315,7 @@ export const DECK: Card[] = [
   },
   {
     id: "beauty-28", number: 28, territory: "beauty", name: "The Arrangement",
-    typeLine: "Adventure • Creation", rarity: "uncommon",
+    typeLine: "Creation", rarity: "uncommon",
     quest: ["Compose a still life from five things you already own.", "Light it like a painting — one lamp, late hour.", "Leave it standing for a full day where you will pass it."],
     proof: "Photograph it; keep the photograph as the artifact.",
     ability: { name: "Nothing Bought", text: "every object must already be yours." },
@@ -325,7 +325,7 @@ export const DECK: Card[] = [
   },
   {
     id: "beauty-29", number: 29, territory: "beauty", name: "The Color Hunt",
-    typeLine: "Adventure • Pursuit", rarity: "rare",
+    typeLine: "Pursuit", rarity: "rare",
     quest: ["Choose one color.", "Walk your streets for an hour noticing only that color.", "Photograph your ten best finds."],
     proof: "The photographs, kept as one grid.",
     ability: { name: "One Thread", text: "once chosen, the color may not be changed." },
@@ -335,7 +335,7 @@ export const DECK: Card[] = [
   },
   {
     id: "beauty-30", number: 30, territory: "beauty", name: "Visible Mending",
-    typeLine: "Adventure • Creation", rarity: "rare",
+    typeLine: "Creation", rarity: "rare",
     quest: ["Mend something you were going to throw away — a sock, a book spine, a chair, a hole in a sweater.", "Make the repair beautiful on purpose.", "Do not hide it."],
     proof: "Photograph the repaired thing in use.",
     ability: { name: "Gold in the Crack", text: "the repair must be visible, not disguised." },
@@ -346,7 +346,7 @@ export const DECK: Card[] = [
 
   {
     id: "connection-31", number: 31, territory: "connection", name: "The Long Letter",
-    typeLine: "Adventure • Creation", rarity: "common",
+    typeLine: "Creation", rarity: "common",
     quest: ["Write a real letter, by hand, to someone who matters.", "Three pages minimum — or until you write something you did not know you thought.", "Address it, stamp it, walk it to a postbox."],
     proof: "Photograph the sealed envelope; keep a copy of the first page.",
     ability: { name: "The Unsaid Paragraph", text: "include one thing you have never said out loud." },
@@ -356,7 +356,7 @@ export const DECK: Card[] = [
   },
   {
     id: "connection-32", number: 32, territory: "connection", name: "The Story You Never Asked For",
-    typeLine: "Adventure • Encounter", rarity: "common",
+    typeLine: "Encounter", rarity: "common",
     quest: ["Find someone older than you.", "Ask: \"What's a story from your life you don't think I've ever heard?\"", "Then don't steer the conversation.", "Listen."],
     proof: "Write one sentence from their story that you never want to forget.",
     ability: { name: "Inheritance", text: "if the story changes something you believed about this person, write that beneath the first sentence." },
@@ -366,7 +366,7 @@ export const DECK: Card[] = [
   },
   {
     id: "connection-33", number: 33, territory: "connection", name: "The Memory Menu",
-    typeLine: "Adventure • Offering", rarity: "common",
+    typeLine: "Offering", rarity: "common",
     quest: ["Cook one full meal for one specific person — a dish from their childhood, their grandmother's table, a place they miss.", "Ask them about the dish first.", "Let them talk while it cooks."],
     proof: "Keep the recipe, written in their words, and one sentence they said at the table.",
     ability: { name: "No Apologies", text: "the meal may not be defended or explained." },
@@ -376,7 +376,7 @@ export const DECK: Card[] = [
   },
   {
     id: "connection-34", number: 34, territory: "connection", name: "Actually Call Them",
-    typeLine: "Adventure • Encounter", rarity: "common",
+    typeLine: "Encounter", rarity: "common",
     quest: ["Choose someone you text constantly.", "Call instead. No agenda.", "Talk until the call finds something texts cannot carry."],
     proof: "Write the sentence that could never have been typed.",
     ability: { name: "No Agenda", text: "you may not open with logistics." },
@@ -386,7 +386,7 @@ export const DECK: Card[] = [
   },
   {
     id: "connection-35", number: 35, territory: "connection", name: "Becoming a Regular",
-    typeLine: "Adventure • Pilgrimage", rarity: "common",
+    typeLine: "Pilgrimage", rarity: "common",
     quest: ["Choose one place — a café, a bakery, a corner shop.", "Go three times in two weeks.", "Order the same thing.", "Learn one staff member's name; let them learn yours."],
     proof: "Keep a receipt from each visit, dated.",
     ability: { name: "The Same Seat", text: "sit or stand in the same spot each time." },
@@ -396,7 +396,7 @@ export const DECK: Card[] = [
   },
   {
     id: "connection-36", number: 36, territory: "connection", name: "The Photo You're Missing",
-    typeLine: "Adventure • Encounter", rarity: "uncommon",
+    typeLine: "Encounter", rarity: "uncommon",
     quest: ["Notice someone who matters and is missing from your photographs.", "Make one — together, properly, both of you in the frame.", "Print it. Date the back."],
     proof: "The printed photograph itself.",
     ability: { name: "Paper Only", text: "it must exist in the physical world, not only the cloud." },
@@ -406,7 +406,7 @@ export const DECK: Card[] = [
   },
   {
     id: "connection-37", number: 37, territory: "connection", name: "The Thank-You You Owed",
-    typeLine: "Adventure • Offering", rarity: "uncommon",
+    typeLine: "Offering", rarity: "uncommon",
     quest: ["Think of someone who changed your life and does not know it — a teacher, an author, a nurse, a stranger from a decade ago.", "Write and send the thanks.", "If they cannot be reached, write it in full and read it aloud to their memory."],
     proof: "Keep the letter — sent or kept.",
     ability: { name: "No Reply Required", text: "you may not wait for one." },
@@ -416,7 +416,7 @@ export const DECK: Card[] = [
   },
   {
     id: "connection-38", number: 38, territory: "connection", name: "The Shared Table",
-    typeLine: "Adventure • Encounter", rarity: "uncommon",
+    typeLine: "Encounter", rarity: "uncommon",
     quest: ["Eat somewhere communal — a food hall, a long bench, a night market — beside strangers.", "Offer one real sentence beyond \"excuse me.\"", "Receive one back."],
     proof: "Keep the napkin, ticket, or menu from the bench.",
     ability: { name: "Elbow Distance", text: "no phone at the bench; the strangers are the entertainment." },
@@ -426,7 +426,7 @@ export const DECK: Card[] = [
   },
   {
     id: "connection-39", number: 39, territory: "connection", name: "The Bridge Rebuilt",
-    typeLine: "Adventure • Pilgrimage", rarity: "rare",
+    typeLine: "Pilgrimage", rarity: "rare",
     quest: ["Reach out to a friend the years have quietly taken.", "Do not catch up on news.", "Tell them what they meant to you — specifically."],
     proof: "Keep their reply — a screenshot, a message, a note of the call.",
     ability: { name: "No Apology Required", text: "you may not explain the gap." },
@@ -436,7 +436,7 @@ export const DECK: Card[] = [
   },
   {
     id: "connection-40", number: 40, territory: "connection", name: "Learn It from Their Hands",
-    typeLine: "Adventure • Encounter", rarity: "rare",
+    typeLine: "Encounter", rarity: "rare",
     quest: ["Ask an elder in your life to teach you one thing their hands know — a recipe, a repair, a knot, a card game.", "Do it beside them, badly, until it is yours."],
     proof: "Make the thing, and write the steps in their words, verbatim.",
     ability: { name: "The Recipe Card", text: "you must write their words, not your translation." },
@@ -447,7 +447,7 @@ export const DECK: Card[] = [
 
   {
     id: "wonder-41", number: 41, territory: "wonder", name: "The Vertical Hour",
-    typeLine: "Adventure • Pilgrimage", rarity: "common",
+    typeLine: "Pilgrimage", rarity: "common",
     quest: ["Find the darkest place you can reach tonight.", "Look up for twenty minutes.", "Let your eyes adjust properly."],
     proof: "One photograph of the sky, and a note of what you saw moving.",
     ability: { name: "Dark Adapted", text: "the phone goes dark after the first minute; the eyes need twenty." },
@@ -457,7 +457,7 @@ export const DECK: Card[] = [
   },
   {
     id: "wonder-42", number: 42, territory: "wonder", name: "Hands in the Water",
-    typeLine: "Adventure • Discovery", rarity: "common",
+    typeLine: "Discovery", rarity: "common",
     quest: ["Find natural water — river, sea, lake, rain gathered in stone.", "Put your hands in it for ten minutes.", "Nothing else is required."],
     proof: "A photograph of the water closing over your hands, or a stone from the bank.",
     ability: { name: "No Skipping Stones", text: "you may not throw anything in; the water is not an audience." },
@@ -467,7 +467,7 @@ export const DECK: Card[] = [
   },
   {
     id: "wonder-43", number: 43, territory: "wonder", name: "Follow the Music",
-    typeLine: "Adventure • Pursuit", rarity: "common",
+    typeLine: "Pursuit", rarity: "common",
     quest: ["Find live music you did not originally plan to hear.", "Follow it.", "Stay for three songs."],
     proof: "Bring back a ticket, coaster, napkin, flyer, photograph, or other artifact.",
     ability: { name: "Encore", text: "if you lose track of time, remain until you naturally want to leave." },
@@ -477,7 +477,7 @@ export const DECK: Card[] = [
   },
   {
     id: "wonder-44", number: 44, territory: "wonder", name: "Standing in the Weather",
-    typeLine: "Adventure • Pursuit", rarity: "common",
+    typeLine: "Pursuit", rarity: "common",
     quest: ["When real weather arrives — storm, fog, first snow, hard rain — go out into it on purpose.", "Stand in it. Walk in it.", "Come in when your body asks, not your schedule."],
     proof: "One photograph taken from inside the weather.",
     ability: { name: "From the Inside", text: "no watching from windows; the weather must be worn, not viewed." },
@@ -487,7 +487,7 @@ export const DECK: Card[] = [
   },
   {
     id: "wonder-45", number: 45, territory: "wonder", name: "Under the Giant",
-    typeLine: "Adventure • Pilgrimage", rarity: "common",
+    typeLine: "Pilgrimage", rarity: "common",
     quest: ["Go stand beneath something built at the extreme of human scale — a cathedral, a dam, the underside of a bridge, a great station hall.", "Stay until your neck relaxes into it."],
     proof: "A wide photograph that makes the size legible.",
     ability: { name: "Long Look", text: "you may not photograph before you have stood there five minutes." },
@@ -497,7 +497,7 @@ export const DECK: Card[] = [
   },
   {
     id: "wonder-46", number: 46, territory: "wonder", name: "The Unhurried Animal",
-    typeLine: "Adventure • Discovery", rarity: "uncommon",
+    typeLine: "Discovery", rarity: "uncommon",
     quest: ["Find a wild animal — a bird, a squirrel, a heron, a tide-pool crab.", "Watch until it changes what it is doing.", "Do not feed it. Do not hurry it."],
     proof: "A sketch or photograph, with the name you gave it written beside.",
     ability: { name: "Field Notes", text: "you must invent it a name and use the name aloud." },
@@ -507,7 +507,7 @@ export const DECK: Card[] = [
   },
   {
     id: "wonder-47", number: 47, territory: "wonder", name: "The Cloud Parliament",
-    typeLine: "Adventure • Creation", rarity: "uncommon",
+    typeLine: "Creation", rarity: "uncommon",
     quest: ["Lie on your back somewhere safe and watch clouds for twenty minutes.", "Name each shape that convinces you — aloud or on paper."],
     proof: "The list of names you gave them.",
     ability: { name: "No Podcasts", text: "the sky is the only audio." },
@@ -517,7 +517,7 @@ export const DECK: Card[] = [
   },
   {
     id: "wonder-48", number: 48, territory: "wonder", name: "The Moonrise Appointment",
-    typeLine: "Adventure • Pursuit", rarity: "uncommon",
+    typeLine: "Pursuit", rarity: "uncommon",
     quest: ["Find tonight's moonrise time and a clear eastern view.", "Wait.", "Watch it clear the rooftops, the hills, or the sea."],
     proof: "One photograph of the moon low against a landmark.",
     ability: { name: "No Photograph First", text: "you must watch five full minutes before raising any camera." },
@@ -527,7 +527,7 @@ export const DECK: Card[] = [
   },
   {
     id: "wonder-49", number: 49, territory: "wonder", name: "The First Light Club",
-    typeLine: "Adventure • Pilgrimage", rarity: "rare",
+    typeLine: "Pilgrimage", rarity: "rare",
     quest: ["Wake before the sun.", "Be somewhere open to the east when it arrives — a hill, a pier, a bridge, an east-facing step.", "Watch the whole arrival."],
     proof: "A photograph as the light lands, with the time written beneath it.",
     ability: { name: "No Snooze", text: "the alarm may not be postponed; you may go back to bed afterward." },
@@ -537,7 +537,7 @@ export const DECK: Card[] = [
   },
   {
     id: "wonder-50", number: 50, territory: "wonder", name: "The Quietest Room",
-    typeLine: "Adventure • Discovery", rarity: "rare",
+    typeLine: "Discovery", rarity: "rare",
     quest: ["Find the quietest place within an hour of home — a forest clearing, a chapel, a library basement, your own kitchen at 3am.", "Sit in silence for fifteen minutes.", "Listen until the quiet starts to have details."],
     proof: "Record one minute of the silence, and write what you heard inside it.",
     ability: { name: "Ears First", text: "eyes closed for the first five minutes." },
@@ -548,7 +548,7 @@ export const DECK: Card[] = [
 
   {
     id: "wild-51", number: 51, territory: "wild", name: "Follow the Thread",
-    typeLine: "Legendary Adventure • Wild", rarity: "legendary",
+    typeLine: "Legendary Wild", rarity: "legendary",
     quest: ["Leave home without choosing a destination.", "Notice what pulls at you.", "Follow it.", "A road.", "A smell.", "A bookstore.", "Music through an open door.", "Something strange in a shop window.", "A person saying, \"You should see…\"", "Follow the first thread.", "Then the next.", "Then the next.", "Continue for at least two hours."],
     proof: "Return with one object that could not possibly have entered your life if you'd planned the day.",
     ability: { name: "Serendipity", text: "during this adventure, the question \"What is the point of this?\" has no power." },
@@ -558,7 +558,7 @@ export const DECK: Card[] = [
   },
   {
     id: "wild-52", number: 52, territory: "wild", name: "Proof of Life",
-    typeLine: "Mythic Adventure • Wild", rarity: "mythic",
+    typeLine: "Mythic Wild", rarity: "mythic",
     quest: ["Choose something that produces nothing measurable.", "It cannot advance your career.", "It cannot make you more efficient.", "It cannot solve a problem.", "It cannot be chosen primarily because someone else will admire it.", "You must still want it if nobody ever knows you did it.", "Go do it."],
     proof: "Bring back one artifact. Write upon it:\nI WANTED THIS.\nTHAT WAS ENOUGH.",
     ability: { name: "Alive", text: "this card cannot be completed for points. It cannot be optimized. It cannot be compared with another player's experience. Once lived, place it somewhere you will encounter it again." },

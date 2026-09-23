@@ -81,13 +81,13 @@ describe("deck integrity — structure (SPEC §2)", () => {
 
 describe("deck integrity — anatomy (SPEC §3)", () => {
   const ADVENTURE_TYPE_RE =
-    /^Adventure • (Discovery|Encounter|Indulgence|Pilgrimage|Creation|Offering|Pursuit)$/;
-  const WILD_TYPE_RE = /^(Legendary|Mythic) Adventure • Wild$/;
+    /^(Discovery|Encounter|Indulgence|Pilgrimage|Creation|Offering|Pursuit)$/;
+  const WILD_TYPE_RE = /^(Legendary|Mythic) Wild$/;
 
-  it("gives every territory card a complete Adventure • Mode type line", () => {
+  it("gives every territory card a complete mode type line", () => {
     for (const card of cards.filter((c) => c.territory !== "wild")) {
       expect(card.typeLine, card.id).toMatch(ADVENTURE_TYPE_RE);
-      expect(card.mode, card.id).toBe(card.typeLine.split("•")[1]!.trim());
+      expect(card.mode, card.id).toBe(card.typeLine);
     }
   });
 
@@ -115,9 +115,9 @@ describe("deck integrity — anatomy (SPEC §3)", () => {
     const thread = byNumber.get(51)!;
     const mythic = byNumber.get(52)!;
     expect(thread.rarityTag).toBe("legendary");
-    expect(thread.typeLine).toMatch(/^Legendary Adventure • Wild$/);
+    expect(thread.typeLine).toMatch(/^Legendary Wild$/);
     expect(mythic.rarityTag).toBe("mythic");
-    expect(mythic.typeLine).toMatch(/^Mythic Adventure • Wild$/);
+    expect(mythic.typeLine).toMatch(/^Mythic Wild$/);
     for (const card of cards.filter((c) => c.territory !== "wild")) {
       // Specs deliberately carry no territory rarity — the 5/3/2 pattern is
       // assigned in the data pass (AGENT.md content rules).
@@ -177,7 +177,7 @@ describe("deck integrity — canon anchors (SPEC §4)", () => {
 
     const expected: Record<number, ReturnType<typeof textFor>> = {
       1: {
-        typeLine: "Adventure • Indulgence",
+        typeLine: "Indulgence",
         quest: [
           "Find a dessert you would normally talk yourself out of ordering.",
           "Order it.",
@@ -192,7 +192,7 @@ describe("deck integrity — canon anchors (SPEC §4)", () => {
         flavor: "Pleasure does not have to earn its place in your life.",
       },
       17: {
-        typeLine: "Adventure • Discovery",
+        typeLine: "Discovery",
         quest: [
           'Ask someone: "If I had one free hour around here, where would you send me?"',
           "If their answer is safe and reasonably possible, go.",
@@ -209,7 +209,7 @@ describe("deck integrity — canon anchors (SPEC §4)", () => {
         flavor: "Curiosity begins when you stop needing to know where you're going.",
       },
       23: {
-        typeLine: "Adventure • Offering",
+        typeLine: "Offering",
         quest: [
           "Buy flowers.",
           "There may be no birthday.",
@@ -229,7 +229,7 @@ describe("deck integrity — canon anchors (SPEC §4)", () => {
         flavor: "Some things should exist simply because they make being alive feel like being alive.",
       },
       32: {
-        typeLine: "Adventure • Encounter",
+        typeLine: "Encounter",
         quest: [
           "Find someone older than you.",
           "Ask: \"What's a story from your life you don't think I've ever heard?\"",
@@ -247,7 +247,7 @@ describe("deck integrity — canon anchors (SPEC §4)", () => {
         flavor: "Some treasures can only be inherited by asking.",
       },
       43: {
-        typeLine: "Adventure • Pursuit",
+        typeLine: "Pursuit",
         quest: [
           "Find live music you did not originally plan to hear.",
           "Follow it.",
@@ -264,7 +264,7 @@ describe("deck integrity — canon anchors (SPEC §4)", () => {
         flavor: "Wonder rarely sends a calendar invitation.",
       },
       51: {
-        typeLine: "Legendary Adventure • Wild",
+        typeLine: "Legendary Wild",
         quest: [
           "Leave home without choosing a destination.",
           "Notice what pulls at you.",
@@ -291,7 +291,7 @@ describe("deck integrity — canon anchors (SPEC §4)", () => {
         flavor: "You cannot discover what you refuse to wander toward.",
       },
       52: {
-        typeLine: "Mythic Adventure • Wild",
+        typeLine: "Mythic Wild",
         quest: [
           "Choose something that produces nothing measurable.",
           "It cannot advance your career.",

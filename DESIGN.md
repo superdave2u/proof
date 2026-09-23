@@ -13,7 +13,7 @@ Borrow the *feel* of a deep collectible card game. **Do not copy Magic: The Gath
 
 1. Header band: `TERRITORY NN/52` (collector line) + rarity gem + territory symbol watermark.
 2. Card name (display serif).
-3. Type line: `Adventure • Mode` (small caps).
+3. Type line: the card's mode (small caps), e.g. `Indulgence`, `Discovery`, `Legendary Wild`. Specs author `Adventure • <Mode>`; the parser drops the `Adventure • ` prefix.
 4. **Territory atmosphere panel (4:3)** — no rendered artwork in this release. A procedural background pattern within the territory's color and tonal range: layered washes, woven texture, and the territory sigil as a large watermark; wilds get a prismatic sheen, mythic stays deep black with a violet edge glow.
 5. **Flavor text** — italic, territory-tinted, rendered *inside* the atmosphere panel, centered vertically and horizontally in the 4:3 negative space over a soft radial scrim.
 6. **Quest** block.
@@ -36,7 +36,7 @@ interface Card {
   number: number;       // 1..52
   territory: Territory;
   name: string;
-  typeLine: string;     // "Adventure • Indulgence"
+  typeLine: string;     // rendered mode, e.g. "Indulgence" / "Legendary Wild" (specs' "Adventure • " prefix dropped at transcribe time)
   rarity: Rarity;       // assigned in data pass per SPEC §3
   art: string;          // authored art-direction string — preserved, NOT rendered (atmosphere panel replaces artwork this release; reintroduced later)
   quest: string[];      // line-separated steps
