@@ -1,4 +1,4 @@
-import { describeApp } from "./app";
+import { APP_SUBHEADLINE, APP_TAGLINE, APP_TITLE } from "./app";
 import { DECK } from "./data/cards";
 import { mountHomeView } from "./views/home";
 import { mountGalleryView } from "./views/gallery";
@@ -12,9 +12,9 @@ const app = document.querySelector<HTMLDivElement>("#app");
 if (app) {
   app.innerHTML = `<main class="app-shell">
     <header class="app-intro">
-      <p class="app-intro__eyebrow">A collectible adventure game</p>
-      <h1>Proof of Life</h1>
-      <p class="app-intro__copy">${describeApp()}. A pristine deck holds the life you could live; each card is an invitation to bring back evidence of the life that happened.</p>
+      <p class="app-intro__eyebrow">${APP_TAGLINE}</p>
+      <h1>${APP_TITLE}</h1>
+      <p class="app-intro__copy">${APP_SUBHEADLINE}</p>
     </header>
     <div id="home-view"></div>
     <div id="gallery-view" hidden></div>

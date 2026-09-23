@@ -49,6 +49,8 @@ describe("app shell accessibility foundations", () => {
     expect(styles).toMatch(/\.daily-draw \{[^}]*width: min\(100%, 480px\);/s);
     expect(styles).toMatch(/\.daily-draw \{[^}]*margin: 2\.5rem auto 0;/s);
     expect(styles).toMatch(/\.deck-grid \{[^}]*align-items: stretch;/s);
+    // Cards fill their track width (height-driven aspect ratio must not widen them).
+    expect(styles).toMatch(/\.deck-card-back \{[^}]*width: 100%;/s);
     expect(styles).toMatch(/\.deck-card-back \{[^}]*height: 100%;/s);
     expect(styles).toMatch(/\.archive-grid \{[^}]*align-items: stretch;/s);
   });
@@ -57,6 +59,8 @@ describe("app shell accessibility foundations", () => {
     expect(styles).toContain(":focus-visible");
     expect(styles).toContain("body {\n  min-width: 320px;");
     expect(styles).toContain("@media (max-width: 360px)");
+    // WHY: the gallery must be a single column on phones, not two cards wide.
+    expect(styles).toMatch(/@media \(max-width: 520px\) \{[^@]*\.deck-grid \{ grid-template-columns: minmax\(0, 1fr\);/s);
     expect(styles).toContain("@media (prefers-reduced-motion: reduce)");
     expect(styles).toContain("animation-duration: .01ms !important");
     expect(styles).toContain("transition-duration: .01ms !important");

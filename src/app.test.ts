@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { APP_TITLE, describeApp } from "./app";
+import { APP_SUBHEADLINE, APP_TAGLINE, APP_TITLE } from "./app";
 
 /**
  * WHY this test exists: it is the wheel smoke test. It proves the Ralph
@@ -9,7 +9,8 @@ import { APP_TITLE, describeApp } from "./app";
  */
 describe("wheel smoke", () => {
   it("wires the app module into the test wheel", () => {
-    expect(APP_TITLE).toBe("Proof of Life");
-    expect(describeApp()).toContain(APP_TITLE);
+    expect(APP_TITLE).toBe("Proof");
+    expect(APP_TAGLINE).toBe("A Collectible Life Game");
+    expect(APP_SUBHEADLINE).toBe("Each card is an invitation to bring back evidence of the life that happened.");
   });
 });
