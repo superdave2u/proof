@@ -15,23 +15,121 @@ Territory energy: **Discovery.** Curiosity begins when you stop needing to know 
 - **Art direction**: a woman standing at a nighttime crossroads while a stranger sketches directions onto the back of a receipt. One road seems to glow faintly.
 - **Flavor**: *"Curiosity begins when you stop needing to know where you're going."*
 
----
+## 11/52 — THE OTHER LINE
 
-## Pending slots (Ralph authors in planning loops)
-
-11, 12, 13, 14, 15, 16, 18, 19, 20
-
-Template per card — every field required (SPEC §3):
-
-```
-## NN/52 — CARD NAME
-- **Type**: Adventure • <Mode>
-- **Quest**: <the actual action>
-- **Proof of Life**: <physical evidence required>
+- **Type**: Adventure • Discovery
+- **Quest**:
+  At a menu or a counter, order the thing you always skip — the unpronounceable, the unfamiliar, the one you always talk past.
+  You may ask what it is.
+  You may not ask for the safe alternative.
+- **Proof of Life**: Keep the receipt and write one honest sentence of review.
 - **Reward**: Place your evidence in the Archive. This card is now **Lived**.
-- **Special Ability**: <Name> — <experiential rule> (optional)
-- **Art direction**: <cinematic scene, mood, light — never the player completing it>
-- **Flavor**: *"<philosophy, in the canon voice>"*
-```
+- **Special Ability**: **No Translating** — you may not look it up until after the first bite.
+- **Art direction**: a night-market stall lit like an aquarium, an unidentifiable dish steaming under a single bulb, language dissolving into steam above it.
+- **Flavor**: "The unfamiliar is only a habit you haven't met yet."
 
-Style bar: read the canon card above and the wilds. A quest must be concretely doable this week, by one person, with evidence that can be kept. Flavor text must carry the philosophy (SPEC §8). No activity-list filler — this is a dealt adventure.
+## 12/52 — ASK THE SHELF
+
+- **Type**: Adventure • Encounter
+- **Quest**:
+  Go to a bookshop.
+  Ask the person who works there: "What's the best thing you've read this year that almost nobody buys?"
+  Buy or borrow it.
+  Read the first chapter on a bench nearby, the same day.
+- **Proof of Life**: Keep the receipt and copy the first sentence by hand.
+- **Reward**: Place your evidence in the Archive. This card is now **Lived**.
+- **Special Ability**: **No Covers Judged** — you may not reject the recommendation by genre.
+- **Art direction**: a midnight-blue bookshop, a ladder leaning against the shelves, one book floating open in mid-air, constellations strung between the spines.
+- **Flavor**: "Every bookseller is an undiscovered country."
+
+## 13/52 — THE BUS WINDOW LOTTERY
+
+- **Type**: Adventure • Pilgrimage
+- **Quest**:
+  Board the first bus or train that arrives.
+  Ride twenty minutes.
+  Get off wherever you are. Find one thing worth walking to.
+  Ride back.
+- **Proof of Life**: Keep the ticket and one artifact from the stop.
+- **Reward**: Place your evidence in the Archive. This card is now **Lived**.
+- **Special Ability**: **Terminal Rule** — if you land somewhere you already know, go one stop further.
+- **Art direction**: a bus interior at dusk washed in amber light, the window framing a glowing street sign in a language you don't read.
+- **Flavor**: "Transit is a slot machine that pays out in places."
+
+## 14/52 — THE MUSEUM OF ONE THING
+
+- **Type**: Adventure • Pursuit
+- **Quest**:
+  Visit a museum, gallery, or historic site.
+  Look at exactly one exhibit.
+  Stay with it as long as it holds you.
+  Skip everything else without guilt.
+- **Proof of Life**: Sketch it, badly, by hand — the sketch is the artifact.
+- **Reward**: Place your evidence in the Archive. This card is now **Lived**.
+- **Special Ability**: **Single Room** — you may visit one room only.
+- **Art direction**: a dark gallery with one floating illuminated artifact, its shadow stretching across the floor like a second, larger exhibit.
+- **Flavor**: "Ten thousand things ask for your eyes. Give them to one."
+
+## 15/52 — THE MASTER'S HANDS
+
+- **Type**: Adventure • Discovery
+- **Quest**:
+  Find someone doing skilled physical work — potter, butcher, tailor, blacksmith, baker.
+  Watch, silently, for twenty minutes.
+  Notice what only hands know.
+- **Proof of Life**: Photograph their hands mid-work, and write down one detail you would have missed at a glance.
+- **Reward**: Place your evidence in the Archive. This card is now **Lived**.
+- **Special Ability**: **Apprentice Eyes** — you may not ask questions until you have watched first.
+- **Art direction**: a workshop in late light, sparks and clay-dust suspended like fireflies, enormous weathered hands shaping something delicate.
+- **Flavor**: "Mastery is invisible until you stand close enough to feel the heat."
+
+## 16/52 — THE TOURIST AT HOME
+
+- **Type**: Adventure • Pilgrimage
+- **Quest**:
+  Do the thing visitors travel here to do — the lookout, the oldest café, the historic plaque you have walked past a hundred times.
+  Do it as if it were your first day in this city.
+- **Proof of Life**: Keep a ticket, postcard, or photograph from it.
+- **Reward**: Place your evidence in the Archive. This card is now **Lived**.
+- **Special Ability**: **Souvenir Rules** — you must buy the tackiest souvenir available.
+- **Art direction**: a golden-hour lookout crowded with visitors taking the same photograph, one figure in the middle of them glowing faintly as if newly arrived.
+- **Flavor**: "You have never been here either."
+
+## 18/52 — THE FOREIGN SHELF
+
+- **Type**: Adventure • Creation
+- **Quest**:
+  In a market, buy one ingredient you have never cooked.
+  Ask someone — a clerk, a grandmother, an old recipe — how it wants to be treated.
+  Cook it tonight.
+- **Proof of Life**: Keep the label or empty package beside a photograph of the dish.
+- **Reward**: Place your evidence in the Archive. This card is now **Lived**.
+- **Special Ability**: **First Taste** — you must taste it raw before cooking.
+- **Art direction**: a kitchen counter arranged like an explorer's table, one mysterious fruit or root under a beam of light, an open atlas beside the cutting board.
+- **Flavor**: "The supermarket is an atlas you are allowed to take home."
+
+## 19/52 — WHAT MOST PEOPLE GET WRONG
+
+- **Type**: Adventure • Discovery
+- **Quest**:
+  Find someone who does work you don't understand — tailor, farrier, organist, crane operator.
+  Ask: "What do most people get wrong about what you do?"
+  Listen until they forget you are a stranger.
+- **Proof of Life**: Write the one sentence you will repeat to someone else.
+- **Reward**: Place your evidence in the Archive. This card is now **Lived**.
+- **Special Ability**: **No Small Talk** — the conversation may not end on weather.
+- **Art direction**: a craftsman's stall lit like a theater stage, the tools on the wall rearranged into a constellation, the worker's shadow taller than the truth of them.
+- **Flavor**: "Everyone is a deep well you walk past daily."
+
+## 20/52 — THE MAP YOU DRAW
+
+- **Type**: Adventure • Creation
+- **Quest**:
+  From memory, draw a map of a place you know well — a childhood street, your neighborhood, a grandmother's house.
+  Then walk it.
+  Mark what memory moved, invented, or erased.
+- **Proof of Life**: Keep the drawn map beside a photograph of the real place.
+- **Reward**: Place your evidence in the Archive. This card is now **Lived**.
+- **Special Ability**: **Cartographer's Honesty** — you may not check reality before the ink dries.
+- **Art direction**: a hand-drawn map spread across a kitchen table, its streets glowing softly, the real streets visible faintly beneath like a second exposure.
+- **Flavor**: "Memory is not a camera. It is a painter with opinions."
