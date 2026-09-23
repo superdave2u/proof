@@ -4,9 +4,10 @@ import { filterDeck, renderDeckView, type DeckRecords } from "./deck";
 
 /**
  * WHY these tests exist: the Deck is the player's view of all 52 possible
- * adventures. They protect the concealed/unconcealed boundary, territory and
- * lifecycle filters, and the unfiltered lived count so future UI changes do
- * not accidentally turn the deck into a progress score or lose cards.
+ * adventures. They protect the once-per-day reveal alongside the repeatable
+ * random ritual, the concealed/unconcealed boundary, territory and lifecycle
+ * filters, and the unfiltered lived count so UI changes preserve the game's
+ * no-reroll promise without turning the deck into a score or losing cards.
  */
 describe("deck view", () => {
   it("shows all 52 cards as territory-marked backs without leaking undiscovered names", () => {
@@ -33,6 +34,26 @@ describe("deck view", () => {
     expect(html).toContain('data-state="drawn"');
     expect(html).not.toContain(DECK[0]!.name);
     expect(html).toContain('role="status" aria-live="polite"');
+  });
+
+  it("offers one date-seeded reveal and keeps the chosen card visibly locked for the day", () => {
+    const untouched = renderDeckView();
+    expect(untouched).toContain('data-action="daily-draw"');
+    expect(untouched).toContain("Reveal today's adventure");
+    expect(untouched).toContain("chosen once for today");
+    expect(untouched).not.toContain(`Today's adventure: ${DECK[0]!.name}.`);
+
+    const card = DECK[16]!;
+    const revealed = renderDeckView(
+      { [card.id]: { state: "drawn", drawnAt: "2026-09-22T12:30:00.000Z" } },
+      undefined,
+      undefined,
+      card.id,
+    );
+    expect(revealed).toContain(`Today&#39;s adventure: ${card.name.replaceAll("'", "&#39;")}.`);
+    expect(revealed).toContain('class="daily-draw__face" data-draw-animation="true" role="group" tabindex="-1"');
+    expect(revealed).toContain('data-action="daily-draw" disabled');
+    expect(revealed).toContain("Today's card is revealed");
   });
 
   it("filters by territory and state together while retaining wild as its own territory", () => {

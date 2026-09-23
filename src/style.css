@@ -101,6 +101,19 @@ button, input, textarea { font: inherit; }
 .deck-empty { grid-column: 1 / -1; margin: 0; padding: 2.5rem 1rem; border: 1px dashed #55505a; border-radius: 12px; color: #d1c7b6; line-height: 1.6; text-align: center; }
 
 .draw-ritual { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .75rem 2rem; margin: 2.5rem 0 0; padding: clamp(1.1rem, 3vw, 1.8rem); border: 1px solid rgb(220 201 161 / 24%); border-radius: 16px; background: linear-gradient(120deg, rgb(201 162 39 / 9%), rgb(122 63 201 / 7%) 58%, rgb(30 79 200 / 7%)); }
+.daily-draw { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .75rem 2rem; margin: 2.5rem 0 0; padding: clamp(1.1rem, 3vw, 1.8rem); border: 1px solid rgb(185 164 238 / 34%); border-radius: 16px; background: radial-gradient(ellipse at 85% 15%, rgb(122 63 201 / 16%), transparent 28rem), linear-gradient(120deg, rgb(39 34 47 / 88%), rgb(20 20 26 / 96%)); }
+.daily-draw__eyebrow { margin: 0 0 .4rem; color: #d2c2f5; font-size: .65rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
+.daily-draw__intro h2 { margin: 0; font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif; font-size: clamp(1.35rem, 3vw, 1.85rem); font-weight: 500; line-height: 1.2; }
+.daily-draw__intro > p:last-child { margin: .45rem 0 0; color: var(--muted); font-size: .84rem; line-height: 1.5; }
+.daily-draw__button { min-height: 3rem; padding: .65rem 1.15rem; border: 1px solid #d2c2f5; border-radius: 99px; background: linear-gradient(130deg, #d5c6f2, #9377c5); color: #17151a; cursor: pointer; font-size: .78rem; font-weight: 800; letter-spacing: .045em; box-shadow: 0 5px 20px rgb(122 63 201 / 20%); transition: transform .2s ease, filter .2s ease; }
+.daily-draw__button:hover:not(:disabled) { filter: brightness(1.12); transform: translateY(-2px); }
+.daily-draw__button:focus-visible { outline: 3px solid #f1e9ff; outline-offset: 3px; }
+.daily-draw__button:disabled { cursor: default; filter: saturate(.75); opacity: .8; }
+.daily-draw__message { grid-column: 1 / -1; margin: 0; color: #e4dcf5; font-size: .78rem; }
+.daily-draw__reveal { grid-column: 1 / -1; display: flex; justify-content: center; width: 100%; padding: .5rem 0 0; perspective: 1100px; }
+.daily-draw__face { transform-origin: center; animation: deal-flip .82s cubic-bezier(.2, .75, .25, 1) both; }
+.daily-draw__face:focus { outline: 3px solid #d2c2f5; outline-offset: 4px; border-radius: 23px; }
+.daily-draw + .draw-ritual { margin-top: 1rem; }
 .draw-ritual__eyebrow { margin: 0 0 .4rem; color: #d8c9a4; font-size: .65rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
 .draw-ritual__intro h2 { margin: 0; font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif; font-size: clamp(1.35rem, 3vw, 1.85rem); font-weight: 500; line-height: 1.2; }
 .draw-ritual__intro > p:last-child { margin: .45rem 0 0; color: var(--muted); font-size: .84rem; line-height: 1.5; }
@@ -120,8 +133,9 @@ button, input, textarea { font: inherit; }
 }
 
 @media (max-width: 520px) {
-  .draw-ritual { grid-template-columns: 1fr; gap: 1rem; }
+  .draw-ritual, .daily-draw { grid-template-columns: 1fr; gap: 1rem; }
   .draw-ritual__button { justify-self: start; }
+  .daily-draw__button { justify-self: start; }
 }
 
 @media (max-width: 520px) {
@@ -353,5 +367,5 @@ button, input, textarea { font: inherit; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
-  .draw-reveal__face { animation: none; }
+  .draw-reveal__face, .daily-draw__face { animation: none; }
 }

@@ -12,15 +12,24 @@ export interface KeyValueStorage {
 
 export interface DeckStore {
   getRecords(): DeckRecords;
+  getDailyDraw(): Card | undefined;
+  drawDaily(): Card | undefined;
   draw(): Card | undefined;
 }
 
 interface PersistedDeck {
   version: 1;
   cards: Record<string, CardFaceRecord>;
+  dailyDraw?: DailyDrawRecord;
+}
+
+interface DailyDrawRecord {
+  date: string;
+  cardId: string;
 }
 
 const deckIds = new Set(DECK.map((card) => card.id));
+const datePattern = /^\d{4}-\d{2}-\d{2}$/;
 
 function isObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -53,14 +62,18 @@ function parseCardRecord(value: unknown): CardFaceRecord | undefined {
 
 /** Read only this deck's versioned record shape; invalid data starts as a pristine deck. */
 export function loadDeckRecords(storage?: KeyValueStorage): Record<string, CardFaceRecord> {
-  if (!storage) return {};
+  return loadDeckState(storage).records;
+}
+
+function loadDeckState(storage?: KeyValueStorage): { records: Record<string, CardFaceRecord>; dailyDraw?: DailyDrawRecord } {
+  if (!storage) return { records: {} };
 
   try {
     const serialized = storage.getItem(DECK_STORAGE_KEY);
-    if (!serialized) return {};
+    if (!serialized) return { records: {} };
 
     const parsed: unknown = JSON.parse(serialized);
-    if (!isObject(parsed) || parsed.version !== 1 || !isObject(parsed.cards)) return {};
+    if (!isObject(parsed) || parsed.version !== 1 || !isObject(parsed.cards)) return { records: {} };
 
     const records: Record<string, CardFaceRecord> = {};
     for (const [cardId, value] of Object.entries(parsed.cards)) {
@@ -68,13 +81,27 @@ export function loadDeckRecords(storage?: KeyValueStorage): Record<string, CardF
       const record = parseCardRecord(value);
       if (record) records[cardId] = record;
     }
-    return records;
+
+    const dailyDraw = isObject(parsed.dailyDraw)
+      && typeof parsed.dailyDraw.date === "string"
+      && datePattern.test(parsed.dailyDraw.date)
+      && typeof parsed.dailyDraw.cardId === "string"
+      && deckIds.has(parsed.dailyDraw.cardId)
+      && (records[parsed.dailyDraw.cardId]?.state === "drawn" || records[parsed.dailyDraw.cardId]?.state === "lived")
+      ? { date: parsed.dailyDraw.date, cardId: parsed.dailyDraw.cardId }
+      : undefined;
+
+    return dailyDraw ? { records, dailyDraw } : { records };
   } catch {
-    return {};
+    return { records: {} };
   }
 }
 
-function saveDeckRecords(storage: KeyValueStorage | undefined, records: DeckRecords): void {
+function saveDeckRecords(
+  storage: KeyValueStorage | undefined,
+  records: DeckRecords,
+  dailyDraw?: DailyDrawRecord,
+): void {
   if (!storage) return;
 
   try {
@@ -82,6 +109,7 @@ function saveDeckRecords(storage: KeyValueStorage | undefined, records: DeckReco
     for (const [cardId, record] of Object.entries(records)) {
       if (record) state.cards[cardId] = record;
     }
+    if (dailyDraw) state.dailyDraw = dailyDraw;
     storage.setItem(DECK_STORAGE_KEY, JSON.stringify(state));
   } catch {
     // A storage denial or quota limit must not prevent the in-memory draw ritual.
@@ -89,18 +117,62 @@ function saveDeckRecords(storage: KeyValueStorage | undefined, records: DeckReco
 }
 
 /**
- * Create the small client-side deck store. Draws follow SPEC §7: choose randomly
- * from every card not yet Lived, while an existing Drawn card remains Drawn.
+ * Create the client-side deck store. Random draws choose from every card not yet
+ * Lived; the daily draw is date-seeded and persisted so today's deal cannot reroll.
  */
 export function createDeckStore(
   storage?: KeyValueStorage,
   random: () => number = Math.random,
   now: () => Date = () => new Date(),
 ): DeckStore {
-  let records = loadDeckRecords(storage);
+  const loadedState = loadDeckState(storage);
+  let records = loadedState.records;
+  let dailyDraw = loadedState.dailyDraw;
+
+  const persist = (): void => saveDeckRecords(storage, records, dailyDraw);
+  const dateFor = (date: Date): string => {
+    const year = String(date.getFullYear()).padStart(4, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+  const cardById = (cardId: string): Card | undefined => DECK.find((card) => card.id === cardId);
+
+  const getDailyDraw = (): Card | undefined => {
+    if (!dailyDraw || dailyDraw.date !== dateFor(now())) return undefined;
+    return cardById(dailyDraw.cardId);
+  };
+
+  const drawDaily = (): Card | undefined => {
+    const drawnAt = now();
+    const today = dateFor(drawnAt);
+    if (dailyDraw?.date === today) return cardById(dailyDraw.cardId);
+
+    const eligible = DECK.filter((card) => records[card.id]?.state !== "lived");
+    if (eligible.length === 0) return undefined;
+
+    // FNV-1a makes the same calendar date and eligible deck produce the same deal.
+    let hash = 0x811c9dc5;
+    for (let index = 0; index < today.length; index += 1) {
+      hash ^= today.charCodeAt(index);
+      hash = Math.imul(hash, 0x01000193);
+    }
+    const card = eligible[(hash >>> 0) % eligible.length];
+    if (!card) return undefined;
+
+    const previous = records[card.id];
+    if (previous?.state !== "drawn") {
+      records = { ...records, [card.id]: { state: "drawn", drawnAt: drawnAt.toISOString() } };
+    }
+    dailyDraw = { date: today, cardId: card.id };
+    persist();
+    return card;
+  };
 
   return {
     getRecords: () => records,
+    getDailyDraw,
+    drawDaily,
     draw: () => {
       const eligible = DECK.filter((card) => records[card.id]?.state !== "lived");
       if (eligible.length === 0) return undefined;
@@ -118,7 +190,7 @@ export function createDeckStore(
           ...records,
           [card.id]: { state: "drawn", drawnAt: now().toISOString() },
         };
-        saveDeckRecords(storage, records);
+        persist();
       }
       return card;
     },

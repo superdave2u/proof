@@ -99,6 +99,30 @@ function renderDrawRitual(records: DeckRecords, lastDrawnCardId?: string): strin
   </section>`;
 }
 
+function renderDailyDraw(records: DeckRecords, dailyDrawCardId?: string): string {
+  const card = dailyDrawCardId ? DECK.find((item) => item.id === dailyDrawCardId) : undefined;
+  const hasEligibleCard = DECK.some((item) => records[item.id]?.state !== "lived");
+  const message = card
+    ? `Today's adventure: ${card.name}.`
+    : hasEligibleCard
+      ? "A date-seeded card, chosen once for today."
+      : "Every adventure in this deck has been Lived.";
+  const revealedCard = card
+    ? `<div class="daily-draw__face" data-draw-animation="true" role="group" tabindex="-1" aria-label="Today's card: ${escapeHtml(card.name)}">${renderCardFace(card, records[card.id])}</div>`
+    : "";
+
+  return `<section class="daily-draw" aria-labelledby="daily-draw-title">
+    <div class="daily-draw__intro">
+      <p class="daily-draw__eyebrow">The card of the day</p>
+      <h2 id="daily-draw-title">One adventure, chosen for today.</h2>
+      <p>The date decides the card. Once revealed, today's deal stays yours across reloads.</p>
+    </div>
+    <button class="daily-draw__button" type="button" data-action="daily-draw"${card || !hasEligibleCard ? " disabled" : ""}>${card ? "Today's card is revealed" : "Reveal today's adventure"}</button>
+    <p class="daily-draw__message" role="status" aria-live="polite">${escapeHtml(message)}</p>
+    ${revealedCard ? `<div class="daily-draw__reveal">${revealedCard}</div>` : ""}
+  </section>`;
+}
+
 function resultSummary(visible: number, lived: number): string {
   const cardWord = visible === 1 ? "card" : "cards";
   return `Showing ${visible} ${cardWord}. ${lived} of ${DECK.length} cards lived.`;
@@ -132,11 +156,13 @@ export function renderDeckView(
   records: DeckRecords = {},
   filters: DeckFilters = DEFAULT_FILTERS,
   lastDrawnCardId?: string,
+  dailyDrawCardId?: string,
 ): string {
   const livedCount = DECK.filter((card) => stateFor(card, records) === "lived").length;
   const visibleCards = filterDeck(DECK, records, filters);
 
-  return `${renderDrawRitual(records, lastDrawnCardId)}
+  return `${renderDailyDraw(records, dailyDrawCardId)}
+  ${renderDrawRitual(records, lastDrawnCardId)}
   <section class="deck-view" aria-labelledby="deck-title">
     <div class="deck-view__heading">
       <div>
@@ -178,14 +204,35 @@ export function mountDeckView(
 ): void {
   let filters = { ...DEFAULT_FILTERS };
   let lastDrawnCardId: string | undefined;
+  let dailyDrawCardId = store.getDailyDraw()?.id;
   const render = (): void => {
-    container.innerHTML = renderDeckView(store.getRecords(), filters, lastDrawnCardId);
+    dailyDrawCardId = store.getDailyDraw()?.id;
+    container.innerHTML = renderDeckView(store.getRecords(), filters, lastDrawnCardId, dailyDrawCardId);
   };
   render();
 
+  const scheduleDailyRefresh = (): void => {
+    const now = new Date();
+    const nextLocalMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+    window.setTimeout(() => {
+      render();
+      scheduleDailyRefresh();
+    }, nextLocalMidnight.getTime() - now.getTime() + 25);
+  };
+  scheduleDailyRefresh();
+
   container.addEventListener("click", (event: Event) => {
     const target = event.target;
-    if (!(target instanceof Element) || !target.closest('[data-action="draw"]')) return;
+    if (!(target instanceof Element)) return;
+
+    if (target.closest('[data-action="daily-draw"]')) {
+      const card = store.drawDaily();
+      if (!card) return;
+      render();
+      container.querySelector<HTMLElement>(".daily-draw__face")?.focus();
+      return;
+    }
+    if (!target.closest('[data-action="draw"]')) return;
 
     const card = store.draw();
     if (!card) return;
