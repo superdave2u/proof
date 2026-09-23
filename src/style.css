@@ -106,6 +106,11 @@ button, input, textarea { font: inherit; }
 .deck-card-revealed { min-width: 0; }
 .deck-card-revealed__state { margin: 0 0 .5rem; color: #d1c7b6; font-size: .65rem; font-weight: 700; letter-spacing: .12em; text-align: center; text-transform: uppercase; }
 .deck-card-revealed .card-face { margin-inline: auto; }
+/* The compact face-up preview is one big link to the card's detail page,
+   where the full anatomy and the only deposit flow live. */
+.deck-card-revealed__link { display: block; color: inherit; text-decoration: none; border-radius: 23px; transition: transform .2s ease; }
+.deck-card-revealed__link:hover { transform: translateY(-2px); }
+.deck-card-revealed__link:focus-visible { outline: 3px solid #e4c987; outline-offset: 3px; }
 .deck-empty { grid-column: 1 / -1; margin: 0; padding: 2.5rem 1rem; border: 1px dashed #55505a; border-radius: 12px; color: #d1c7b6; line-height: 1.6; text-align: center; }
 .archive-open, .archive-view__back { min-height: 2.8rem; padding: .6rem .9rem; border: 1px solid #b9a6df; border-radius: 99px; background: rgb(122 63 201 / 12%); color: #eee5ff; cursor: pointer; font-size: .73rem; font-weight: 700; }
 .archive-open:hover, .archive-view__back:hover { background: rgb(122 63 201 / 23%); }

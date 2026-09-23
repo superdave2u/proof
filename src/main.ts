@@ -2,7 +2,7 @@ import { describeApp } from "./app";
 import { DECK } from "./data/cards";
 import { mountDeckView } from "./views/deck";
 import { mountArchiveView } from "./views/archive";
-import { mountCardDetail } from "./views/cardDetail";
+import { mountCardDetail, type CardDetailAction, type EvidenceEntryState } from "./views/cardDetail";
 import { mountHashRouter, type AppRoute } from "./router";
 import { browserDeckStorage, createDeckStore, DeckStorageError } from "./state/store";
 import "./style.css";
@@ -26,11 +26,12 @@ if (app) {
   if (deckView && archiveView && cardDetailView) {
     const store = createDeckStore(browserDeckStorage());
     let refreshArchive = (): void => undefined;
-    let openEvidenceInDeck = (_cardId: string): void => undefined;
-    let pendingEvidenceCardId: string | undefined;
     let removeCardDetailActions = (): void => undefined;
     let navigate = (_route: AppRoute): void => undefined;
     let activeRoute: AppRoute = "deck";
+    // Owned here so an unsaved deposit draft survives re-renders (e.g. when
+    // another tab changes the card while the form is open).
+    const detailEvidence: EvidenceEntryState = { open: false };
 
     const showCardDetail = (cardId: string, shouldFocus: boolean, drawError?: string): void => {
       const card = DECK.find((item) => item.id === cardId);
@@ -40,24 +41,31 @@ if (app) {
       }
 
       removeCardDetailActions();
-      removeCardDetailActions = mountCardDetail(cardDetailView, card, store.getRecords()[cardId], async (action, selectedCard) => {
-        if (action === "draw") {
-          try {
-            if (!await store.draw(selectedCard.id)) return;
-            showCardDetail(selectedCard.id, true);
-          } catch (error) {
-            if (!(error instanceof DeckStorageError)) throw error;
-            showCardDetail(selectedCard.id, true, error.message);
-          }
-        } else if (action === "open-evidence") {
-          pendingEvidenceCardId = selectedCard.id;
-          navigate("deck");
-        } else if (action === "open-archive") {
-          navigate("archive");
-        } else {
-          navigate("deck");
-        }
-      }, drawError);
+      removeCardDetailActions = mountCardDetail(
+        cardDetailView,
+        card,
+        store.getRecords()[cardId],
+        {
+          onAction: async (action: CardDetailAction, selectedCard) => {
+            if (action === "draw") {
+              try {
+                if (!await store.draw(selectedCard.id)) return;
+                showCardDetail(selectedCard.id, true);
+              } catch (error) {
+                if (!(error instanceof DeckStorageError)) throw error;
+                showCardDetail(selectedCard.id, true, error.message);
+              }
+            } else if (action === "open-archive") {
+              navigate("archive");
+            } else {
+              navigate("deck");
+            }
+          },
+          onSubmitEvidence: (cardIdToSubmit, evidence) => store.submitEvidence(cardIdToSubmit, evidence),
+        },
+        detailEvidence,
+        drawError,
+      );
       if (shouldFocus) {
         const focusTarget = drawError ? ".card-detail__error" : ".card-detail";
         cardDetailView.querySelector<HTMLElement>(focusTarget)?.focus();
@@ -69,6 +77,7 @@ if (app) {
       const showArchive = route === "archive";
       const showCard = typeof route !== "string";
       if (showArchive) refreshArchive();
+      if (!showCard) detailEvidence.open = false;
       deckView.hidden = showArchive || showCard;
       archiveView.hidden = !showArchive;
       cardDetailView.hidden = !showCard;
@@ -76,24 +85,20 @@ if (app) {
       else {
         removeCardDetailActions();
         removeCardDetailActions = (): void => undefined;
-      }
-      if (!showCard && !showArchive && pendingEvidenceCardId) {
-        openEvidenceInDeck(pendingEvidenceCardId);
-        pendingEvidenceCardId = undefined;
-      } else if (shouldFocus) {
-        const heading = showArchive ? "#archive-title" : "#deck-title";
-        (showArchive ? archiveView : deckView).querySelector<HTMLElement>(heading)?.focus();
+        if (shouldFocus) {
+          const heading = showArchive ? "#archive-title" : "#deck-title";
+          (showArchive ? archiveView : deckView).querySelector<HTMLElement>(heading)?.focus();
+        }
       }
     };
 
     refreshArchive = mountArchiveView(archiveView, store, () => navigate("deck"));
-    const deckControls = mountDeckView(
+    mountDeckView(
       deckView,
       store,
       () => navigate("archive"),
       (cardId) => navigate({ type: "card", cardId }),
     );
-    openEvidenceInDeck = deckControls.openEvidence;
     navigate = mountHashRouter(window, showRoute).navigate;
     store.subscribe(() => {
       const archiveFocus = archiveView.contains(document.activeElement)

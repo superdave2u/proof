@@ -8,8 +8,8 @@ import { filterDeck, renderDeckView, type DeckRecords } from "./deck";
  * random ritual, the concealed/unconcealed boundary, territory and lifecycle
  * filters, and the unfiltered lived count so UI changes preserve the game's
  * no-reroll promise without turning the deck into a score or losing cards.
- * They also protect the evidence entry action from disappearing on drawn cards
- * and make the date/note/photo requirements and photo cap visible to players.
+ * They also keep the gallery's face-up cards as compact previews that link to
+ * card detail, where the only deposit flow lives.
  */
 describe("deck view", () => {
   it("shows all 52 cards as territory-marked backs without leaking undiscovered names", () => {
@@ -63,7 +63,7 @@ describe("deck view", () => {
 
   it("announces random and daily draw persistence failures as escaped, focusable alerts", () => {
     const html = renderDeckView(
-      {}, undefined, undefined, undefined, undefined, undefined, undefined, undefined,
+      {}, undefined, undefined, undefined,
       "Random draw <failed>", "Daily draw could not be saved.",
     );
 
@@ -96,53 +96,36 @@ describe("deck view", () => {
 
     expect(html).toContain("1 of 52 cards lived.");
     expect(html).toContain("Flowers for No Occasion");
-    expect(html).toContain("Found a quiet color.");
+    // Evidence notes live on the detail page; the gallery preview stays compact.
+    expect(html).not.toContain("Found a quiet color.");
+    expect(html).toContain('href="#/card/beauty-23"');
     expect(drawnHtml).toContain('<div class="deck-card-revealed" data-card-id="pleasure-01" data-state="drawn">');
     // WHY: a revealed card is face up, so the drawn state is implied and must
     // not be labeled on the card; the lived note is not implied and must remain.
     // (The state filter's "Drawn" option is a control, not a card label.)
     expect(drawnHtml).not.toContain("deck-card-revealed__state");
     expect(html).toContain("Lived · in the Archive");
-    expect(drawnHtml).toContain('data-action="open-card" data-card-id="pleasure-01">Open card details</button>');
+    expect(drawnHtml).toContain('class="deck-card-revealed__link" href="#/card/pleasure-01"');
+    expect(drawnHtml).toContain("card-face--preview");
     expect(html).toContain('aria-live="polite"');
     expect(html).toContain('for="deck-filter-territory"');
     expect(html).toContain('for="deck-filter-state"');
     expect(html).not.toContain(DECK[0]?.name);
   });
 
-  it("offers an evidence form only for a Drawn card with optional capped photo input", () => {
+  it("renders gallery face-up cards as compact previews with no deposit flow", () => {
+    // WHY: the gallery previews stop at the flavor window; the full anatomy and
+    // the only deposit form live on the card detail page the preview links to.
     const card = DECK[0]!;
-    const html = renderDeckView({ [card.id]: { state: "drawn" } }, undefined, undefined, undefined, card.id);
+    const html = renderDeckView({ [card.id]: { state: "drawn" } });
 
-    expect(html).toContain('data-action="open-evidence" data-card-id="pleasure-01"');
-    expect(html).toContain('data-evidence-form="pleasure-01"');
-    expect(html).toContain('name="date" type="date"');
-    expect(html).toContain('name="note" rows="3" required');
-    expect(html).toContain('name="artifact" type="file" accept="image/png,image/jpeg,image/webp,image/gif"');
-    expect(html).toContain("512 KiB");
-    expect(renderDeckView().includes('data-evidence-form=')).toBe(false);
-  });
-
-  /** WHY: a storage event from another tab can complete a card while its evidence form is open. The user's unsaved note must remain visible and explicitly marked unsaved rather than disappearing or appearing to overwrite the archived evidence. */
-  it("retains and labels an open evidence draft when another tab Lived the card", () => {
-    const card = DECK[0]!;
-    const records: DeckRecords = {
-      [card.id]: {
-        state: "lived",
-        livedAt: "2026-09-22T12:00:00.000Z",
-        evidence: { date: "2026-09-22", note: "Evidence deposited in the other tab." },
-      },
-    };
-    const html = renderDeckView(
-      records, undefined, undefined, undefined, card.id, undefined, undefined,
-      { date: "2026-09-22", note: "My still-unsaved memory.", fileName: "afternoon.png" },
-    );
-
-    expect(html).toContain("Unsaved Proof of Life draft");
-    expect(html).toContain("My still-unsaved memory.");
-    expect(html).toContain("afternoon.png (retained in this tab)");
-    expect(html).toContain('data-action="dismiss-evidence-draft" data-card-id="pleasure-01"');
-    expect(html).not.toContain('data-evidence-form="pleasure-01"');
+    expect(html).toContain(`href="#/card/${card.id}"`);
+    expect(html).toContain("card-face--preview");
+    expect(html).toContain("card-atmosphere__flavor");
+    expect(html).not.toContain("<h3>Quest</h3>");
+    expect(html).not.toContain("<h3>Proof of Life</h3>");
+    expect(html).not.toContain("data-evidence-form=");
+    expect(html).not.toContain('data-action="open-evidence"');
   });
 
   it("renders a clear empty state when a state filter has no matching cards", () => {

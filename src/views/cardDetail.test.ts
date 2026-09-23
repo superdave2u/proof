@@ -58,11 +58,53 @@ describe("card detail view", () => {
 
   it("keeps an undiscovered card intact and announces when its Draw action could not be saved", () => {
     const card = DECK[0]!;
-    const html = renderCardDetail(card, undefined, "This draw could not be saved in this browser.");
+    const html = renderCardDetail(card, undefined, { open: false }, "This draw could not be saved in this browser.");
 
     expect(html).toContain('data-state="undiscovered"');
     expect(html).toContain('role="alert" tabindex="-1">This draw could not be saved in this browser.</p>');
     expect(html).toContain('data-action="draw" data-card-id="pleasure-01">Draw</button>');
+  });
+
+  it("renders the deposit form here — the only place a card can be marked Lived", () => {
+    // WHY: evidence entry lives on card detail so the gallery can stay a
+    // compact preview; this is the sole deposit flow.
+    const card = DECK[0]!;
+    const html = renderCardDetail(card, { state: "drawn" }, { open: true });
+
+    expect(html).toContain('data-evidence-form="pleasure-01"');
+    expect(html).toContain('name="date" type="date"');
+    expect(html).toContain('name="note" rows="3" required');
+    expect(html).toContain('name="artifact" type="file" accept="image/png,image/jpeg,image/webp,image/gif"');
+    expect(html).toContain("512 KiB");
+    expect(html).toContain('data-action="cancel-evidence"');
+    // The manual "Deposit" button is replaced by the form while it is open.
+    expect(html).not.toContain('data-action="open-evidence"');
+  });
+
+  it("retains an unsaved draft and explains when another tab already Lived the card", () => {
+    // WHY: a cross-tab Lived transition must not silently discard the note the
+    // user is still typing; the draft is retained, labeled, and non-destructive.
+    const card = DECK[0]!;
+    const html = renderCardDetail(card, { state: "lived", evidence: { date: "2026-09-22", note: "Already archived." } }, {
+      open: true,
+      draft: { date: "2026-09-23", note: "My unsaved note." },
+    });
+
+    expect(html).toContain("Unsaved Proof of Life draft");
+    expect(html).toContain("My unsaved note.");
+    expect(html).toContain('data-action="dismiss-evidence-draft"');
+    expect(html).not.toContain('data-evidence-form="pleasure-01"');
+  });
+
+  it("announces a successful deposit and returns to the normal actions", () => {
+    const card = DECK[0]!;
+    const html = renderCardDetail(card, { state: "lived", evidence: { date: "2026-09-23", note: "Done." } }, {
+      open: false,
+      message: "The Ridiculous Dessert is now Lived. Your evidence is in the Archive.",
+    });
+
+    expect(html).toContain("is now Lived. Your evidence is in the Archive.");
+    expect(html).toContain('data-action="open-archive"');
   });
 
   it("escapes authored identifiers as well as relying on the card face's escaped copy", () => {

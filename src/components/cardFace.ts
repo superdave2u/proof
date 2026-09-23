@@ -8,6 +8,11 @@ export interface CardFaceRecord {
   evidence?: Evidence;
 }
 
+export interface CardFaceOptions {
+  /** Gallery preview: header, name, type line, and atmosphere/flavor only — nothing below the flavor window. */
+  preview?: boolean;
+}
+
 function escapeHtml(value: string): string {
   return value.replace(/[&<>"']/g, (character) => {
     switch (character) {
@@ -48,7 +53,7 @@ function renderLivedRecord(card: Card, record: CardFaceRecord | undefined): stri
 }
 
 /** Render a complete, self-contained card face. All authored card text is escaped before entering HTML. */
-export function renderCardFace(card: Card, record?: CardFaceRecord): string {
+export function renderCardFace(card: Card, record?: CardFaceRecord, options?: CardFaceOptions): string {
   const territoryMeta = territories.find((territory) => territory.territory === card.territory);
   if (!territoryMeta) throw new Error(`Missing territory metadata for ${card.territory}.`);
 
@@ -62,8 +67,16 @@ export function renderCardFace(card: Card, record?: CardFaceRecord): string {
     : "";
   const ariaLabel = `${territoryName} card ${String(card.number).padStart(2, "0")} of 52, ${rarityLabel(card.rarity)}: ${card.name}`;
   const wildClass = isWild ? ` card-face--${card.rarity}` : "";
+  // Preview faces stop at the flavor window; the full anatomy lives on the detail page.
+  const details = options?.preview
+    ? ""
+    : `<section class="card-section card-section--quest"><h3>Quest</h3><ol>${quest}</ol></section>
+      <section class="card-section card-section--proof"><h3>Proof of Life</h3><p>${proof}</p></section>
+      ${ability}
+      <p class="card-face__reward"><span>Reward</span> ${escapeHtml(card.reward)}</p>
+      ${renderLivedRecord(card, record)}`;
 
-  return `<article class="card-face card-face--${card.territory}${wildClass}" aria-label="${escapeHtml(ariaLabel)}" data-card-id="${escapeHtml(card.id)}">
+  return `<article class="card-face card-face--${card.territory}${wildClass}${options?.preview ? " card-face--preview" : ""}" aria-label="${escapeHtml(ariaLabel)}" data-card-id="${escapeHtml(card.id)}">
     <header class="card-face__header">
       <div class="card-face__collector"><span class="card-face__territory">${territoryName}</span><span aria-hidden="true">${String(card.number).padStart(2, "0")}/52</span></div>
       <span class="rarity rarity--${card.rarity}" aria-label="${rarityLabel(card.rarity)} rarity" title="${rarityLabel(card.rarity)}"><span class="rarity__gem" aria-hidden="true">◆</span><span class="rarity__name">${rarityLabel(card.rarity)}</span></span>
@@ -76,11 +89,7 @@ export function renderCardFace(card: Card, record?: CardFaceRecord): string {
         <span class="card-atmosphere__sigil" aria-hidden="true">${symbol}</span>
         <blockquote class="card-atmosphere__flavor">“${escapeHtml(card.flavor)}”</blockquote>
       </figure>
-      <section class="card-section card-section--quest"><h3>Quest</h3><ol>${quest}</ol></section>
-      <section class="card-section card-section--proof"><h3>Proof of Life</h3><p>${proof}</p></section>
-      ${ability}
-      <p class="card-face__reward"><span>Reward</span> ${escapeHtml(card.reward)}</p>
-      ${renderLivedRecord(card, record)}
+      ${details}
     </div>
   </article>`;
 }
