@@ -123,7 +123,7 @@ export const CANON_CARDS: readonly CanonCard[] = [
 const TERRITORY_HEADER_RE = /^# ([A-Z]+) — (.+?) · cards (\d+)–(\d+)\s*$/;
 const CARD_HEADING_RE = /^## (\d{2})\/52 — (.+)$/;
 const FIELD_RE = /^- \*\*([^*]+)\*\*: ?(.*)$/;
-const ABILITY_VALUE_RE = /^\*\*(.+?)\*\*\s+—\s+(.*)$/;
+const ABILITY_VALUE_RE = /^\*\*(.+?)\*\*\s+—\s*(.*)$/;
 const HEADING_ANY_RE = /^#{1,6}\s/;
 const RULE_RE = /^---+\s*$/;
 
@@ -167,7 +167,7 @@ function cleanFlavor(raw: string): string {
   return text;
 }
 
-function parseSpecFile(
+export function parseSpecFile(
   fileBase: string,
   territory: Territory,
   raw: string,
@@ -227,10 +227,17 @@ function parseSpecFile(
       let canon = false;
       let rarityTag: RarityTag | null = null;
       for (const segment of segments.slice(1)) {
-        if (segment === "CANON") canon = true;
-        else if (segment === "LEGENDARY") rarityTag = "legendary";
-        else if (segment === "MYTHIC") rarityTag = "mythic";
-        else {
+        if (segment === "CANON") {
+          if (canon) {
+            throw new Error(`${fileBase}.md: card ${number} repeats the CANON heading marker`);
+          }
+          canon = true;
+        } else if (segment === "LEGENDARY" || segment === "MYTHIC") {
+          if (rarityTag !== null) {
+            throw new Error(`${fileBase}.md: card ${number} has conflicting or repeated rarity markers`);
+          }
+          rarityTag = segment.toLowerCase() as RarityTag;
+        } else {
           throw new Error(
             `${fileBase}.md: unexpected heading suffix "${segment}" on card ${number}`,
           );
@@ -273,7 +280,9 @@ function parseSpecFile(
       continue;
     }
     if (line.trim() === "") continue;
-    flush(); // stray unindented prose ends the card section
+    throw new Error(
+      `${fileBase}.md: card ${current.number} has unexpected unindented content: "${line.trim()}"`,
+    );
   }
   flush();
 
@@ -322,7 +331,11 @@ function buildCard(territory: Territory, fileBase: string, section: Section): Sp
 
   let ability: SpecAbility | undefined;
   let abilityKind: AbilityKind | null = null;
-  const abilityField = fieldOrder.find((name) => name in ABILITY_FIELD_KIND);
+  const abilityFields = fieldOrder.filter((name) => name in ABILITY_FIELD_KIND);
+  if (abilityFields.length > 1) {
+    throw new Error(`${fileBase}.md: card ${number} has more than one ability field`);
+  }
+  const abilityField = abilityFields[0];
   if (abilityField) {
     abilityKind = ABILITY_FIELD_KIND[abilityField]!;
     // The ability value keeps its **Name** marker until parsed, so do not
@@ -339,6 +352,9 @@ function buildCard(territory: Territory, fileBase: string, section: Section): Sp
       name: match[1]!.trim(),
       text: stripEmphasis(match[2]!).trim(),
     };
+    if (ability.name === "" || ability.text === "") {
+      throw new Error(`${fileBase}.md: card ${number} has an empty ability name or text`);
+    }
   }
 
   return {

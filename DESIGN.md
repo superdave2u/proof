@@ -36,7 +36,7 @@ interface Card {
   name: string;
   typeLine: string;     // "Adventure • Indulgence"
   rarity: Rarity;       // assigned in data pass per SPEC §3
-  art: { scene: string; mood: string };
+  art: string;          // authored art-direction string, rendered as a CSS scene
   quest: string[];      // line-separated steps
   proof: string;
   ability?: { name: string; text: string };

@@ -27,6 +27,9 @@ Legend: `[ ]` incomplete · `[x]` done (verified) — prune `[x]` items periodic
 - `src/data/specDeck.ts` parses the frozen specs via vite `?raw` imports (no @types/node needed; vitest env is node). It strips presentation-only markup (bold/italic asterisks, flavor quote wraps) but preserves the verbatim words and line structure: quest = string[], proof may be multi-line ("\n").
 - Card ids follow DESIGN.md's exact rule: `${territory}-${NN}` (e.g. "pleasure-01"), enforced by specDeck.test.ts.
 - Data transcription is complete: cards are transcribed as a static typed `DECK`; `cards.test.ts` compares each field against `loadSpecDeck()` to protect wording and structure, including multiline proof.
+- `Card.art` uses the authored art-direction string model, and DESIGN.md now aligns with it.
+- Seven canon card bodies are independently baselined, so coordinated edits to specs and transcription are caught.
+- Parser fixture tests cover malformed anatomy, headings, and ability inputs; the parser rejects multiple abilities and unexpected prose.
 
 ### Learnings — data transcription pass
 
@@ -35,7 +38,8 @@ Legend: `[ ]` incomplete · `[x]` done (verified) — prune `[x]` items periodic
 
 - [x] Deck integrity pass: 52 cards verified — numbering 01–52 no gaps/duplicates, unique titles/ids, complete anatomy, 7 canon anchors exact, no placeholder content (durable audit: src/data/specDeck.test.ts + src/data/specDeck.ts)
 - [x] Data pipeline: `src/data/cards.ts` — transcribe all 52 specs into typed `Card[]`; assign rarity per SPEC §3 (5 common / 3 uncommon / 2 rare per territory; wilds canon legendary/mythic)
-- [ ] Schema tests: exactly 52, 10 per territory + 2 wilds, unique ids/numbers/names, anatomy completeness, frozen card text verbatim, no placeholder content
+- [x] Schema tests: exactly 52, 10 per territory + 2 wilds, unique ids/numbers/names, anatomy completeness, frozen card text verbatim, no placeholder content; independent canon baselines and parser validation tests
+- [x] Current verification after schema audit changes: `npx tsc --noEmit && npx vitest run` passed (3 test files, 21 tests).
 - [ ] Card face component: territory theming + symbols (♥ ◉ ✦ ∞ ✧, ✵ wilds), type line, art window (CSS-composed scenes from art direction), quest/proof/ability/reward/flavor blocks, collector line `TERRITORY NN/52`, rarity gems, prismatic wilds
 - [ ] Deck view: grid, card backs w/ territory glint, filters (territory, state), lived counts
 - [ ] Draw ritual: deal/flip animation (reduced-motion aware), UNDISCOVERED → DRAWN

@@ -4,6 +4,7 @@ import {
   EXPECTED_TERRITORY_META,
   SPEC_FILES,
   loadSpecDeck,
+  parseSpecFile,
   type SpecCard,
 } from "./specDeck";
 
@@ -153,6 +154,227 @@ describe("deck integrity — canon anchors (SPEC §4)", () => {
       expect(card.title, card.id).toBe(canon.title);
       expect(card.territory, card.id).toBe(canon.territory);
     }
+  });
+
+  /**
+   * WHY: comparing the application deck to the live Markdown only catches
+   * transcription drift. These independent, authored-content baselines also
+   * catch a canon edit that is copied into both places, preserving the seven
+   * operator-authored anchors verbatim unless an operator intentionally
+   * updates the baseline.
+   */
+  it("preserves every canon card's authored text against an independent baseline", () => {
+    const textFor = (card: SpecCard) => ({
+      typeLine: card.typeLine,
+      quest: card.quest,
+      proof: card.proof,
+      abilityKind: card.abilityKind,
+      ability: card.ability,
+      reward: card.reward,
+      art: card.art,
+      flavor: card.flavor,
+    });
+
+    const expected: Record<number, ReturnType<typeof textFor>> = {
+      1: {
+        typeLine: "Adventure • Indulgence",
+        quest: [
+          "Find a dessert you would normally talk yourself out of ordering.",
+          "Order it.",
+          "No sharing required.",
+          "Eat it slowly enough to actually experience it.",
+        ],
+        proof: "Keep the receipt, wrapper, menu, or photograph the first bite.",
+        abilityKind: null,
+        ability: undefined,
+        reward: "Place your evidence in the Archive. This card is now Lived.",
+        art: "candlelit European café, extravagant chocolate cake sitting alone on a tiny marble table, evening rain outside, warm amber light, almost magical realism.",
+        flavor: "Pleasure does not have to earn its place in your life.",
+      },
+      17: {
+        typeLine: "Adventure • Discovery",
+        quest: [
+          'Ask someone: "If I had one free hour around here, where would you send me?"',
+          "If their answer is safe and reasonably possible, go.",
+          "You may not research it first.",
+        ],
+        proof: "Return with one artifact from the destination.",
+        abilityKind: "special",
+        ability: {
+          name: "Unknown Territory",
+          text: "if you've never heard of the place they recommend, the card gains +1 Wonder.",
+        },
+        reward: "Place your evidence in the Archive. This card is now Lived.",
+        art: "a woman standing at a nighttime crossroads while a stranger sketches directions onto the back of a receipt. One road seems to glow faintly.",
+        flavor: "Curiosity begins when you stop needing to know where you're going.",
+      },
+      23: {
+        typeLine: "Adventure • Offering",
+        quest: [
+          "Buy flowers.",
+          "There may be no birthday.",
+          "No anniversary.",
+          "No dinner party.",
+          "No reason.",
+          "Choose entirely by beauty.",
+        ],
+        proof: "Press one petal and preserve it with this card.",
+        abilityKind: "special",
+        ability: {
+          name: "Useless Beauty",
+          text: "you may not explain or justify the purchase.",
+        },
+        reward: "Place your evidence in the Archive. This card is now Lived.",
+        art: "an enormous, almost enchanted flower stall appearing unexpectedly on a gray city street.",
+        flavor: "Some things should exist simply because they make being alive feel like being alive.",
+      },
+      32: {
+        typeLine: "Adventure • Encounter",
+        quest: [
+          "Find someone older than you.",
+          "Ask: \"What's a story from your life you don't think I've ever heard?\"",
+          "Then don't steer the conversation.",
+          "Listen.",
+        ],
+        proof: "Write one sentence from their story that you never want to forget.",
+        abilityKind: "special",
+        ability: {
+          name: "Inheritance",
+          text: "if the story changes something you believed about this person, write that beneath the first sentence.",
+        },
+        reward: "Place your evidence in the Archive. This card is now Lived.",
+        art: "two people across a kitchen table, late-afternoon sunlight, old photographs scattered between them, with scenes from another lifetime almost ghostlike in the background.",
+        flavor: "Some treasures can only be inherited by asking.",
+      },
+      43: {
+        typeLine: "Adventure • Pursuit",
+        quest: [
+          "Find live music you did not originally plan to hear.",
+          "Follow it.",
+          "Stay for three songs.",
+        ],
+        proof: "Bring back a ticket, coaster, napkin, flyer, photograph, or other artifact.",
+        abilityKind: "special",
+        ability: {
+          name: "Encore",
+          text: "if you lose track of time, remain until you naturally want to leave.",
+        },
+        reward: "Place your evidence in the Archive. This card is now Lived.",
+        art: "narrow cobblestone alley at night, music represented by glowing golden particles drifting from a doorway.",
+        flavor: "Wonder rarely sends a calendar invitation.",
+      },
+      51: {
+        typeLine: "Legendary Adventure • Wild",
+        quest: [
+          "Leave home without choosing a destination.",
+          "Notice what pulls at you.",
+          "Follow it.",
+          "A road.",
+          "A smell.",
+          "A bookstore.",
+          "Music through an open door.",
+          "Something strange in a shop window.",
+          'A person saying, "You should see…"',
+          "Follow the first thread.",
+          "Then the next.",
+          "Then the next.",
+          "Continue for at least two hours.",
+        ],
+        proof: "Return with one object that could not possibly have entered your life if you'd planned the day.",
+        abilityKind: "legendary",
+        ability: {
+          name: "Serendipity",
+          text: 'during this adventure, the question "What is the point of this?" has no power.',
+        },
+        reward: "Place your evidence in the Archive. This card is now Lived.",
+        art: "a figure walking away down an unplanned street, threads of light tugging from doorways and alley mouths in different directions, prismatic light refracting off everything.",
+        flavor: "You cannot discover what you refuse to wander toward.",
+      },
+      52: {
+        typeLine: "Mythic Adventure • Wild",
+        quest: [
+          "Choose something that produces nothing measurable.",
+          "It cannot advance your career.",
+          "It cannot make you more efficient.",
+          "It cannot solve a problem.",
+          "It cannot be chosen primarily because someone else will admire it.",
+          "You must still want it if nobody ever knows you did it.",
+          "Go do it.",
+        ],
+        proof: "Bring back one artifact. Write upon it:\nI WANTED THIS.\nTHAT WAS ENOUGH.",
+        abilityKind: "mythic",
+        ability: {
+          name: "Alive",
+          text: "this card cannot be completed for points. It cannot be optimized. It cannot be compared with another player's experience. Once lived, place it somewhere you will encounter it again.",
+        },
+        reward: "Place your evidence in the Archive. This card is now Lived.",
+        art: "hands holding a small ordinary object — a stone, a shell, a pressed leaf — glowing softly as if lit from within, the rest of the world dimmed away.",
+        flavor: "That space is not outside the work. It is what keeps the work human.",
+      },
+    };
+
+    for (const canon of CANON_CARDS) {
+      expect(textFor(byNumber.get(canon.number)!), `canon card ${canon.number}`).toEqual(
+        expected[canon.number],
+      );
+    }
+  });
+});
+
+describe("spec parser — malformed content (SPEC §3 contract)", () => {
+  /**
+   * WHY: the real frozen deck only exercises the happy path. Mutation fixtures
+   * prove malformed authored input fails loudly rather than silently dropping
+   * content or accepting an incomplete/ambiguous card.
+   */
+  const validCard = `# PLEASURE — Crimson/Rose · ♥ · Desire · cards 01–10
+
+## 01/52 — TEST CARD
+
+- **Type**: Adventure • Discovery
+- **Quest**:
+  Take the adventure.
+- **Proof of Life**: Keep an artifact.
+- **Reward**: Place it in the Archive.
+- **Art direction**: A cinematic scene.
+- **Flavor**: "A complete sentence."
+`;
+
+  const parse = (source: string) => parseSpecFile("pleasure", "pleasure", source);
+
+  it("rejects unknown, duplicate, and missing anatomy fields", () => {
+    expect(() => parse(validCard.replace("- **Reward**", "- **Rewards**"))).toThrow(
+      'unknown field "**Rewards**"',
+    );
+    expect(() => parse(validCard.replace("- **Reward**: Place it in the Archive.", "- **Reward**: Place it in the Archive.\n- **Reward**: Again."))).toThrow(
+      'repeats field "**Reward**"',
+    );
+    expect(() => parse(validCard.replace("- **Type**: Adventure • Discovery\n", ""))).toThrow(
+      'missing **Type**',
+    );
+  });
+
+  it("rejects stray prose and conflicting or empty abilities", () => {
+    expect(() => parse(validCard.replace("- **Reward**", "unexpected prose\n- **Reward**"))).toThrow(
+      "unexpected unindented content",
+    );
+    expect(() => parse(validCard.replace(
+      "- **Reward**",
+      "- **Special Ability**: **One** — a rule.\n- **Mythic Ability**: **Two** — another rule.\n- **Reward**",
+    ))).toThrow("more than one ability field");
+    expect(() => parse(validCard.replace(
+      "- **Reward**",
+      "- **Special Ability**: **One** — \n- **Reward**",
+    ))).toThrow("empty ability name or text");
+  });
+
+  it("rejects repeated and contradictory heading markers", () => {
+    expect(() => parse(validCard.replace("TEST CARD", "TEST CARD — CANON — CANON"))).toThrow(
+      "repeats the CANON heading marker",
+    );
+    expect(() => parse(validCard.replace("TEST CARD", "TEST CARD — LEGENDARY — MYTHIC"))).toThrow(
+      "conflicting or repeated rarity markers",
+    );
   });
 });
 
