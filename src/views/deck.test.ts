@@ -61,6 +61,17 @@ describe("deck view", () => {
     expect(revealed).toContain("Today's card is revealed");
   });
 
+  it("announces random and daily draw persistence failures as escaped, focusable alerts", () => {
+    const html = renderDeckView(
+      {}, undefined, undefined, undefined, undefined, undefined, undefined, undefined,
+      "Random draw <failed>", "Daily draw could not be saved.",
+    );
+
+    expect(html).toContain('data-draw-error="random" role="alert" tabindex="-1">Random draw &lt;failed&gt;</p>');
+    expect(html).toContain('data-draw-error="daily" role="alert" tabindex="-1">Daily draw could not be saved.</p>');
+    expect(html).not.toContain("Random draw <failed>");
+  });
+
   it("filters by territory and state together while retaining wild as its own territory", () => {
     const records: DeckRecords = {
       "pleasure-01": { state: "drawn" },

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { DECK } from "../data/cards";
 import { MAX_ARTIFACT_BYTES } from "./evidence";
-import { createDeckStore, DECK_STORAGE_KEY, loadDeckRecords, type KeyValueStorage } from "./store";
+import { createDeckStore, DeckStorageError, DECK_STORAGE_KEY, loadDeckRecords, type KeyValueStorage } from "./store";
 
 class MemoryStorage implements KeyValueStorage {
   values = new Map<string, string>();
@@ -21,8 +21,10 @@ class MemoryStorage implements KeyValueStorage {
  * same card even after reload or completion), the UNDISCOVERED → DRAWN transition,
  * durable reload behavior, the evidence-backed DRAWN → LIVED transition,
  * rejection of invalid/backward submissions, and resilience to stale or
- * malformed browser storage. Evidence persistence matters because the Archive
- * is the player's record of a life lived, not merely a visual card state.
+ * malformed browser storage. Failed draw writes must roll back too, so the app
+ * never presents a non-durable deal as a successful state transition. Evidence
+ * persistence matters because the Archive is the player's record of a life
+ * lived, not merely a visual card state.
  */
 describe("deck store draw ritual", () => {
   it("draws an undiscovered adventure, timestamps it, and persists the forward transition", () => {
@@ -72,6 +74,33 @@ describe("deck store draw ritual", () => {
     expect(store.draw("unknown-01")).toBeUndefined();
     expect(store.draw("beauty-23")).toBeUndefined();
     expect(store.getRecords()["beauty-23"]?.state).toBe("lived");
+  });
+
+  it("reports and rolls back failed random and card-specific draw writes", () => {
+    const storage: KeyValueStorage = {
+      getItem: () => null,
+      setItem: () => { throw new Error("quota exceeded"); },
+    };
+    const randomStore = createDeckStore(storage, () => 0);
+    const specificStore = createDeckStore(storage, () => 0);
+
+    expect(() => randomStore.draw()).toThrow(DeckStorageError);
+    expect(randomStore.getRecords()).toEqual({});
+    expect(() => specificStore.draw("connection-32")).toThrow(DeckStorageError);
+    expect(specificStore.getRecords()).toEqual({});
+  });
+
+  it("reports a failed daily deal without retaining its card or date in memory", () => {
+    const storage: KeyValueStorage = {
+      getItem: () => null,
+      setItem: () => { throw new Error("quota exceeded"); },
+    };
+    const date = new Date(2026, 8, 22, 12);
+    const store = createDeckStore(storage, undefined, () => date);
+
+    expect(() => store.drawDaily()).toThrow(DeckStorageError);
+    expect(store.getRecords()).toEqual({});
+    expect(store.getDailyDraw()).toBeUndefined();
   });
 
   it("chooses one date-seeded card, saves it, and restores the same deal after reloads", () => {
@@ -266,11 +295,13 @@ describe("evidence lifecycle", () => {
 
   it("does not claim a Lived transition when storage rejects the evidence record", () => {
     const storage: KeyValueStorage = {
-      getItem: () => null,
+      getItem: () => JSON.stringify({
+        version: 1,
+        cards: { "pleasure-01": { state: "drawn", drawnAt: "2026-09-22T12:00:00.000Z" } },
+      }),
       setItem: () => { throw new Error("quota exceeded"); },
     };
     const store = createDeckStore(storage, () => 0);
-    store.draw();
 
     expect(store.submitEvidence("pleasure-01", { date: "2026-09-22", note: "A remembered day." })).toBe(false);
     expect(store.getRecords()["pleasure-01"]?.state).toBe("drawn");

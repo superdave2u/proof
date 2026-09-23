@@ -1,7 +1,7 @@
 import { DECK, territories, type Card, type Territory } from "../data/cards";
 import { renderCardFace, type CardFaceRecord } from "../components/cardFace";
 import { isValidEvidence, MAX_ARTIFACT_BYTES, type Evidence } from "../state/evidence";
-import { browserDeckStorage, createDeckStore, type DeckStore } from "../state/store";
+import { browserDeckStorage, createDeckStore, DeckStorageError, type DeckStore } from "../state/store";
 
 export type DeckStateFilter = "all" | CardFaceRecord["state"];
 export type DeckTerritoryFilter = "all" | Territory;
@@ -133,7 +133,7 @@ function escapeHtml(value: string): string {
   });
 }
 
-function renderDrawRitual(records: DeckRecords, lastDrawnCardId?: string): string {
+function renderDrawRitual(records: DeckRecords, lastDrawnCardId?: string, drawError?: string): string {
   const card = lastDrawnCardId ? DECK.find((item) => item.id === lastDrawnCardId) : undefined;
   const hasEligibleCard = DECK.some((item) => records[item.id]?.state !== "lived");
   const message = card
@@ -153,11 +153,12 @@ function renderDrawRitual(records: DeckRecords, lastDrawnCardId?: string): strin
     </div>
     <button class="draw-ritual__button" type="button" data-action="draw"${hasEligibleCard ? "" : " disabled"}>Draw an adventure</button>
     <p class="draw-ritual__message" role="status" aria-live="polite">${escapeHtml(message)}</p>
+    ${drawError ? `<p class="draw-storage-error" data-draw-error="random" role="alert" tabindex="-1">${escapeHtml(drawError)}</p>` : ""}
     ${revealedCard ? `<div class="draw-reveal">${revealedCard}</div>` : ""}
   </section>`;
 }
 
-function renderDailyDraw(records: DeckRecords, dailyDrawCardId?: string): string {
+function renderDailyDraw(records: DeckRecords, dailyDrawCardId?: string, drawError?: string): string {
   const card = dailyDrawCardId ? DECK.find((item) => item.id === dailyDrawCardId) : undefined;
   const hasEligibleCard = DECK.some((item) => records[item.id]?.state !== "lived");
   const message = card
@@ -177,6 +178,7 @@ function renderDailyDraw(records: DeckRecords, dailyDrawCardId?: string): string
     </div>
     <button class="daily-draw__button" type="button" data-action="daily-draw"${card || !hasEligibleCard ? " disabled" : ""}>${card ? "Today's card is revealed" : "Reveal today's adventure"}</button>
     <p class="daily-draw__message" role="status" aria-live="polite">${escapeHtml(message)}</p>
+    ${drawError ? `<p class="draw-storage-error" data-draw-error="daily" role="alert" tabindex="-1">${escapeHtml(drawError)}</p>` : ""}
     ${revealedCard ? `<div class="daily-draw__reveal">${revealedCard}</div>` : ""}
   </section>`;
 }
@@ -219,12 +221,14 @@ export function renderDeckView(
   evidenceError?: string,
   evidenceMessage?: string,
   evidenceDraft?: EvidenceDraft,
+  randomDrawError?: string,
+  dailyDrawError?: string,
 ): string {
   const livedCount = DECK.filter((card) => stateFor(card, records) === "lived").length;
   const visibleCards = filterDeck(DECK, records, filters);
 
-  return `${renderDailyDraw(records, dailyDrawCardId)}
-  ${renderDrawRitual(records, lastDrawnCardId)}
+  return `${renderDailyDraw(records, dailyDrawCardId, dailyDrawError)}
+  ${renderDrawRitual(records, lastDrawnCardId, randomDrawError)}
   <section class="deck-view" aria-labelledby="deck-title">
     <div class="deck-view__heading">
       <div>
@@ -278,10 +282,13 @@ export function mountDeckView(
   let evidenceMessage: string | undefined;
   let evidenceDraft: EvidenceDraft | undefined;
   let evidenceDraftFile: File | undefined;
+  let randomDrawError: string | undefined;
+  let dailyDrawError: string | undefined;
   const render = (): void => {
     dailyDrawCardId = store.getDailyDraw()?.id;
     container.innerHTML = renderDeckView(
       store.getRecords(), filters, lastDrawnCardId, dailyDrawCardId, evidenceCardId, evidenceError, evidenceMessage, evidenceDraft,
+      randomDrawError, dailyDrawError,
     );
   };
   const openEvidence = (cardId: string): void => {
@@ -322,10 +329,21 @@ export function mountDeckView(
     }
 
     if (target.closest('[data-action="daily-draw"]')) {
-      const card = store.drawDaily();
-      if (!card) return;
-      render();
-      container.querySelector<HTMLElement>(".daily-draw__face")?.focus();
+      dailyDrawError = undefined;
+      try {
+        const card = store.drawDaily();
+        if (!card) {
+          render();
+          return;
+        }
+        render();
+        container.querySelector<HTMLElement>(".daily-draw__face")?.focus();
+      } catch (error) {
+        if (!(error instanceof DeckStorageError)) throw error;
+        dailyDrawError = error.message;
+        render();
+        container.querySelector<HTMLElement>('[data-draw-error="daily"]')?.focus();
+      }
       return;
     }
     const openEvidenceButton = target.closest<HTMLButtonElement>('[data-action="open-evidence"]');
@@ -344,11 +362,22 @@ export function mountDeckView(
     }
     if (!target.closest('[data-action="draw"]')) return;
 
-    const card = store.draw();
-    if (!card) return;
-    lastDrawnCardId = card.id;
-    render();
-    container.querySelector<HTMLElement>(".draw-reveal__face")?.focus();
+    randomDrawError = undefined;
+    try {
+      const card = store.draw();
+      if (!card) {
+        render();
+        return;
+      }
+      lastDrawnCardId = card.id;
+      render();
+      container.querySelector<HTMLElement>(".draw-reveal__face")?.focus();
+    } catch (error) {
+      if (!(error instanceof DeckStorageError)) throw error;
+      randomDrawError = error.message;
+      render();
+      container.querySelector<HTMLElement>('[data-draw-error="random"]')?.focus();
+    }
   });
 
   container.addEventListener("change", (event: Event) => {

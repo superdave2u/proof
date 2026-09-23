@@ -19,6 +19,14 @@ export interface DeckStore {
   submitEvidence(cardId: string, evidence: Evidence): boolean;
 }
 
+/** A requested draw could not be made durable in browser storage. */
+export class DeckStorageError extends Error {
+  constructor() {
+    super("This draw could not be saved in this browser. Your deck is unchanged; free storage space and try again.");
+    this.name = "DeckStorageError";
+  }
+}
+
 interface PersistedDeck {
   version: 1;
   cards: Record<string, CardFaceRecord>;
@@ -106,8 +114,7 @@ function saveDeckRecords(
     storage.setItem(DECK_STORAGE_KEY, JSON.stringify(state));
     return true;
   } catch {
-    // Draws remain usable in memory; evidence submissions use false to avoid
-    // claiming that a record was archived when durable storage rejected it.
+    // Callers decide whether to roll back or report a failed durable transition.
     return false;
   }
 }
@@ -156,12 +163,17 @@ export function createDeckStore(
     const card = eligible[(hash >>> 0) % eligible.length];
     if (!card) return undefined;
 
-    const previous = records[card.id];
-    if (previous?.state !== "drawn") {
+    const previousRecords = records;
+    const previousDailyDraw = dailyDraw;
+    if (records[card.id]?.state !== "drawn") {
       records = { ...records, [card.id]: { state: "drawn", drawnAt: drawnAt.toISOString() } };
     }
     dailyDraw = { date: today, cardId: card.id };
-    persist();
+    if (!persist()) {
+      records = previousRecords;
+      dailyDraw = previousDailyDraw;
+      throw new DeckStorageError();
+    }
     return card;
   };
 
@@ -188,11 +200,15 @@ export function createDeckStore(
 
       const previous = records[card.id];
       if (previous?.state !== "drawn") {
+        const previousRecords = records;
         records = {
           ...records,
           [card.id]: { state: "drawn", drawnAt: now().toISOString() },
         };
-        persist();
+        if (!persist()) {
+          records = previousRecords;
+          throw new DeckStorageError();
+        }
       }
       return card;
     },

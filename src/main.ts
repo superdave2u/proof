@@ -4,7 +4,7 @@ import { mountDeckView } from "./views/deck";
 import { mountArchiveView } from "./views/archive";
 import { mountCardDetail } from "./views/cardDetail";
 import { mountHashRouter, type AppRoute } from "./router";
-import { browserDeckStorage, createDeckStore } from "./state/store";
+import { browserDeckStorage, createDeckStore, DeckStorageError } from "./state/store";
 import "./style.css";
 
 const app = document.querySelector<HTMLDivElement>("#app");
@@ -31,7 +31,7 @@ if (app) {
     let removeCardDetailActions = (): void => undefined;
     let navigate = (_route: AppRoute): void => undefined;
 
-    const showCardDetail = (cardId: string, shouldFocus: boolean): void => {
+    const showCardDetail = (cardId: string, shouldFocus: boolean, drawError?: string): void => {
       const card = DECK.find((item) => item.id === cardId);
       if (!card) {
         navigate("deck");
@@ -41,8 +41,13 @@ if (app) {
       removeCardDetailActions();
       removeCardDetailActions = mountCardDetail(cardDetailView, card, store.getRecords()[cardId], (action, selectedCard) => {
         if (action === "draw") {
-          if (!store.draw(selectedCard.id)) return;
-          showCardDetail(selectedCard.id, true);
+          try {
+            if (!store.draw(selectedCard.id)) return;
+            showCardDetail(selectedCard.id, true);
+          } catch (error) {
+            if (!(error instanceof DeckStorageError)) throw error;
+            showCardDetail(selectedCard.id, true, error.message);
+          }
         } else if (action === "open-evidence") {
           pendingEvidenceCardId = selectedCard.id;
           navigate("deck");
@@ -51,8 +56,11 @@ if (app) {
         } else {
           navigate("deck");
         }
-      });
-      if (shouldFocus) cardDetailView.querySelector<HTMLElement>(".card-detail")?.focus();
+      }, drawError);
+      if (shouldFocus) {
+        const focusTarget = drawError ? ".card-detail__error" : ".card-detail";
+        cardDetailView.querySelector<HTMLElement>(focusTarget)?.focus();
+      }
     };
 
     const showRoute = (route: AppRoute, shouldFocus: boolean): void => {

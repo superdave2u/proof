@@ -29,7 +29,7 @@ function renderPrimaryAction(cardId: string, state: CardFaceRecord["state"]): st
 }
 
 /** Render one complete card face with state-specific actions and route controls. */
-export function renderCardDetail(card: Card, record?: CardFaceRecord): string {
+export function renderCardDetail(card: Card, record?: CardFaceRecord, drawError?: string): string {
   const state = record?.state ?? "undiscovered";
   const escapedId = escapeHtml(card.id);
 
@@ -37,6 +37,7 @@ export function renderCardDetail(card: Card, record?: CardFaceRecord): string {
     <nav class="card-detail__navigation" aria-label="Card detail navigation">
       <button type="button" data-action="back-to-deck">Return to the deck</button>
     </nav>
+    ${drawError ? `<p class="draw-storage-error card-detail__error" role="alert" tabindex="-1">${escapeHtml(drawError)}</p>` : ""}
     <div class="card-detail__face">${renderCardFace(card, record)}</div>
     <div class="card-detail__actions" aria-label="Card actions">
       ${renderPrimaryAction(card.id, state)}
@@ -50,8 +51,9 @@ export function mountCardDetail(
   card: Card,
   record: CardFaceRecord | undefined,
   onAction: (action: CardDetailAction, card: Card) => void,
+  drawError?: string,
 ): () => void {
-  container.innerHTML = renderCardDetail(card, record);
+  container.innerHTML = renderCardDetail(card, record, drawError);
 
   const handleClick = (event: Event): void => {
     const target = event.target;

@@ -56,6 +56,15 @@ describe("card detail view", () => {
     expect(html).not.toContain('data-action="open-evidence"');
   });
 
+  it("keeps an undiscovered card intact and announces when its Draw action could not be saved", () => {
+    const card = DECK[0]!;
+    const html = renderCardDetail(card, undefined, "This draw could not be saved in this browser.");
+
+    expect(html).toContain('data-state="undiscovered"');
+    expect(html).toContain('role="alert" tabindex="-1">This draw could not be saved in this browser.</p>');
+    expect(html).toContain('data-action="draw" data-card-id="pleasure-01">Draw</button>');
+  });
+
   it("escapes authored identifiers as well as relying on the card face's escaped copy", () => {
     const card = { ...DECK[0]!, id: 'card"><script>alert(1)</script>' };
     const html = renderCardDetail(card);

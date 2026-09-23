@@ -132,6 +132,8 @@ button, input, textarea { font: inherit; }
 .daily-draw__button:focus-visible { outline: 3px solid #f1e9ff; outline-offset: 3px; }
 .daily-draw__button:disabled { cursor: default; filter: saturate(.75); opacity: .8; }
 .daily-draw__message { grid-column: 1 / -1; margin: 0; color: #e4dcf5; font-size: .78rem; }
+.draw-storage-error { grid-column: 1 / -1; margin: 0; padding: .65rem .8rem; border-left: 3px solid #e58b8b; border-radius: 3px; background: rgb(145 48 48 / 16%); color: #ffd6d6; font-size: .8rem; line-height: 1.5; }
+.draw-storage-error:focus { outline: 2px solid #ffd6d6; outline-offset: 3px; }
 .daily-draw__reveal { grid-column: 1 / -1; display: flex; justify-content: center; width: 100%; padding: .5rem 0 0; perspective: 1100px; }
 .daily-draw__face { transform-origin: center; animation: deal-flip .82s cubic-bezier(.2, .75, .25, 1) both; }
 .daily-draw__face:focus { outline: 3px solid #d2c2f5; outline-offset: 4px; border-radius: 23px; }
@@ -152,6 +154,7 @@ button, input, textarea { font: inherit; }
 .card-detail { margin: clamp(2rem, 7vw, 4rem) auto 0; }
 .card-detail:focus { outline: 3px solid #e4c987; outline-offset: 7px; border-radius: 8px; }
 .card-detail__navigation { width: min(100%, 390px); margin: 0 auto .8rem; }
+.card-detail__error { width: min(100%, 390px); margin: 0 auto .8rem; }
 .card-detail__navigation button, .card-detail__open, .card-detail__primary { min-height: 2.8rem; padding: .6rem .95rem; border: 1px solid #85765c; border-radius: 99px; background: #25232a; color: #f6efdf; cursor: pointer; font-size: .76rem; font-weight: 700; }
 .card-detail__navigation button:hover, .card-detail__open:hover { background: #34313a; }
 .card-detail__navigation button:focus-visible, .card-detail__open:focus-visible, .card-detail__primary:focus-visible { outline: 3px solid #e4c987; outline-offset: 3px; }
