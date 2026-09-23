@@ -28,6 +28,14 @@ ralph_banner() {
   echo "[ralph] prompt=$prompt_file HEAD=${head:-none} tag=${tag}"
 }
 
+# Strip ANSI escape sequences (colors, cursors, OSC titles) from a stream.
+ralph_strip_ansi() {
+  sed -u \
+    -e 's/\x1B\[[0-9;?]*[ -\/]*[@-~]//g' \
+    -e 's/\x1B\][^\x07\x1B]*(\x07|\x1B\\)//g' \
+    -e 's/\x1B[@-_]//g'
+}
+
 # Run one opencode iteration with full streaming visibility.
 # Usage: ralph_exec <prompt_file> <log_file> <session_title>
 # Streams opencode stdout+stderr (incl. thinking blocks and harness logs)
@@ -47,9 +55,16 @@ ralph_exec() {
 
   echo "[ralph] ▶ $(date '+%H:%M:%S') opencode starting (model=${RALPH_MODEL:-default} thinking=${RALPH_THINKING:-1} logs=${RALPH_LOG_LEVEL:-INFO})"
 
-  # opencode writes to the log; tail streams it to the console and exits
-  # automatically when opencode's process is gone.
-  cat "$prompt_file" | opencode run "${model_args[@]}" "${think_args[@]}" "${log_args[@]}" "${auto_args[@]}" --title "$title" > "$log" 2>&1 &
+  # No ANSI color in logs or streamed output.
+  export NO_COLOR=1
+  export CLICOLOR=0
+  export CLICOLOR_FORCE=0
+  export FORCE_COLOR=0
+
+  # opencode writes (color-stripped) to the log; tail streams it to the
+  # console and exits automatically when the writer is gone.
+  local rc_file="$log.rc"
+  { cat "$prompt_file" | opencode run "${model_args[@]}" "${think_args[@]}" "${log_args[@]}" "${auto_args[@]}" --title "$title" 2>&1; echo "$?" > "$rc_file"; } | ralph_strip_ansi > "$log" &
   local pid=$!
   tail -n +1 -f --pid="$pid" "$log" &
   local tail_pid=$!
@@ -72,7 +87,9 @@ ralph_exec() {
     fi
   done
 
-  wait "$pid"; local rc=$?
+  wait "$pid" 2>/dev/null
+  local rc; rc="$(cat "$rc_file" 2>/dev/null || echo 1)"
+  rm -f "$rc_file"
   kill "$tail_pid" 2>/dev/null
   wait "$tail_pid" 2>/dev/null
   local secs=$(( $(date +%s) - start ))
