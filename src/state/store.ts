@@ -9,14 +9,19 @@ export type DeckRecords = Readonly<Record<string, CardFaceRecord | undefined>>;
 export interface KeyValueStorage {
   getItem(key: string): string | null;
   setItem(key: string, value: string): void;
+  /** Serialize read/merge/write transactions across tabs when the platform supports it. */
+  runExclusive?<T>(operation: () => T | Promise<T>): Promise<T>;
+  /** Notify this store when another browsing context changes the persisted deck. */
+  subscribe?(listener: (value: string | null) => void): () => void;
 }
 
 export interface DeckStore {
   getRecords(): DeckRecords;
   getDailyDraw(): Card | undefined;
-  drawDaily(): Card | undefined;
-  draw(cardId?: string): Card | undefined;
-  submitEvidence(cardId: string, evidence: Evidence): boolean;
+  drawDaily(): Promise<Card | undefined>;
+  draw(cardId?: string): Promise<Card | undefined>;
+  submitEvidence(cardId: string, evidence: Evidence): Promise<boolean>;
+  subscribe(listener: () => void): () => void;
 }
 
 /** A requested draw could not be made durable in browser storage. */
@@ -98,6 +103,47 @@ function loadDeckState(storage?: KeyValueStorage): { records: Record<string, Car
   }
 }
 
+function mergeRecord(left: CardFaceRecord | undefined, right: CardFaceRecord | undefined): CardFaceRecord | undefined {
+  if (!left) return right;
+  if (!right) return left;
+  if (left.state === "lived") return left;
+  if (right.state === "lived") return right;
+  if (left.state === "drawn") return left;
+  return right;
+}
+
+function mergeDeckStates(
+  left: { records: Record<string, CardFaceRecord>; dailyDraw?: DailyDrawRecord },
+  right: { records: Record<string, CardFaceRecord>; dailyDraw?: DailyDrawRecord },
+): { records: Record<string, CardFaceRecord>; dailyDraw?: DailyDrawRecord } {
+  const records: Record<string, CardFaceRecord> = {};
+  for (const card of DECK) {
+    const record = mergeRecord(left.records[card.id], right.records[card.id]);
+    if (record) records[card.id] = record;
+  }
+
+  // A saved choice wins same-day races; after records merge it remains valid even
+  // if another tab has since deposited that card in the Archive.
+  const dailyDraw = left.dailyDraw && right.dailyDraw
+    ? (left.dailyDraw.date > right.dailyDraw.date ? left.dailyDraw
+      : right.dailyDraw.date > left.dailyDraw.date ? right.dailyDraw
+      : right.dailyDraw)
+    : left.dailyDraw ?? right.dailyDraw;
+  return dailyDraw ? { records, dailyDraw } : { records };
+}
+
+function serializeDeckState(
+  records: DeckRecords,
+  dailyDraw?: DailyDrawRecord,
+): string {
+  const state: PersistedDeck = { version: 1, cards: {} };
+  for (const [cardId, record] of Object.entries(records)) {
+    if (record) state.cards[cardId] = record;
+  }
+  if (dailyDraw) state.dailyDraw = dailyDraw;
+  return JSON.stringify(state);
+}
+
 function saveDeckRecords(
   storage: KeyValueStorage | undefined,
   records: DeckRecords,
@@ -106,12 +152,7 @@ function saveDeckRecords(
   if (!storage) return true;
 
   try {
-    const state: PersistedDeck = { version: 1, cards: {} };
-    for (const [cardId, record] of Object.entries(records)) {
-      if (record) state.cards[cardId] = record;
-    }
-    if (dailyDraw) state.dailyDraw = dailyDraw;
-    storage.setItem(DECK_STORAGE_KEY, JSON.stringify(state));
+    storage.setItem(DECK_STORAGE_KEY, serializeDeckState(records, dailyDraw));
     return true;
   } catch {
     // Callers decide whether to roll back or report a failed durable transition.
@@ -131,6 +172,45 @@ export function createDeckStore(
   const loadedState = loadDeckState(storage);
   let records = loadedState.records;
   let dailyDraw = loadedState.dailyDraw;
+  const listeners = new Set<() => void>();
+  const currentState = (): { records: Record<string, CardFaceRecord>; dailyDraw?: DailyDrawRecord } => ({
+    records,
+    ...(dailyDraw ? { dailyDraw } : {}),
+  });
+
+  const updateFromSerialized = (serialized: string | null): void => {
+    if (!serialized) return;
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(serialized);
+    } catch {
+      return;
+    }
+    if (!isObject(parsed) || parsed.version !== 1 || !isObject(parsed.cards)) return;
+    const incoming = loadDeckState({ getItem: () => serialized, setItem: () => undefined });
+    const merged = mergeDeckStates(currentState(), incoming);
+    if (JSON.stringify(merged) === JSON.stringify({ records, ...(dailyDraw ? { dailyDraw } : {}) })) return;
+    records = merged.records;
+    dailyDraw = merged.dailyDraw;
+    listeners.forEach((listener) => listener());
+  };
+
+  storage?.subscribe?.(updateFromSerialized);
+
+  const transact = async <T>(operation: () => T): Promise<T> => {
+    const execute = (): T => {
+      const previous = currentState();
+      const stored = loadDeckState(storage);
+      const merged = mergeDeckStates(currentState(), stored);
+      records = merged.records;
+      dailyDraw = merged.dailyDraw;
+      if (JSON.stringify(previous) !== JSON.stringify({ records, ...(dailyDraw ? { dailyDraw } : {}) })) notify();
+      return operation();
+    };
+    return storage?.runExclusive ? storage.runExclusive(execute) : execute();
+  };
+
+  const notify = (): void => listeners.forEach((listener) => listener());
 
   const persist = (): boolean => saveDeckRecords(storage, records, dailyDraw);
   const dateFor = (date: Date): string => {
@@ -146,7 +226,7 @@ export function createDeckStore(
     return cardById(dailyDraw.cardId);
   };
 
-  const drawDaily = (): Card | undefined => {
+  const drawDaily = (): Promise<Card | undefined> => transact(() => {
     const drawnAt = now();
     const today = dateFor(drawnAt);
     if (dailyDraw?.date === today) return cardById(dailyDraw.cardId);
@@ -174,14 +254,25 @@ export function createDeckStore(
       dailyDraw = previousDailyDraw;
       throw new DeckStorageError();
     }
-    return card;
-  };
+    // A concurrent same-day deal may already have won. Reconcile and return the
+    // persisted choice so every participating tab reveals the same adventure.
+    const saved = loadDeckState(storage);
+    const merged = mergeDeckStates(currentState(), saved);
+    records = merged.records;
+    dailyDraw = merged.dailyDraw;
+    if (JSON.stringify(previousRecords) !== JSON.stringify(records) || previousDailyDraw !== dailyDraw) notify();
+    return dailyDraw?.date === today ? cardById(dailyDraw.cardId) : card;
+  });
 
   return {
     getRecords: () => records,
     getDailyDraw,
     drawDaily,
-    draw: (cardId) => {
+    subscribe: (listener) => {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
+    },
+    draw: (cardId) => transact(() => {
       let card: Card | undefined;
       if (cardId !== undefined) {
         card = cardById(cardId);
@@ -209,10 +300,15 @@ export function createDeckStore(
           records = previousRecords;
           throw new DeckStorageError();
         }
+        const saved = loadDeckState(storage);
+        const merged = mergeDeckStates(currentState(), saved);
+        records = merged.records;
+        dailyDraw = merged.dailyDraw;
+        if (JSON.stringify(previousRecords) !== JSON.stringify(records)) notify();
       }
       return card;
-    },
-    submitEvidence: (cardId, evidence) => {
+    }),
+    submitEvidence: (cardId, evidence) => transact(() => {
       if (!deckIds.has(cardId) || records[cardId]?.state !== "drawn" || !isValidEvidence(evidence)) return false;
 
       const previousRecords = records;
@@ -227,10 +323,17 @@ export function createDeckStore(
             : { date: evidence.date, note: evidence.note.trim(), artifact: evidence.artifact },
         },
       };
-      if (persist()) return true;
-      records = previousRecords;
-      return false;
-    },
+      if (!persist()) {
+        records = previousRecords;
+        return false;
+      }
+      const saved = loadDeckState(storage);
+      const merged = mergeDeckStates(currentState(), saved);
+      records = merged.records;
+      dailyDraw = merged.dailyDraw;
+      notify();
+      return records[cardId]?.state === "lived";
+    }),
   };
 }
 
@@ -239,7 +342,83 @@ export function browserDeckStorage(): KeyValueStorage | undefined {
   if (typeof window === "undefined") return undefined;
 
   try {
-    return window.localStorage;
+    const localStorage = window.localStorage;
+    const runWithStorageLease = async <T>(operation: () => T | Promise<T>): Promise<T> => {
+      const lockKey = `${DECK_STORAGE_KEY}:lock`;
+      const owner = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      const leaseDuration = 30_000;
+      const readLease = (): string | null => {
+        try {
+          return localStorage.getItem(lockKey);
+        } catch {
+          throw new DeckStorageError();
+        }
+      };
+      const writeLease = (value: string): void => {
+        try {
+          localStorage.setItem(lockKey, value);
+        } catch {
+          throw new DeckStorageError();
+        }
+      };
+
+      while (true) {
+        const current = readLease();
+        let expiresAt = 0;
+        if (current) {
+          try {
+            const lease: unknown = JSON.parse(current);
+            if (isObject(lease) && typeof lease.expiresAt === "number") expiresAt = lease.expiresAt;
+          } catch {
+            // Replace a malformed abandoned lease.
+          }
+        }
+        if (!current || expiresAt <= Date.now()) {
+          writeLease(JSON.stringify({ owner, expiresAt: Date.now() + leaseDuration }));
+          // Let simultaneous contenders' synchronous localStorage writes settle
+          // before trusting the lease owner on browsers without Web Locks.
+          await new Promise((resolve) => window.setTimeout(resolve, 12));
+          const confirmed = readLease();
+          let ownsLease = false;
+          try {
+            const lease: unknown = confirmed ? JSON.parse(confirmed) : undefined;
+            ownsLease = isObject(lease) && lease.owner === owner;
+          } catch {
+            ownsLease = false;
+          }
+          if (ownsLease) {
+            try {
+              return await operation();
+            } finally {
+              try {
+                const latest: unknown = JSON.parse(localStorage.getItem(lockKey) ?? "null");
+                if (isObject(latest) && latest.owner === owner) localStorage.removeItem(lockKey);
+              } catch {
+                // The deck write has completed; a stale lease expires on its own.
+              }
+            }
+          }
+        }
+        await new Promise((resolve) => window.setTimeout(resolve, 8 + Math.random() * 17));
+      }
+    };
+    return {
+      getItem: (key) => localStorage.getItem(key),
+      setItem: (key, value) => localStorage.setItem(key, value),
+      runExclusive: async <T>(operation: () => T | Promise<T>): Promise<T> => {
+        const locks = typeof navigator === "undefined" ? undefined : navigator.locks;
+        return locks
+          ? locks.request(DECK_STORAGE_KEY, operation)
+          : runWithStorageLease(operation);
+      },
+      subscribe: (listener) => {
+        const handleStorage = (event: StorageEvent): void => {
+          if (event.key === DECK_STORAGE_KEY && event.storageArea === localStorage) listener(event.newValue);
+        };
+        window.addEventListener("storage", handleStorage);
+        return () => window.removeEventListener("storage", handleStorage);
+      },
+    };
   } catch (error) {
     const storageError = error instanceof Error ? error : new Error("Browser storage is unavailable.");
     return {

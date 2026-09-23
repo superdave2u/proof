@@ -99,9 +99,15 @@ Legend: `[ ]` incomplete · `[x]` done (verified) — prune `[x]` items periodic
 - Failed draws roll back, and failed evidence writes leave the card Drawn.
 - Verification passed: `npx tsc --noEmit && npx vitest run` (11 files, 69 tests).
 
+### Learnings — concurrent browser-tab updates pass
+
+- Store mutations re-read and merge persisted records inside a cross-tab exclusive transaction, using Web Locks with a localStorage lease fallback. Record merges are forward-only and preserve the first committed Lived evidence; same-day daily draws converge to the persisted choice.
+- Storage events refresh mounted views while preserving evidence drafts and focus. Tests cover independent stores, distinct-card updates, same-card evidence races, and daily draw convergence.
+- Verification passed: `npx tsc --noEmit && npx vitest run` (11 files, 73 tests).
+
 ### Unaddressed backlog — parallel audit (prioritized)
 
-- [ ] P1 — Merge concurrent browser-tab updates instead of persisting full snapshots: a stale tab can overwrite newer records and evidence, losing user progress.
+- [x] P1 — Merge concurrent browser-tab updates instead of persisting full snapshots: a stale tab can overwrite newer records and evidence, losing user progress.
 - [ ] P2 — Validate evidence image bytes/content in addition to data URL syntax and claimed MIME type: mislabeled or invalid image data can be accepted as an artifact.
 - [ ] P2 — Keep evidence entry reachable when opened from card detail despite active deck filters: the filtered-out card can leave the form hidden, blocking the intended flow.
 - [ ] P2 — Restore focus when canceling the evidence form: removing the focused form element strands keyboard users without a predictable focus target.

@@ -65,6 +65,23 @@ function renderEvidenceForm(card: Card, error?: string, draft?: EvidenceDraft): 
   </section>`;
 }
 
+function renderRetainedEvidenceDraft(card: Card, draft?: EvidenceDraft, error?: string): string {
+  const formId = `evidence-form-${card.id}`;
+  return `<section class="evidence-entry" aria-labelledby="${formId}-title">
+    <h3 id="${formId}-title" tabindex="-1">Unsaved Proof of Life draft</h3>
+    <p role="status">Another tab has already deposited this card in the Archive. This draft has not been saved and cannot replace that evidence. Copy anything you want to keep before dismissing it.</p>
+    <label for="${formId}-date">Draft date
+      <input id="${formId}-date" type="date" value="${escapeHtml(draft?.date ?? "")}" readonly>
+    </label>
+    <label for="${formId}-note">Draft note
+      <textarea id="${formId}-note" rows="3" readonly>${escapeHtml(draft?.note ?? "")}</textarea>
+    </label>
+    ${draft?.fileName ? `<p id="${formId}-artifact" tabindex="-1">Selected artifact: ${escapeHtml(draft.fileName)} (retained in this tab)</p>` : ""}
+    ${error ? `<p class="evidence-entry__error" role="alert">${escapeHtml(error)}</p>` : ""}
+    <button type="button" data-action="dismiss-evidence-draft" data-card-id="${card.id}">Dismiss unsaved entry</button>
+  </section>`;
+}
+
 function renderCardTile(
   card: Card,
   records: DeckRecords,
@@ -90,7 +107,7 @@ function renderCardTile(
 
   const evidenceControls = state === "drawn"
     ? `<div class="deck-card-revealed__actions"><button class="card-detail__open" type="button" data-action="open-card" data-card-id="${card.id}">Open card details</button><button class="evidence-entry__open" type="button" data-action="open-evidence" data-card-id="${card.id}">Deposit my Proof of Life</button></div>${evidenceCardId === card.id ? renderEvidenceForm(card, evidenceError, evidenceDraft) : ""}`
-    : `<button class="card-detail__open" type="button" data-action="open-card" data-card-id="${card.id}">Open card details</button>`;
+    : `<button class="card-detail__open" type="button" data-action="open-card" data-card-id="${card.id}">Open card details</button>${state === "lived" && evidenceCardId === card.id ? renderRetainedEvidenceDraft(card, evidenceDraft, evidenceError) : ""}`;
 
   return `<div class="deck-card-revealed" data-card-id="${card.id}" data-state="${state}">
     <p class="deck-card-revealed__state">${state === "lived" ? "Lived · in the Archive" : "Drawn"}</p>
@@ -302,6 +319,41 @@ export function mountDeckView(
     container.querySelector<HTMLInputElement>(`#evidence-form-${cardId}-date`)?.focus();
   };
   render();
+  store.subscribe(() => {
+    const focusedElement = container.contains(document.activeElement)
+      ? document.activeElement as HTMLElement
+      : undefined;
+    const focusedId = focusedElement?.id;
+    const focusedAction = focusedElement?.dataset.action;
+    const focusedCardId = focusedElement?.dataset.cardId;
+    const dateInput = evidenceCardId
+      ? container.querySelector<HTMLInputElement>(`#evidence-form-${evidenceCardId}-date`)
+      : null;
+    const noteInput = evidenceCardId
+      ? container.querySelector<HTMLTextAreaElement>(`#evidence-form-${evidenceCardId}-note`)
+      : null;
+    const artifactInput = evidenceCardId
+      ? container.querySelector<HTMLInputElement>(`#evidence-form-${evidenceCardId}-artifact`)
+      : null;
+    if (dateInput && noteInput) {
+      const file = artifactInput?.files?.[0] ?? evidenceDraftFile;
+      evidenceDraft = {
+        date: dateInput.value,
+        note: noteInput.value,
+        ...(file ? { fileName: file.name } : {}),
+      };
+      evidenceDraftFile = file;
+    }
+    render();
+    if (focusedId) {
+      Array.from(container.querySelectorAll<HTMLElement>("[id]")).find((element) => element.id === focusedId)
+        ?.focus({ preventScroll: true });
+    } else if (focusedAction) {
+      const cardSelector = focusedCardId ? `[data-card-id="${focusedCardId}"]` : "";
+      container.querySelector<HTMLElement>(`[data-action="${focusedAction}"]${cardSelector}`)
+        ?.focus({ preventScroll: true });
+    }
+  });
 
   const scheduleDailyRefresh = (): void => {
     const now = new Date();
@@ -330,20 +382,22 @@ export function mountDeckView(
 
     if (target.closest('[data-action="daily-draw"]')) {
       dailyDrawError = undefined;
-      try {
-        const card = store.drawDaily();
-        if (!card) {
+      void (async () => {
+        try {
+          const card = await store.drawDaily();
+          if (!card) {
+            render();
+            return;
+          }
           render();
-          return;
+          container.querySelector<HTMLElement>(".daily-draw__face")?.focus();
+        } catch (error) {
+          if (!(error instanceof DeckStorageError)) throw error;
+          dailyDrawError = error.message;
+          render();
+          container.querySelector<HTMLElement>('[data-draw-error="daily"]')?.focus();
         }
-        render();
-        container.querySelector<HTMLElement>(".daily-draw__face")?.focus();
-      } catch (error) {
-        if (!(error instanceof DeckStorageError)) throw error;
-        dailyDrawError = error.message;
-        render();
-        container.querySelector<HTMLElement>('[data-draw-error="daily"]')?.focus();
-      }
+      })();
       return;
     }
     const openEvidenceButton = target.closest<HTMLButtonElement>('[data-action="open-evidence"]');
@@ -352,7 +406,7 @@ export function mountDeckView(
       if (cardId) openEvidence(cardId);
       return;
     }
-    if (target.closest('[data-action="cancel-evidence"]')) {
+    if (target.closest('[data-action="cancel-evidence"], [data-action="dismiss-evidence-draft"]')) {
       evidenceCardId = undefined;
       evidenceError = undefined;
       evidenceDraft = undefined;
@@ -363,21 +417,23 @@ export function mountDeckView(
     if (!target.closest('[data-action="draw"]')) return;
 
     randomDrawError = undefined;
-    try {
-      const card = store.draw();
-      if (!card) {
+    void (async () => {
+      try {
+        const card = await store.draw();
+        if (!card) {
+          render();
+          return;
+        }
+        lastDrawnCardId = card.id;
         render();
-        return;
+        container.querySelector<HTMLElement>(".draw-reveal__face")?.focus();
+      } catch (error) {
+        if (!(error instanceof DeckStorageError)) throw error;
+        randomDrawError = error.message;
+        render();
+        container.querySelector<HTMLElement>('[data-draw-error="random"]')?.focus();
       }
-      lastDrawnCardId = card.id;
-      render();
-      container.querySelector<HTMLElement>(".draw-reveal__face")?.focus();
-    } catch (error) {
-      if (!(error instanceof DeckStorageError)) throw error;
-      randomDrawError = error.message;
-      render();
-      container.querySelector<HTMLElement>('[data-draw-error="random"]')?.focus();
-    }
+    })();
   });
 
   container.addEventListener("change", (event: Event) => {
@@ -435,7 +491,7 @@ export function mountDeckView(
         if (!isValidEvidence(evidence)) {
           throw new Error("Enter a valid date and a note describing the evidence of this adventure.");
         }
-        if (!store.submitEvidence(cardId, evidence)) {
+        if (!await store.submitEvidence(cardId, evidence)) {
           throw new Error("This card could not be saved in this browser. Your card remains Drawn; check that browser storage is available and has space, then try again.");
         }
         const card = DECK.find((item) => item.id === cardId);

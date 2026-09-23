@@ -119,6 +119,28 @@ describe("deck view", () => {
     expect(renderDeckView().includes('data-evidence-form=')).toBe(false);
   });
 
+  /** WHY: a storage event from another tab can complete a card while its evidence form is open. The user's unsaved note must remain visible and explicitly marked unsaved rather than disappearing or appearing to overwrite the archived evidence. */
+  it("retains and labels an open evidence draft when another tab Lived the card", () => {
+    const card = DECK[0]!;
+    const records: DeckRecords = {
+      [card.id]: {
+        state: "lived",
+        livedAt: "2026-09-22T12:00:00.000Z",
+        evidence: { date: "2026-09-22", note: "Evidence deposited in the other tab." },
+      },
+    };
+    const html = renderDeckView(
+      records, undefined, undefined, undefined, card.id, undefined, undefined,
+      { date: "2026-09-22", note: "My still-unsaved memory.", fileName: "afternoon.png" },
+    );
+
+    expect(html).toContain("Unsaved Proof of Life draft");
+    expect(html).toContain("My still-unsaved memory.");
+    expect(html).toContain("afternoon.png (retained in this tab)");
+    expect(html).toContain('data-action="dismiss-evidence-draft" data-card-id="pleasure-01"');
+    expect(html).not.toContain('data-evidence-form="pleasure-01"');
+  });
+
   it("renders a clear empty state when a state filter has no matching cards", () => {
     const html = renderDeckView({}, { territory: "all", state: "lived" });
 

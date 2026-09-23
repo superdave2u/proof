@@ -30,6 +30,7 @@ if (app) {
     let pendingEvidenceCardId: string | undefined;
     let removeCardDetailActions = (): void => undefined;
     let navigate = (_route: AppRoute): void => undefined;
+    let activeRoute: AppRoute = "deck";
 
     const showCardDetail = (cardId: string, shouldFocus: boolean, drawError?: string): void => {
       const card = DECK.find((item) => item.id === cardId);
@@ -39,10 +40,10 @@ if (app) {
       }
 
       removeCardDetailActions();
-      removeCardDetailActions = mountCardDetail(cardDetailView, card, store.getRecords()[cardId], (action, selectedCard) => {
+      removeCardDetailActions = mountCardDetail(cardDetailView, card, store.getRecords()[cardId], async (action, selectedCard) => {
         if (action === "draw") {
           try {
-            if (!store.draw(selectedCard.id)) return;
+            if (!await store.draw(selectedCard.id)) return;
             showCardDetail(selectedCard.id, true);
           } catch (error) {
             if (!(error instanceof DeckStorageError)) throw error;
@@ -64,6 +65,7 @@ if (app) {
     };
 
     const showRoute = (route: AppRoute, shouldFocus: boolean): void => {
+      activeRoute = route;
       const showArchive = route === "archive";
       const showCard = typeof route !== "string";
       if (showArchive) refreshArchive();
@@ -93,5 +95,24 @@ if (app) {
     );
     openEvidenceInDeck = deckControls.openEvidence;
     navigate = mountHashRouter(window, showRoute).navigate;
+    store.subscribe(() => {
+      const archiveFocus = archiveView.contains(document.activeElement)
+        ? document.activeElement as HTMLElement
+        : undefined;
+      const archiveFocusId = archiveFocus?.id;
+      const archiveFocusAction = archiveFocus?.dataset.action;
+      refreshArchive();
+      if (archiveView.contains(document.activeElement) || archiveFocusId || archiveFocusAction) {
+        if (archiveFocusId) archiveView.querySelector<HTMLElement>(`#${archiveFocusId}`)?.focus({ preventScroll: true });
+        else if (archiveFocusAction) archiveView.querySelector<HTMLElement>(`[data-action="${archiveFocusAction}"]`)?.focus({ preventScroll: true });
+      }
+      if (typeof activeRoute === "string") return;
+
+      const focusedAction = cardDetailView.querySelector<HTMLElement>("button:focus[data-action]")?.dataset.action;
+      showCardDetail(activeRoute.cardId, false);
+      if (focusedAction) {
+        cardDetailView.querySelector<HTMLElement>(`[data-action="${focusedAction}"]`)?.focus({ preventScroll: true });
+      }
+    });
   }
 }
