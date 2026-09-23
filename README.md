@@ -77,9 +77,10 @@ This repo is built with the [Ralph Wiggum technique](https://ghuntley.com/ralph/
 ```bash
 ./ralph.sh                          # build loops (default 25)
 MAX_ITERATIONS=5 ./ralph.sh         # smaller run
-RALPH_MODEL=anthropic/claude-sonnet-4-5 ./ralph.sh
 ./ralph-plan.sh                     # planning loops — specs and plan only
 ```
+
+Loop configuration lives in `.env` (see `.env.example`): `RALPH_MODEL` defaults to **openai luna** (`openrouter/~openai/gpt-luna-latest`), and visibility is on by default — thinking blocks (`--thinking`), harness logs (`--print-logs`), and a heartbeat whenever opencode goes silent (`RALPH_IDLE_SECONDS`). Every iteration is bannered with iteration count, HEAD, and tag, then streamed live and logged to `logs/`. Real environment variables override `.env`.
 
 Each loop is logged to `logs/`. Rules of the house: search the codebase before assuming anything is missing, full implementations only (no placeholders), capture the _why_ in every test, and keep `fix_plan.md` honest.
 
