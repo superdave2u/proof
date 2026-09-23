@@ -62,20 +62,15 @@ UNDISCOVERED → DRAWN → LIVED
 - **DRAWN** — the deal. A random draw must feel like *"you've just been dealt an adventure"*, not "pick an activity".
 - **LIVED** — the player completed the quest and deposited Proof of Life in the **Archive**.
 
-## 6. The Archive & the battered deck
+## 6. The Archive & the record of a life
 
-The Archive is the collection of Lived cards. When a card becomes Lived, its physical (and digital) form transforms:
+The Archive is the collection of Lived cards. When a card becomes Lived, the player's record grows:
 
-- dates written on it,
-- petals pressed against it,
-- receipts folded behind it,
-- photographs attached,
-- someone's handwriting appears,
-- a wine stain happens,
-- a ticket taped to it,
-- a bent corner from an afternoon in a purse.
+- the date it was completed,
+- the evidence note (a sentence, a recipe, a list of names),
+- the artifact — receipt, ticket, photograph — recorded against the card.
 
-**This degradation is desirable and must be rendered** — Lived cards visually weather while Undiscovered cards stay pristine. The pristine deck is potential; the battered deck is the life that happened.
+**The physical deck transforms as described above; the digital app does not simulate wear.** Lived cards are presented cleanly — with their date, note, and evidence attached — with no procedural weathering, stains, tape, bent corners, or simulated handwriting effects. The pristine deck is potential; the lived record is the life that happened. The evidence itself carries the transformation, not the pixels.
 
 ## 7. Mechanics
 

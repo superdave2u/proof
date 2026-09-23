@@ -20,7 +20,7 @@ Borrow the *feel* of a deep collectible card game. **Do not copy Magic: The Gath
 7. **Special Ability** box (if present) — distinct background, ability name bold.
 8. **Reward** line.
 9. **Flavor text** footer — italic, territory-tinted.
-10. Lived overlays: date stamp, handwriting-style note, evidence photo thumb, procedural weathering.
+10. Lived overlays: date stamp, evidence note, evidence photo thumb — clean, no wear effects.
 
 ## 3. Data model (`src/data/`)
 
@@ -64,11 +64,11 @@ interface DeckState { version: 1; cards: Record<string, CardRecord>; dailyDraw?:
 2. **Draw ritual** — deck cut animation → card flips to reveal → lands in hand. This must feel like being *dealt an adventure*. Honors `prefers-reduced-motion`.
 3. **Card detail** — full anatomy; actions: `Draw` (undiscovered → drawn), `Deposited my Proof of Life` (opens evidence form: date, note, optional artifact photo → lived). Flavor-footer moment of quiet: reveal flavor text with a gentle fade.
 4. **Daily draw** — date-seeded card of the day, deterministic; shown once per day.
-5. **Archive** — Lived cards with evidence; the battered-deck gallery. The emotional payoff screen.
+5. **Archive** — Lived cards with their evidence; the collected-evidence gallery. The emotional payoff screen.
 
-## 6. Weathering (Lived transformation)
+## 6. Lived presentation — no weathering (operator decision)
 
-Deterministic per card id hash: rotation ±3°, stain radial-gradients, tape strips, bent corner shading, handwriting font for notes. Undiscovered cards stay pristine. This is required by SPEC §6 — a Lived deck must look *lived*.
+The physical deck weathers (SPEC §6); **the digital app does not simulate wear**. No rotation, stains, tape, bent-corner shading, or handwriting effects. A Lived card is shown cleanly with its date, evidence note, and artifact attached. Marking a card Lived changes its state presentation (pristine face → lived record with evidence), not its texture.
 
 ## 7. File layout
 
@@ -76,7 +76,7 @@ Deterministic per card id hash: rotation ±3°, stain radial-gradients, tape str
 src/
 ├── main.ts            # bootstrap, screen router (hash-based)
 ├── app.ts             # app title/metadata
-├── style.css          # design tokens, territory palette, card face, weathering
+├── style.css          # design tokens, territory palette, card face, lived overlays
 ├── data/
 │   ├── cards.ts       # DECK: Card[] (52)
 │   └── cards.test.ts  # schema: 52 cards, 10/territory + 2 wild, unique, complete anatomy, canon preserved
@@ -86,7 +86,7 @@ src/
 ├── views/
 │   ├── deck.ts, cardDetail.ts, drawRitual.ts, archive.ts, dailyDraw.ts
 └── components/
-    └── cardFace.ts    # renders Card + CardRecord (weathering overlays)
+    └── cardFace.ts    # renders Card + CardRecord (lived overlays, no wear effects)
 ```
 
 Vanilla TS + template literals (fast wheel). Framework adoption is a deliberate later decision, not a default.

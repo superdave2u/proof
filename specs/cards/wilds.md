@@ -50,4 +50,4 @@ The Wild Cards use iridescent/prismatic treatments and sit above all territory r
 
 - **51 Follow the Thread** — prismatic foil treatment, iridescent border shimmer.
 - **52 Proof of Life** — the philosophical center of the entire game (SPEC §3). Its mythic foil should feel quiet, not loud: deep black card body, prismatic light only at the edges — the card is valuable because of its meaning, not its shine.
-- In the digital deck, card 52's weathering when Lived may include the written words **I WANTED THIS. / THAT WAS ENOUGH.** as handwriting overlays on the evidence.
+- In the digital deck, card 52's evidence when Lived includes the written words **I WANTED THIS. / THAT WAS ENOUGH.** as the evidence note — presented cleanly, with no wear or handwriting effects (the app does not simulate weathering).

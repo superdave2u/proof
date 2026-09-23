@@ -24,7 +24,6 @@ Legend: `[ ]` incomplete · `[x]` done (verified) — prune `[x]` items periodic
 - [ ] Draw ritual: deal/flip animation (reduced-motion aware), UNDISCOVERED → DRAWN
 - [ ] Daily draw: date-seeded, deterministic, shown once per day
 - [ ] Evidence flow: date + note + optional artifact photo (dataURL, size-capped) → LIVED; forward-only state machine in store
-- [ ] Weathering: procedural Lived-card transformation (rotation, stains, tape, handwriting, bent corners) — deterministic per card id; card 52 gets the "I WANTED THIS. / THAT WAS ENOUGH." handwriting overlay
-- [ ] Archive view: the battered-deck gallery with evidence
+- [ ] Archive view: the collected-evidence gallery with Lived cards, dates, notes, artifacts — clean presentation, no weathering (operator decision)
 - [ ] App shell: hash router, territory design tokens, typography, a11y (contrast, keyboard, 320px, reduced motion)
 - [ ] README.md + production build green
