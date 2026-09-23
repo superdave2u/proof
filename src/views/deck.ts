@@ -436,7 +436,7 @@ export function mountDeckView(
           throw new Error("Enter a valid date and a note describing the evidence of this adventure.");
         }
         if (!store.submitEvidence(cardId, evidence)) {
-          throw new Error("This card could not be saved in this browser. Your card remains Drawn; free storage space and try again.");
+          throw new Error("This card could not be saved in this browser. Your card remains Drawn; check that browser storage is available and has space, then try again.");
         }
         const card = DECK.find((item) => item.id === cardId);
         evidenceCardId = undefined;

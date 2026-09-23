@@ -22,7 +22,7 @@ export interface DeckStore {
 /** A requested draw could not be made durable in browser storage. */
 export class DeckStorageError extends Error {
   constructor() {
-    super("This draw could not be saved in this browser. Your deck is unchanged; free storage space and try again.");
+    super("This draw could not be saved in this browser. Your deck is unchanged; check that browser storage is available and has space, then try again.");
     this.name = "DeckStorageError";
   }
 }
@@ -236,9 +236,15 @@ export function createDeckStore(
 
 /** Access browser storage without letting privacy-mode access errors block startup. */
 export function browserDeckStorage(): KeyValueStorage | undefined {
+  if (typeof window === "undefined") return undefined;
+
   try {
-    return typeof window === "undefined" ? undefined : window.localStorage;
-  } catch {
-    return undefined;
+    return window.localStorage;
+  } catch (error) {
+    const storageError = error instanceof Error ? error : new Error("Browser storage is unavailable.");
+    return {
+      getItem: () => { throw storageError; },
+      setItem: () => { throw storageError; },
+    };
   }
 }

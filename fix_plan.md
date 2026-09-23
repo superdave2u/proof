@@ -93,6 +93,20 @@ Legend: `[ ]` incomplete · `[x]` done (verified) — prune `[x]` items periodic
 - Tests cover store rollback and visible alerts; the evidence failure test fixture now starts from a persisted Drawn record.
 - Verification passed: `npx tsc --noEmit && npx vitest run` (11 files / 68 tests).
 
+### Learnings — browser storage access failure pass
+
+- A denied browser `localStorage` access previously returned `undefined`, silently making app writes appear successful. `browserDeckStorage` now returns a rejecting adapter when `window` exists but accessing `localStorage` throws; `createDeckStore(undefined)` remains intentionally ephemeral when there is no window.
+- Failed draws roll back, and failed evidence writes leave the card Drawn.
+- Verification passed: `npx tsc --noEmit && npx vitest run` (11 files, 69 tests).
+
+### Unaddressed backlog — parallel audit (prioritized)
+
+- [ ] P1 — Merge concurrent browser-tab updates instead of persisting full snapshots: a stale tab can overwrite newer records and evidence, losing user progress.
+- [ ] P2 — Validate evidence image bytes/content in addition to data URL syntax and claimed MIME type: mislabeled or invalid image data can be accepted as an artifact.
+- [ ] P2 — Keep evidence entry reachable when opened from card detail despite active deck filters: the filtered-out card can leave the form hidden, blocking the intended flow.
+- [ ] P2 — Restore focus when canceling the evidence form: removing the focused form element strands keyboard users without a predictable focus target.
+- [ ] P3 — Give evidence artifact images descriptive alt text: generic alt text does not convey the image's relevant content to screen-reader users.
+
 - [x] Deck integrity pass: 52 cards verified — numbering 01–52 no gaps/duplicates, unique titles/ids, complete anatomy, 7 canon anchors exact, no placeholder content (durable audit: src/data/specDeck.test.ts + src/data/specDeck.ts)
 - [x] Data pipeline: `src/data/cards.ts` — transcribe all 52 specs into typed `Card[]`; assign rarity per SPEC §3 (5 common / 3 uncommon / 2 rare per territory; wilds canon legendary/mythic)
 - [x] Schema tests: exactly 52, 10 per territory + 2 wilds, unique ids/numbers/names, anatomy completeness, frozen card text verbatim, no placeholder content; independent canon baselines and parser validation tests

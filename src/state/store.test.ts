@@ -1,7 +1,7 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { DECK } from "../data/cards";
 import { MAX_ARTIFACT_BYTES } from "./evidence";
-import { createDeckStore, DeckStorageError, DECK_STORAGE_KEY, loadDeckRecords, type KeyValueStorage } from "./store";
+import { browserDeckStorage, createDeckStore, DeckStorageError, DECK_STORAGE_KEY, loadDeckRecords, type KeyValueStorage } from "./store";
 
 class MemoryStorage implements KeyValueStorage {
   values = new Map<string, string>();
@@ -27,6 +27,39 @@ class MemoryStorage implements KeyValueStorage {
  * lived, not merely a visual card state.
  */
 describe("deck store draw ritual", () => {
+  /** WHY: denied browser storage must not be mistaken for intentional ephemeral storage, which would let a draw appear successful without being durable. */
+  it("fails closed when accessing browser storage is denied, while no-window callers remain ephemeral", () => {
+    const accessError = new Error("storage access denied");
+    vi.stubGlobal("window", Object.defineProperty({}, "localStorage", {
+      configurable: true,
+      get: () => { throw accessError; },
+    }));
+
+    try {
+      const storage = browserDeckStorage();
+      expect(storage).toBeDefined();
+      expect(() => storage!.getItem(DECK_STORAGE_KEY)).toThrow(accessError);
+      expect(() => storage!.setItem(DECK_STORAGE_KEY, "{}")).toThrow(accessError);
+
+      const randomStore = createDeckStore(storage, () => 0);
+      const specificStore = createDeckStore(storage, () => 0);
+      const dailyStore = createDeckStore(storage, undefined, () => new Date("2026-09-22T12:00:00.000Z"));
+      expect(() => randomStore.draw()).toThrow(DeckStorageError);
+      expect(() => specificStore.draw("pleasure-01")).toThrow(DeckStorageError);
+      expect(() => dailyStore.drawDaily()).toThrow(DeckStorageError);
+      expect(randomStore.getRecords()).toEqual({});
+      expect(specificStore.getRecords()).toEqual({});
+      expect(dailyStore.getRecords()).toEqual({});
+      expect(dailyStore.getDailyDraw()).toBeUndefined();
+
+      vi.stubGlobal("window", undefined);
+      expect(browserDeckStorage()).toBeUndefined();
+      expect(createDeckStore(undefined, () => 0).draw()?.id).toBe(DECK[0]?.id);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
   it("draws an undiscovered adventure, timestamps it, and persists the forward transition", () => {
     const storage = new MemoryStorage();
     const store = createDeckStore(storage, () => 0, () => new Date("2026-09-22T12:30:00.000Z"));
@@ -293,6 +326,7 @@ describe("evidence lifecycle", () => {
     expect(store.getRecords()["pleasure-01"]?.state).toBe("drawn");
   });
 
+  /** WHY: even after a card is drawn, inaccessible or full storage must reject its evidence and leave the card Drawn instead of presenting an unpersisted Archive entry. */
   it("does not claim a Lived transition when storage rejects the evidence record", () => {
     const storage: KeyValueStorage = {
       getItem: () => JSON.stringify({
