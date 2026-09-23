@@ -20,7 +20,15 @@ Legend: `[ ]` incomplete · `[x]` done (verified) — prune `[x]` items periodic
 
 ## Build phase (P0 first — the deck is the product, schema is the contract)
 
-- [ ] Deck integrity pass (planning loop): verify 52 cards, numbering 01–52 no gaps/duplicates, unique titles, anatomy complete
+### Learnings — deck integrity pass (loop 0.0.6)
+
+- Deck verdict: all 52 cards parse clean from specs/cards/*.md — 10 per territory + 2 wilds, numbering 01–52 with no gaps/duplicates, titles + ids globally unique, anatomy complete per SPEC §3, wilds canon (51 Legendary / 52 Mythic via type lines), 7 canon anchors present and marked.
+- Rarity: territory-card rarity (5 common / 3 uncommon / 2 rare) is deliberately absent from specs — the data pass must assign it (AGENT.md content rules). Wilds keep canon legendary/mythic.
+- `src/data/specDeck.ts` parses the frozen specs via vite `?raw` imports (no @types/node needed; vitest env is node). It strips presentation-only markup (bold/italic asterisks, flavor quote wraps) but preserves the verbatim words and line structure: quest = string[], proof may be multi-line ("\n").
+- Card ids follow DESIGN.md: `${territory}-${NN}` (e.g. "pleasure-01") — the data pass must reuse this exact rule (already enforced by specDeck.test.ts).
+- Next-loop opportunity: after transcribing cards.ts, add a cross-check test comparing DECK against loadSpecDeck() output field-by-field to prove verbatim transcription.
+
+- [x] Deck integrity pass: 52 cards verified — numbering 01–52 no gaps/duplicates, unique titles/ids, complete anatomy, 7 canon anchors exact, no placeholder content (durable audit: src/data/specDeck.test.ts + src/data/specDeck.ts)
 - [ ] Data pipeline: `src/data/cards.ts` — transcribe all 52 specs into typed `Card[]`; assign rarity per SPEC §3 (5 common / 3 uncommon / 2 rare per territory; wilds canon legendary/mythic)
 - [ ] Schema tests: exactly 52, 10 per territory + 2 wilds, unique ids/numbers/names, anatomy completeness, frozen card text verbatim, no placeholder content
 - [ ] Card face component: territory theming + symbols (♥ ◉ ✦ ∞ ✧, ✵ wilds), type line, art window (CSS-composed scenes from art direction), quest/proof/ability/reward/flavor blocks, collector line `TERRITORY NN/52`, rarity gems, prismatic wilds

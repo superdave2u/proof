@@ -29,4 +29,5 @@ GitHub Pages via `.github/workflows/deploy.yml` — runs on push to `main`/tags:
 - Back pressure = `npm run check` must be green before every commit.
 - Tests live next to source (`*.test.ts`), with a docblock explaining WHY the test exists.
 - Deck data is typed in `src/data/`; schema tests assert 52 cards (10 per territory + 2 wilds), unique ids/numbers/names, complete anatomy, and canon text preserved verbatim.
+- `src/data/specDeck.ts` parses the frozen `specs/cards/*.md` via vite `?raw` imports; `specDeck.test.ts` is the permanent deck-integrity audit. If it fails, the frozen deck was edited — escalate in fix_plan.md, never edit the specs. The parser strips emphasis/quote markup but preserves verbatim words and line structure.
 - One fix_plan item per loop. See `PROMPT.md`.
