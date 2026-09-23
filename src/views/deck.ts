@@ -1,6 +1,6 @@
 import { DECK, territories, type Card, type Territory } from "../data/cards";
 import { renderCardFace, type CardFaceRecord } from "../components/cardFace";
-import { isValidEvidence, MAX_ARTIFACT_BYTES, type Evidence } from "../state/evidence";
+import { isDecodableArtifactDataUrl, isValidEvidence, MAX_ARTIFACT_BYTES, type Evidence } from "../state/evidence";
 import { browserDeckStorage, createDeckStore, DeckStorageError, type DeckStore } from "../state/store";
 
 export type DeckStateFilter = "all" | CardFaceRecord["state"];
@@ -486,6 +486,9 @@ export function mountDeckView(
             throw new Error(`Choose an image no larger than ${Math.floor(MAX_ARTIFACT_BYTES / 1024)} KiB.`);
           }
           const artifact = await readArtifact(file);
+          if (!await isDecodableArtifactDataUrl(artifact)) {
+            throw new Error("The selected file is not a decodable PNG, JPEG, WebP, or GIF image.");
+          }
           evidence = { ...evidence, artifact };
         }
         if (!isValidEvidence(evidence)) {

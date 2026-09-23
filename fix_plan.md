@@ -105,10 +105,16 @@ Legend: `[ ]` incomplete · `[x]` done (verified) — prune `[x]` items periodic
 - Storage events refresh mounted views while preserving evidence drafts and focus. Tests cover independent stores, distinct-card updates, same-card evidence races, and daily draw convergence.
 - Verification passed: `npx tsc --noEmit && npx vitest run` (11 files, 73 tests).
 
+### Learnings — evidence image validation pass
+
+- WHY: data URL syntax and a claimed MIME type do not prove an artifact is a valid image. Synchronous MIME-specific signature/container checks cover PNG, JPEG, WebP, and GIF; browser image decode with nonzero dimensions is enforced at the evidence submission/store boundary.
+- Regressions cover mislabeled, truncated, and corrupt payloads, plus store rejection when image decode fails.
+- Verification passed: `npx tsc --noEmit && npx vitest run` (11 files, 75 tests).
+
 ### Unaddressed backlog — parallel audit (prioritized)
 
 - [x] P1 — Merge concurrent browser-tab updates instead of persisting full snapshots: a stale tab can overwrite newer records and evidence, losing user progress.
-- [ ] P2 — Validate evidence image bytes/content in addition to data URL syntax and claimed MIME type: mislabeled or invalid image data can be accepted as an artifact.
+- [x] P2 — Validate evidence image bytes/content in addition to data URL syntax and claimed MIME type: mislabeled or invalid image data can be accepted as an artifact.
 - [ ] P2 — Keep evidence entry reachable when opened from card detail despite active deck filters: the filtered-out card can leave the form hidden, blocking the intended flow.
 - [ ] P2 — Restore focus when canceling the evidence form: removing the focused form element strands keyboard users without a predictable focus target.
 - [ ] P3 — Give evidence artifact images descriptive alt text: generic alt text does not convey the image's relevant content to screen-reader users.

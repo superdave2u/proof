@@ -1,6 +1,6 @@
 import { DECK, type Card } from "../data/cards";
 import type { CardFaceRecord } from "../components/cardFace";
-import { isValidEvidence, type Evidence } from "./evidence";
+import { isDecodableArtifactDataUrl, isValidEvidence, type ArtifactImageDecoder, type Evidence } from "./evidence";
 
 export const DECK_STORAGE_KEY = "proof-of-life:deck:v1";
 
@@ -168,6 +168,7 @@ export function createDeckStore(
   storage?: KeyValueStorage,
   random: () => number = Math.random,
   now: () => Date = () => new Date(),
+  decodeArtifact?: ArtifactImageDecoder,
 ): DeckStore {
   const loadedState = loadDeckState(storage);
   let records = loadedState.records;
@@ -308,32 +309,37 @@ export function createDeckStore(
       }
       return card;
     }),
-    submitEvidence: (cardId, evidence) => transact(() => {
+    submitEvidence: async (cardId, evidence) => {
       if (!deckIds.has(cardId) || records[cardId]?.state !== "drawn" || !isValidEvidence(evidence)) return false;
+      if (evidence.artifact !== undefined && !await isDecodableArtifactDataUrl(evidence.artifact, decodeArtifact)) return false;
 
-      const previousRecords = records;
-      records = {
-        ...records,
-        [cardId]: {
-          state: "lived",
-          ...(previousRecords[cardId]?.drawnAt ? { drawnAt: previousRecords[cardId].drawnAt } : {}),
-          livedAt: now().toISOString(),
-          evidence: evidence.artifact === undefined
-            ? { date: evidence.date, note: evidence.note.trim() }
-            : { date: evidence.date, note: evidence.note.trim(), artifact: evidence.artifact },
-        },
-      };
-      if (!persist()) {
-        records = previousRecords;
-        return false;
-      }
-      const saved = loadDeckState(storage);
-      const merged = mergeDeckStates(currentState(), saved);
-      records = merged.records;
-      dailyDraw = merged.dailyDraw;
-      notify();
-      return records[cardId]?.state === "lived";
-    }),
+      return transact(() => {
+        if (records[cardId]?.state !== "drawn") return false;
+
+        const previousRecords = records;
+        records = {
+          ...records,
+          [cardId]: {
+            state: "lived",
+            ...(previousRecords[cardId]?.drawnAt ? { drawnAt: previousRecords[cardId].drawnAt } : {}),
+            livedAt: now().toISOString(),
+            evidence: evidence.artifact === undefined
+              ? { date: evidence.date, note: evidence.note.trim() }
+              : { date: evidence.date, note: evidence.note.trim(), artifact: evidence.artifact },
+          },
+        };
+        if (!persist()) {
+          records = previousRecords;
+          return false;
+        }
+        const saved = loadDeckState(storage);
+        const merged = mergeDeckStates(currentState(), saved);
+        records = merged.records;
+        dailyDraw = merged.dailyDraw;
+        notify();
+        return records[cardId]?.state === "lived";
+      });
+    },
   };
 }
 

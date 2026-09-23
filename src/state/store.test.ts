@@ -356,8 +356,13 @@ describe("evidence lifecycle", () => {
       version: 1,
       cards: { "pleasure-01": { state: "drawn", drawnAt } },
     }));
-    const store = createDeckStore(storage, undefined, () => new Date("2026-09-22T14:00:00.000Z"));
-    const artifact = "data:image/png;base64,AAAA";
+    const store = createDeckStore(
+      storage,
+      undefined,
+      () => new Date("2026-09-22T14:00:00.000Z"),
+      async () => ({ width: 1, height: 1 }),
+    );
+    const artifact = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==";
 
     expect(await store.submitEvidence("pleasure-01", {
       date: "2026-09-21",
@@ -402,6 +407,22 @@ describe("evidence lifecycle", () => {
     })).toBe(false);
     expect(await store.submitEvidence("pleasure-01", {
       date: "2026-09-22", note: "A useful note.", artifact: "javascript:alert(1)",
+    })).toBe(false);
+    expect(await store.submitEvidence("pleasure-01", {
+      date: "2026-09-22", note: "Mislabeled bytes.", artifact: "data:image/png;base64,AAAA",
+    })).toBe(false);
+    expect(store.getRecords()["pleasure-01"]?.state).toBe("drawn");
+  });
+
+  /** WHY: valid container headers alone cannot prove compressed pixels decode. The store must reject a broken image decoder result too, so callers cannot bypass upload validation and create an unrenderable Archive artifact. */
+  it("rejects an image that has valid container bytes but cannot be decoded", async () => {
+    const store = createDeckStore(undefined, () => 0, undefined, async () => undefined);
+    await store.draw();
+
+    expect(await store.submitEvidence("pleasure-01", {
+      date: "2026-09-22",
+      note: "A corrupted image file.",
+      artifact: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==",
     })).toBe(false);
     expect(store.getRecords()["pleasure-01"]?.state).toBe("drawn");
   });

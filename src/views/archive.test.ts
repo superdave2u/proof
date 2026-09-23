@@ -38,7 +38,7 @@ describe("archive view", () => {
         evidence: {
           date: "2026-09-22",
           note: "Pressed <petal> & kept it.",
-          artifact: "data:image/png;base64,AQID",
+          artifact: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==",
         },
       },
     });
@@ -46,7 +46,7 @@ describe("archive view", () => {
     expect(html).toContain('<div class="archive-entry" data-card-id="beauty-23">');
     expect(html).toContain("2026-09-22");
     expect(html).toContain("Pressed &lt;petal&gt; &amp; kept it.");
-    expect(html).toContain('<img class="lived-artifact" src="data:image/png;base64,AQID"');
+    expect(html).toContain('<img class="lived-artifact" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg=="');
     expect(html).toContain("Flowers for No Occasion");
     expect(html).not.toContain("weathering");
   });
