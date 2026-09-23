@@ -44,14 +44,19 @@ Legend: `[ ]` incomplete · `[x]` done (verified) — prune `[x]` items periodic
 - Tests cover all 52 cards, wild rarity, escaping, and lived presentation.
 - Validation passed: `npx tsc --noEmit && npx vitest run` (4 files, 26 tests).
 
+### Learnings — deck view pass
+
+- In `src/views/deck.ts`, missing records mean undiscovered; passed card records render drawn/lived cards. Filters combine territory + state, and lived count is deck-wide.
+- Validation passed: `npx tsc --noEmit && npx vitest run` (5 files, 30 tests).
+
 - [x] Deck integrity pass: 52 cards verified — numbering 01–52 no gaps/duplicates, unique titles/ids, complete anatomy, 7 canon anchors exact, no placeholder content (durable audit: src/data/specDeck.test.ts + src/data/specDeck.ts)
 - [x] Data pipeline: `src/data/cards.ts` — transcribe all 52 specs into typed `Card[]`; assign rarity per SPEC §3 (5 common / 3 uncommon / 2 rare per territory; wilds canon legendary/mythic)
 - [x] Schema tests: exactly 52, 10 per territory + 2 wilds, unique ids/numbers/names, anatomy completeness, frozen card text verbatim, no placeholder content; independent canon baselines and parser validation tests
 - [x] Current verification after schema audit changes: `npx tsc --noEmit && npx vitest run` passed (3 test files, 21 tests).
 - [x] Card face component: territory theming + symbols (♥ ◉ ✦ ∞ ✧, ✵ wilds), type line, art window (CSS-composed scenes from art direction), quest/proof/ability/reward/flavor blocks, collector line `TERRITORY NN/52`, rarity gems, prismatic wilds
-- [ ] Deck view: grid, card backs w/ territory glint, filters (territory, state), lived counts
+- [x] Deck view: grid, card backs w/ territory glint, filters (territory, state), lived counts
 - [ ] Draw ritual: deal/flip animation (reduced-motion aware), UNDISCOVERED → DRAWN
 - [ ] Daily draw: date-seeded, deterministic, shown once per day
-- [ ] Evidence flow: date + note + optional artifact photo (dataURL, size-capped) → LIVED; forward-only state machine in store
+- [ ] Evidence flow: date + note + optional artifact photo (dataURL, size-capped) → LIVED; forward-only state machine in store. README claims deck state persists, so verify actual localStorage persistence.
 - [ ] Archive view: the collected-evidence gallery with Lived cards, dates, notes, artifacts — clean presentation, no weathering (operator decision)
 - [ ] App shell: hash router, territory design tokens, typography, a11y (contrast, keyboard, 320px, reduced motion)
