@@ -1,4 +1,11 @@
-export type AppRoute = "deck" | "archive";
+import { DECK } from "./data/cards";
+
+export interface CardRoute {
+  type: "card";
+  cardId: string;
+}
+
+export type AppRoute = "deck" | "archive" | CardRoute;
 
 export interface HashRouterHost {
   location: { hash: string };
@@ -15,14 +22,35 @@ export interface HashRouter {
   destroy(): void;
 }
 
+const cardIds = new Set(DECK.map((card) => card.id));
+
+function isCardId(cardId: string): boolean {
+  return cardIds.has(cardId);
+}
+
+function routePath(route: AppRoute): string {
+  if (route === "deck" || route === "archive") return route;
+  return isCardId(route.cardId) ? `card/${route.cardId}` : "deck";
+}
+
+function routesEqual(left: AppRoute, right: AppRoute): boolean {
+  if (typeof left === "string" || typeof right === "string") return left === right;
+  return left.type === right.type && left.cardId === right.cardId;
+}
+
 /** Resolve supported routes while treating an empty or unknown hash as home. */
 export function routeFromHash(hash: string): AppRoute {
   const route = hash.replace(/^#\/?/, "");
-  return route === "archive" ? "archive" : "deck";
+  if (route === "archive") return "archive";
+  const cardMatch = /^card\/([a-z]+-\d{2})$/.exec(route);
+  const cardId = cardMatch?.[1];
+  if (cardId && isCardId(cardId)) return { type: "card", cardId };
+  return "deck";
 }
 
 function isCanonicalRouteHash(hash: string, route: AppRoute): boolean {
-  return hash === `#/${route}` || hash === `#${route}`;
+  const path = routePath(route);
+  return hash === `#/${path}` || hash === `#${path}`;
 }
 
 /** Keep the visible screen in sync with URL navigation and browser history. */
@@ -33,7 +61,7 @@ export function mountHashRouter(
   let currentRoute = routeFromHash(host.location.hash);
   const initialHash = host.location.hash;
   if (initialHash && !isCanonicalRouteHash(initialHash, currentRoute)) {
-    host.history.replaceState(host.history.state, "", `#/${currentRoute}`);
+    host.history.replaceState(host.history.state, "", `#/${routePath(currentRoute)}`);
   }
 
   onRoute(currentRoute, false);
@@ -41,9 +69,9 @@ export function mountHashRouter(
   const handleHashChange = (): void => {
     const route = routeFromHash(host.location.hash);
     if (host.location.hash && !isCanonicalRouteHash(host.location.hash, route)) {
-      host.history.replaceState(host.history.state, "", `#/${route}`);
+      host.history.replaceState(host.history.state, "", `#/${routePath(route)}`);
     }
-    if (route === currentRoute) return;
+    if (routesEqual(route, currentRoute)) return;
     currentRoute = route;
     onRoute(route, true);
   };
@@ -52,7 +80,10 @@ export function mountHashRouter(
 
   return {
     navigate(route): void {
-      if (route !== currentRoute) host.location.hash = `/${route}`;
+      const normalizedRoute = routePath(route) === "deck" && route !== "deck" ? "deck" : route;
+      if (!routesEqual(normalizedRoute, currentRoute)) {
+        host.location.hash = `/${routePath(normalizedRoute)}`;
+      }
     },
     destroy(): void {
       host.removeEventListener("hashchange", handleHashChange);

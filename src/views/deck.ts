@@ -89,8 +89,8 @@ function renderCardTile(
   }
 
   const evidenceControls = state === "drawn"
-    ? `<button class="evidence-entry__open" type="button" data-action="open-evidence" data-card-id="${card.id}">Deposit my Proof of Life</button>${evidenceCardId === card.id ? renderEvidenceForm(card, evidenceError, evidenceDraft) : ""}`
-    : "";
+    ? `<div class="deck-card-revealed__actions"><button class="card-detail__open" type="button" data-action="open-card" data-card-id="${card.id}">Open card details</button><button class="evidence-entry__open" type="button" data-action="open-evidence" data-card-id="${card.id}">Deposit my Proof of Life</button></div>${evidenceCardId === card.id ? renderEvidenceForm(card, evidenceError, evidenceDraft) : ""}`
+    : `<button class="card-detail__open" type="button" data-action="open-card" data-card-id="${card.id}">Open card details</button>`;
 
   return `<div class="deck-card-revealed" data-card-id="${card.id}" data-state="${state}">
     <p class="deck-card-revealed__state">${state === "lived" ? "Lived · in the Archive" : "Drawn"}</p>
@@ -142,7 +142,7 @@ function renderDrawRitual(records: DeckRecords, lastDrawnCardId?: string): strin
       ? "The deck is ready when you are."
       : "Every adventure in this deck has been Lived.";
   const revealedCard = card
-    ? `<div class="draw-reveal__face" data-draw-animation="true" role="group" tabindex="-1" aria-label="Dealt card: ${escapeHtml(card.name)}">${renderCardFace(card, records[card.id])}</div>`
+    ? `<div class="draw-reveal__face" data-draw-animation="true" role="group" tabindex="-1" aria-label="Dealt card: ${escapeHtml(card.name)}">${renderCardFace(card, records[card.id])}<button class="card-detail__open" type="button" data-action="open-card" data-card-id="${card.id}">Open card details</button></div>`
     : "";
 
   return `<section class="draw-ritual" aria-labelledby="draw-ritual-title">
@@ -166,7 +166,7 @@ function renderDailyDraw(records: DeckRecords, dailyDrawCardId?: string): string
       ? "A date-seeded card, chosen once for today."
       : "Every adventure in this deck has been Lived.";
   const revealedCard = card
-    ? `<div class="daily-draw__face" data-draw-animation="true" role="group" tabindex="-1" aria-label="Today's card: ${escapeHtml(card.name)}">${renderCardFace(card, records[card.id])}</div>`
+    ? `<div class="daily-draw__face" data-draw-animation="true" role="group" tabindex="-1" aria-label="Today's card: ${escapeHtml(card.name)}">${renderCardFace(card, records[card.id])}<button class="card-detail__open" type="button" data-action="open-card" data-card-id="${card.id}">Open card details</button></div>`
     : "";
 
   return `<section class="daily-draw" aria-labelledby="daily-draw-title">
@@ -268,7 +268,8 @@ export function mountDeckView(
   container: HTMLElement,
   store: DeckStore = createDeckStore(browserDeckStorage()),
   onOpenArchive: () => void = () => undefined,
-): void {
+  onOpenCard: (cardId: string) => void = () => undefined,
+): { openEvidence(cardId: string): void } {
   let filters = { ...DEFAULT_FILTERS };
   let lastDrawnCardId: string | undefined;
   let dailyDrawCardId = store.getDailyDraw()?.id;
@@ -282,6 +283,16 @@ export function mountDeckView(
     container.innerHTML = renderDeckView(
       store.getRecords(), filters, lastDrawnCardId, dailyDrawCardId, evidenceCardId, evidenceError, evidenceMessage, evidenceDraft,
     );
+  };
+  const openEvidence = (cardId: string): void => {
+    if (store.getRecords()[cardId]?.state !== "drawn") return;
+    evidenceCardId = cardId;
+    evidenceError = undefined;
+    evidenceMessage = undefined;
+    evidenceDraft = undefined;
+    evidenceDraftFile = undefined;
+    render();
+    container.querySelector<HTMLInputElement>(`#evidence-form-${cardId}-date`)?.focus();
   };
   render();
 
@@ -304,6 +315,12 @@ export function mountDeckView(
       return;
     }
 
+    const openCardButton = target.closest<HTMLButtonElement>('[data-action="open-card"]');
+    if (openCardButton?.dataset.cardId) {
+      onOpenCard(openCardButton.dataset.cardId);
+      return;
+    }
+
     if (target.closest('[data-action="daily-draw"]')) {
       const card = store.drawDaily();
       if (!card) return;
@@ -313,13 +330,8 @@ export function mountDeckView(
     }
     const openEvidenceButton = target.closest<HTMLButtonElement>('[data-action="open-evidence"]');
     if (openEvidenceButton) {
-      evidenceCardId = openEvidenceButton.dataset.cardId;
-      evidenceError = undefined;
-      evidenceMessage = undefined;
-      evidenceDraft = undefined;
-      evidenceDraftFile = undefined;
-      render();
-      container.querySelector<HTMLInputElement>(`#evidence-form-${evidenceCardId}-date`)?.focus();
+      const cardId = openEvidenceButton.dataset.cardId;
+      if (cardId) openEvidence(cardId);
       return;
     }
     if (target.closest('[data-action="cancel-evidence"]')) {
@@ -412,6 +424,8 @@ export function mountDeckView(
       }
     })();
   });
+
+  return { openEvidence };
 }
 
 function readArtifact(file: File): Promise<string> {

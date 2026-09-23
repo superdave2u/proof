@@ -35,6 +35,7 @@ describe("deck view", () => {
     expect(html).toContain(`You have been dealt: ${card.name.replaceAll("'", "&#39;")}.`);
     expect(html).toContain('class="draw-reveal__face" data-draw-animation="true" role="group" tabindex="-1"');
     expect(html).toContain('data-state="drawn"');
+    expect(html).toContain('data-action="open-card" data-card-id="curiosity-17">Open card details</button>');
     expect(html).not.toContain(DECK[0]!.name);
     expect(html).toContain('role="status" aria-live="polite"');
   });
@@ -56,6 +57,7 @@ describe("deck view", () => {
     expect(revealed).toContain(`Today&#39;s adventure: ${card.name.replaceAll("'", "&#39;")}.`);
     expect(revealed).toContain('class="daily-draw__face" data-draw-animation="true" role="group" tabindex="-1"');
     expect(revealed).toContain('data-action="daily-draw" disabled');
+    expect(revealed).toContain(`data-action="open-card" data-card-id="${card.id}">Open card details</button>`);
     expect(revealed).toContain("Today's card is revealed");
   });
 
@@ -86,6 +88,7 @@ describe("deck view", () => {
     expect(html).toContain("Found a quiet color.");
     expect(drawnHtml).toContain('<div class="deck-card-revealed" data-card-id="pleasure-01" data-state="drawn">');
     expect(drawnHtml).toContain("Drawn");
+    expect(drawnHtml).toContain('data-action="open-card" data-card-id="pleasure-01">Open card details</button>');
     expect(html).toContain('aria-live="polite"');
     expect(html).toContain('for="deck-filter-territory"');
     expect(html).toContain('for="deck-filter-state"');

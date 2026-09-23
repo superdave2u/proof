@@ -147,6 +147,19 @@ button, input, textarea { font: inherit; }
 .draw-reveal { grid-column: 1 / -1; display: flex; justify-content: center; width: 100%; padding: .5rem 0 0; perspective: 1100px; }
 .draw-reveal__face { transform-origin: center; animation: deal-flip .82s cubic-bezier(.2, .75, .25, 1) both; }
 .draw-reveal__face:focus { outline: 3px solid #e4c987; outline-offset: 4px; border-radius: 23px; }
+.draw-reveal__face > .card-detail__open, .daily-draw__face > .card-detail__open { display: block; margin: .9rem auto 0; }
+
+.card-detail { margin: clamp(2rem, 7vw, 4rem) auto 0; }
+.card-detail:focus { outline: 3px solid #e4c987; outline-offset: 7px; border-radius: 8px; }
+.card-detail__navigation { width: min(100%, 390px); margin: 0 auto .8rem; }
+.card-detail__navigation button, .card-detail__open, .card-detail__primary { min-height: 2.8rem; padding: .6rem .95rem; border: 1px solid #85765c; border-radius: 99px; background: #25232a; color: #f6efdf; cursor: pointer; font-size: .76rem; font-weight: 700; }
+.card-detail__navigation button:hover, .card-detail__open:hover { background: #34313a; }
+.card-detail__navigation button:focus-visible, .card-detail__open:focus-visible, .card-detail__primary:focus-visible { outline: 3px solid #e4c987; outline-offset: 3px; }
+.card-detail__face { display: flex; justify-content: center; }
+.card-detail__actions { display: flex; justify-content: center; margin-top: 1.2rem; }
+.card-detail__primary { min-height: 3rem; padding-inline: 1.25rem; border-color: #dfc789; background: linear-gradient(130deg, #d7b86b, #a77d38); color: #17151a; }
+.deck-card-revealed__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; margin: .75rem 0; }
+.deck-card-revealed > .card-detail__open { display: block; margin: .75rem auto; }
 
 @keyframes deal-flip {
   0% { opacity: 0; transform: translateY(-1.75rem) rotateY(88deg) scale(.94); }

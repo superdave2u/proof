@@ -1,6 +1,8 @@
 import { describeApp } from "./app";
+import { DECK } from "./data/cards";
 import { mountDeckView } from "./views/deck";
 import { mountArchiveView } from "./views/archive";
+import { mountCardDetail } from "./views/cardDetail";
 import { mountHashRouter, type AppRoute } from "./router";
 import { browserDeckStorage, createDeckStore } from "./state/store";
 import "./style.css";
@@ -15,27 +17,73 @@ if (app) {
     </header>
     <div id="deck-view"></div>
     <div id="archive-view" hidden></div>
+    <div id="card-detail-view" hidden></div>
   </main>`;
 
   const deckView = app.querySelector<HTMLElement>("#deck-view");
   const archiveView = app.querySelector<HTMLElement>("#archive-view");
-  if (deckView && archiveView) {
+  const cardDetailView = app.querySelector<HTMLElement>("#card-detail-view");
+  if (deckView && archiveView && cardDetailView) {
     const store = createDeckStore(browserDeckStorage());
     let refreshArchive = (): void => undefined;
+    let openEvidenceInDeck = (_cardId: string): void => undefined;
+    let pendingEvidenceCardId: string | undefined;
+    let removeCardDetailActions = (): void => undefined;
     let navigate = (_route: AppRoute): void => undefined;
+
+    const showCardDetail = (cardId: string, shouldFocus: boolean): void => {
+      const card = DECK.find((item) => item.id === cardId);
+      if (!card) {
+        navigate("deck");
+        return;
+      }
+
+      removeCardDetailActions();
+      removeCardDetailActions = mountCardDetail(cardDetailView, card, store.getRecords()[cardId], (action, selectedCard) => {
+        if (action === "draw") {
+          if (!store.draw(selectedCard.id)) return;
+          showCardDetail(selectedCard.id, true);
+        } else if (action === "open-evidence") {
+          pendingEvidenceCardId = selectedCard.id;
+          navigate("deck");
+        } else if (action === "open-archive") {
+          navigate("archive");
+        } else {
+          navigate("deck");
+        }
+      });
+      if (shouldFocus) cardDetailView.querySelector<HTMLElement>(".card-detail")?.focus();
+    };
+
     const showRoute = (route: AppRoute, shouldFocus: boolean): void => {
       const showArchive = route === "archive";
+      const showCard = typeof route !== "string";
       if (showArchive) refreshArchive();
-      deckView.hidden = showArchive;
+      deckView.hidden = showArchive || showCard;
       archiveView.hidden = !showArchive;
-      if (shouldFocus) {
+      cardDetailView.hidden = !showCard;
+      if (typeof route !== "string") showCardDetail(route.cardId, shouldFocus);
+      else {
+        removeCardDetailActions();
+        removeCardDetailActions = (): void => undefined;
+      }
+      if (!showCard && !showArchive && pendingEvidenceCardId) {
+        openEvidenceInDeck(pendingEvidenceCardId);
+        pendingEvidenceCardId = undefined;
+      } else if (shouldFocus) {
         const heading = showArchive ? "#archive-title" : "#deck-title";
         (showArchive ? archiveView : deckView).querySelector<HTMLElement>(heading)?.focus();
       }
     };
 
     refreshArchive = mountArchiveView(archiveView, store, () => navigate("deck"));
-    mountDeckView(deckView, store, () => navigate("archive"));
+    const deckControls = mountDeckView(
+      deckView,
+      store,
+      () => navigate("archive"),
+      (cardId) => navigate({ type: "card", cardId }),
+    );
+    openEvidenceInDeck = deckControls.openEvidence;
     navigate = mountHashRouter(window, showRoute).navigate;
   }
 }

@@ -56,6 +56,24 @@ describe("deck store draw ritual", () => {
     expect(JSON.parse(storage.getItem(DECK_STORAGE_KEY)!).cards["pleasure-02"].state).toBe("lived");
   });
 
+  /** WHY this exists: the card-detail Draw action must honor that card's identity without permitting a Lived card to move backward. */
+  it("draws the addressed undiscovered card and refuses unknown or Lived cards", () => {
+    const storage = new MemoryStorage();
+    storage.setItem(DECK_STORAGE_KEY, JSON.stringify({
+      version: 1,
+      cards: {
+        "beauty-23": { state: "lived", evidence: { date: "2026-09-21", note: "A day remembered." } },
+      },
+    }));
+    const store = createDeckStore(storage, () => 0, () => new Date("2026-09-22T12:30:00.000Z"));
+
+    expect(store.draw("connection-32")).toBe(DECK.find((card) => card.id === "connection-32"));
+    expect(store.getRecords()["connection-32"]).toEqual({ state: "drawn", drawnAt: "2026-09-22T12:30:00.000Z" });
+    expect(store.draw("unknown-01")).toBeUndefined();
+    expect(store.draw("beauty-23")).toBeUndefined();
+    expect(store.getRecords()["beauty-23"]?.state).toBe("lived");
+  });
+
   it("chooses one date-seeded card, saves it, and restores the same deal after reloads", () => {
     const storage = new MemoryStorage();
     let currentTime = new Date(2026, 8, 22, 12, 30);

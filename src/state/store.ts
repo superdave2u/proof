@@ -15,7 +15,7 @@ export interface DeckStore {
   getRecords(): DeckRecords;
   getDailyDraw(): Card | undefined;
   drawDaily(): Card | undefined;
-  draw(): Card | undefined;
+  draw(cardId?: string): Card | undefined;
   submitEvidence(cardId: string, evidence: Evidence): boolean;
 }
 
@@ -169,15 +169,21 @@ export function createDeckStore(
     getRecords: () => records,
     getDailyDraw,
     drawDaily,
-    draw: () => {
-      const eligible = DECK.filter((card) => records[card.id]?.state !== "lived");
-      if (eligible.length === 0) return undefined;
+    draw: (cardId) => {
+      let card: Card | undefined;
+      if (cardId !== undefined) {
+        card = cardById(cardId);
+        if (!card || records[card.id]?.state === "lived") return undefined;
+      } else {
+        const eligible = DECK.filter((item) => records[item.id]?.state !== "lived");
+        if (eligible.length === 0) return undefined;
 
-      const sample = random();
-      if (!Number.isFinite(sample) || sample < 0 || sample >= 1) {
-        throw new RangeError("The random source must return a value in [0, 1).");
+        const sample = random();
+        if (!Number.isFinite(sample) || sample < 0 || sample >= 1) {
+          throw new RangeError("The random source must return a value in [0, 1).");
+        }
+        card = eligible[Math.floor(sample * eligible.length)];
       }
-      const card = eligible[Math.floor(sample * eligible.length)];
       if (!card) return undefined;
 
       const previous = records[card.id];

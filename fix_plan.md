@@ -20,6 +20,9 @@ Legend: `[ ]` incomplete · `[x]` done (verified) — prune `[x]` items periodic
 
 ## Build phase (P0 first — the deck is the product, schema is the contract)
 
+- [x] Card detail screen: add a deep-linkable full card detail view with state-appropriate Draw and Proof of Life actions; current app only has deck and Archive routes despite DESIGN §5 specifying this flow.
+- [ ] Surface failed deck-storage writes for random, daily, and card-specific draws; persistence currently fails silently for draws although evidence submission correctly preserves the prior state on failure.
+
 ### Learnings — deck integrity pass (loop 0.0.6)
 
 - Deck verdict: all 52 cards parse clean from specs/cards/*.md — 10 per territory + 2 wilds, numbering 01–52 with no gaps/duplicates, titles + ids globally unique, anatomy complete per SPEC §3, wilds canon (51 Legendary / 52 Mythic via type lines), 7 canon anchors present and marked.
@@ -76,6 +79,13 @@ Legend: `[ ]` incomplete · `[x]` done (verified) — prune `[x]` items periodic
 
 - Hash routing in `src/router.ts` supports deep links and browser history, falls back canonically for invalid hashes, and transfers focus on navigation. WCAG AA territory text tokens are contrast-tested; app-shell tests cover keyboard focus, 320px layouts, and reduced motion.
 - Verification passed: `npx tsc --noEmit && npx vitest run` (10 files, 57 tests).
+
+### Learnings — card detail pass
+
+- WHY: `#/card/<cardId>` makes a card directly reloadable/shareable; validating the route against actual deck IDs prevents invalid or stale card links from rendering as real cards.
+- Direct Draw uses the store's forward-only transition, so drawing a card cannot reset an existing state. Random and daily reveal screens link to details so either draw can lead into the full card view.
+- Deposit hands off to the existing evidence flow, preserving its validation and DRAWN → LIVED persistence behavior instead of duplicating it in card detail.
+- Verification: `npx tsc --noEmit && npx vitest run` passed (11 files, 64 tests).
 
 - [x] Deck integrity pass: 52 cards verified — numbering 01–52 no gaps/duplicates, unique titles/ids, complete anatomy, 7 canon anchors exact, no placeholder content (durable audit: src/data/specDeck.test.ts + src/data/specDeck.ts)
 - [x] Data pipeline: `src/data/cards.ts` — transcribe all 52 specs into typed `Card[]`; assign rarity per SPEC §3 (5 common / 3 uncommon / 2 rare per territory; wilds canon legendary/mythic)
