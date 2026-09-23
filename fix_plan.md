@@ -14,6 +14,10 @@ Legend: `[ ]` incomplete · `[x]` done (verified) — prune `[x]` items periodic
 - [x] specs/cards/wonder.md — 10 cards (43 canon; 41, 42, 44–50 authored)
 - [x] specs/cards/wilds.md — 51 Follow the Thread (Legendary), 52 Proof of Life (Mythic) — canon, complete
 
+## Operator-done (verified)
+
+- [x] GitHub Pages pipeline: `.github/workflows/deploy.yml` — npm ci → wheel → build → publish dist/ on push to main/tags; Vite `base: "./"`
+
 ## Build phase (P0 first — the deck is the product, schema is the contract)
 
 - [ ] Deck integrity pass (planning loop): verify 52 cards, numbering 01–52 no gaps/duplicates, unique titles, anatomy complete
@@ -26,4 +30,3 @@ Legend: `[ ]` incomplete · `[x]` done (verified) — prune `[x]` items periodic
 - [ ] Evidence flow: date + note + optional artifact photo (dataURL, size-capped) → LIVED; forward-only state machine in store
 - [ ] Archive view: the collected-evidence gallery with Lived cards, dates, notes, artifacts — clean presentation, no weathering (operator decision)
 - [ ] App shell: hash router, territory design tokens, typography, a11y (contrast, keyboard, 320px, reduced motion)
-- [ ] Production build green

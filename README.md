@@ -19,7 +19,7 @@ Five territories — five schools of magic — plus two prismatic Wild Cards:
 | Wonder     | Violet       | ✧      | Awe       | 41–50 |
 | Wild       | Prismatic    | ✵      | —         | 51–52 |
 
-Every card: **name · territory + symbol · type line · rarity · art direction · quest · Proof of Life · reward · special ability · flavor text**. The Wilds sit above all — 51 *Follow the Thread* (Legendary) and 52 *Proof of Life* (Mythic), the philosophical center of the game.
+Every card: **name · territory + symbol · type line · rarity · art direction · quest · Proof of Life · reward · special ability · flavor text**. The Wilds sit above all — 51 _Follow the Thread_ (Legendary) and 52 _Proof of Life_ (Mythic), the philosophical center of the game.
 
 ### Card states
 
@@ -42,9 +42,22 @@ npm run check      # tsc --noEmit && vitest run — must be green before any com
 npm run build      # production build
 ```
 
+## Deployment (GitHub Pages)
+
+A GitHub Actions pipeline (`.github/workflows/deploy.yml`) builds and publishes `dist/` to GitHub Pages on every push to `main` (and on tags):
+
+1. `npm ci` → `npm run check` (typecheck + tests — the wheel) → `npm run build`
+2. `dist/` is uploaded and deployed via `actions/deploy-pages`
+
+One-time setup after adding the GitHub remote:
+
+- Repo **Settings → Pages → Source: GitHub Actions**
+- The site serves at `https://<owner>.github.io/<repo>/` — Vite is configured with a relative `base: "./"` so it works at any subpath.
+
 ## Repo layout
 
 ```
+├── .github/workflows/deploy.yml   GitHub Pages build & deploy pipeline
 ├── SPEC.md            product spec — the source of truth for WHAT
 ├── DESIGN.md          technical design — the source of truth for HOW
 ├── specs/cards/       the frozen 52-card deck, one file per territory + wilds
@@ -68,7 +81,7 @@ RALPH_MODEL=anthropic/claude-sonnet-4-5 ./ralph.sh
 ./ralph-plan.sh                     # planning loops — specs and plan only
 ```
 
-Each loop is logged to `logs/`. Rules of the house: search the codebase before assuming anything is missing, full implementations only (no placeholders), capture the *why* in every test, and keep `fix_plan.md` honest.
+Each loop is logged to `logs/`. Rules of the house: search the codebase before assuming anything is missing, full implementations only (no placeholders), capture the _why_ in every test, and keep `fix_plan.md` honest.
 
 ## Status
 

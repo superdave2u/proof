@@ -20,6 +20,10 @@ Brief instructions for any agent working here. Keep this file brief and current.
 - Both at once (the wheel): `npm run check`
 - Production build: `npm run build`
 
+## Deployment
+
+GitHub Pages via `.github/workflows/deploy.yml` — runs on push to `main`/tags: `npm ci`, `npm run check`, `npm run build`, publishes `dist/` via actions/deploy-pages. Vite uses `base: "./"` for subpath hosting.
+
 ## Conventions
 
 - Back pressure = `npm run check` must be green before every commit.
