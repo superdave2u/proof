@@ -232,7 +232,10 @@ export function renderDeckView(
         <h2 id="deck-title">Your next adventure is in here.</h2>
         <p class="deck-view__description">A card is an invitation, not an obligation. The evidence is the life that happens along the way.</p>
       </div>
-      <p class="deck-view__lived-count" aria-label="${livedCount} of ${DECK.length} cards lived"><span>${livedCount}</span> / ${DECK.length}<small>lived</small></p>
+      <div class="deck-view__actions">
+        <p class="deck-view__lived-count" aria-label="${livedCount} of ${DECK.length} cards lived"><span>${livedCount}</span> / ${DECK.length}<small>lived</small></p>
+        <button class="archive-open" type="button" data-action="open-archive">Open the Archive</button>
+      </div>
     </div>
     <div class="deck-controls" role="group" aria-label="Filter the deck">
       <label for="deck-filter-territory">Territory
@@ -264,6 +267,7 @@ function stateFilter(value: string): DeckStateFilter {
 export function mountDeckView(
   container: HTMLElement,
   store: DeckStore = createDeckStore(browserDeckStorage()),
+  onOpenArchive: () => void = () => undefined,
 ): void {
   let filters = { ...DEFAULT_FILTERS };
   let lastDrawnCardId: string | undefined;
@@ -294,6 +298,11 @@ export function mountDeckView(
   container.addEventListener("click", (event: Event) => {
     const target = event.target;
     if (!(target instanceof Element)) return;
+
+    if (target.closest('[data-action="open-archive"]')) {
+      onOpenArchive();
+      return;
+    }
 
     if (target.closest('[data-action="daily-draw"]')) {
       const card = store.drawDaily();
