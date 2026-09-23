@@ -52,7 +52,25 @@ function renderLivedRecord(card: Card, record: CardFaceRecord | undefined): stri
   </section>`;
 }
 
-/** Render a complete, self-contained card face. All authored card text is escaped before entering HTML. */
+/**
+ * Render the face-down back of a card. Reveals nothing but the collector
+ * number and territory — undiscovered adventures stay concealed everywhere,
+ * including deep links to the detail page.
+ */
+export function renderCardBack(card: Card): string {
+  const territoryName = card.territory.charAt(0).toUpperCase() + card.territory.slice(1);
+  const symbol = territories.find((territory) => territory.territory === card.territory)?.symbol;
+  const collectorNumber = String(card.number).padStart(2, "0");
+
+  return `<article class="deck-card-back deck-card-back--${card.territory}" data-card-id="${escapeHtml(card.id)}" data-state="undiscovered" aria-label="${territoryName} ${collectorNumber} of 52, undiscovered card">
+    <span class="deck-card-back__territory">${territoryName}</span>
+    <span class="deck-card-back__sigil" aria-hidden="true">${symbol}</span>
+    <span class="deck-card-back__number">${collectorNumber}<span aria-hidden="true">/52</span></span>
+    <span class="deck-card-back__state">Undiscovered</span>
+  </article>`;
+}
+
+/** Render one complete card face. All authored card text is escaped before entering HTML. */
 export function renderCardFace(card: Card, record?: CardFaceRecord, options?: CardFaceOptions): string {
   const territoryMeta = territories.find((territory) => territory.territory === card.territory);
   if (!territoryMeta) throw new Error(`Missing territory metadata for ${card.territory}.`);

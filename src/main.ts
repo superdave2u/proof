@@ -5,7 +5,7 @@ import { mountGalleryView } from "./views/gallery";
 import { mountArchiveView } from "./views/archive";
 import { mountCardDetail, type CardDetailAction, type EvidenceEntryState } from "./views/cardDetail";
 import { mountHashRouter, type AppRoute } from "./router";
-import { browserDeckStorage, createDeckStore, DeckStorageError } from "./state/store";
+import { browserDeckStorage, createDeckStore } from "./state/store";
 import "./style.css";
 
 const app = document.querySelector<HTMLDivElement>("#app");
@@ -38,7 +38,7 @@ if (app) {
     // another tab changes the card while the form is open).
     const detailEvidence: EvidenceEntryState = { open: false };
 
-    const showCardDetail = (cardId: string, shouldFocus: boolean, drawError?: string): void => {
+    const showCardDetail = (cardId: string, shouldFocus: boolean): void => {
       const card = DECK.find((item) => item.id === cardId);
       if (!card) {
         navigate("deck");
@@ -51,16 +51,8 @@ if (app) {
         card,
         store.getRecords()[cardId],
         {
-          onAction: async (action: CardDetailAction, selectedCard) => {
-            if (action === "draw") {
-              try {
-                if (!await store.draw(selectedCard.id)) return;
-                showCardDetail(selectedCard.id, true);
-              } catch (error) {
-                if (!(error instanceof DeckStorageError)) throw error;
-                showCardDetail(selectedCard.id, true, error.message);
-              }
-            } else if (action === "open-archive") {
+          onAction: (action: CardDetailAction) => {
+            if (action === "open-archive") {
               navigate("archive");
             } else {
               navigate("deck");
@@ -69,10 +61,9 @@ if (app) {
           onSubmitEvidence: (cardIdToSubmit, evidence) => store.submitEvidence(cardIdToSubmit, evidence),
         },
         detailEvidence,
-        drawError,
       );
       if (shouldFocus) {
-        const focusTarget = drawError ? ".card-detail__error" : ".card-detail";
+        const focusTarget = ".card-detail";
         cardDetailView.querySelector<HTMLElement>(focusTarget)?.focus();
       }
     };
@@ -108,12 +99,7 @@ if (app) {
       onOpenArchive: () => navigate("archive"),
       onOpenCard: (cardId) => navigate({ type: "card", cardId }),
     });
-    refreshGallery = mountGalleryView(
-      galleryView,
-      store,
-      () => navigate("deck"),
-      (cardId) => navigate({ type: "card", cardId }),
-    );
+    refreshGallery = mountGalleryView(galleryView, store, () => navigate("deck"));
     navigate = mountHashRouter(window, showRoute).navigate;
 
     store.subscribe(() => {

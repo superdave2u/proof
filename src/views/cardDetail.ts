@@ -1,4 +1,4 @@
-import { renderCardFace, type CardFaceRecord } from "../components/cardFace";
+import { renderCardBack, renderCardFace, type CardFaceRecord } from "../components/cardFace";
 import {
   buildEvidence,
   renderEvidenceForm,
@@ -9,7 +9,7 @@ import {
 import type { Card } from "../data/cards";
 import type { Evidence } from "../state/evidence";
 
-export type CardDetailAction = "draw" | "open-evidence" | "open-archive" | "back-to-deck";
+export type CardDetailAction = "open-evidence" | "open-archive" | "back-to-deck";
 
 /**
  * Evidence entry state is owned by the application (not the mount) so an
@@ -45,12 +45,13 @@ function escapeHtml(value: string): string {
 function renderPrimaryAction(cardId: string, state: CardFaceRecord["state"]): string {
   const escapedId = escapeHtml(cardId);
   switch (state) {
-    case "undiscovered":
-      return `<button class="card-detail__primary" type="button" data-action="draw" data-card-id="${escapedId}">Draw</button>`;
     case "drawn":
       return `<button class="card-detail__primary" type="button" data-action="open-evidence" data-card-id="${escapedId}">Deposit your Proof of Life</button>`;
     case "lived":
       return `<button class="card-detail__primary" type="button" data-action="open-archive" data-card-id="${escapedId}">View in the Archive</button>`;
+    case "undiscovered":
+      // The daily deal is the only way a card is revealed; no manual action here.
+      return "";
   }
 }
 
@@ -59,10 +60,11 @@ export function renderCardDetail(
   card: Card,
   record?: CardFaceRecord,
   evidence: EvidenceEntryState = { open: false },
-  drawError?: string,
 ): string {
   const state = record?.state ?? "undiscovered";
   const escapedId = escapeHtml(card.id);
+  const collectorNumber = String(card.number).padStart(2, "0");
+  const territoryName = card.territory.charAt(0).toUpperCase() + card.territory.slice(1);
 
   const evidenceSection = !evidence.open
     ? ""
@@ -70,12 +72,17 @@ export function renderCardDetail(
       ? renderRetainedEvidenceDraft(card, evidence.draft, evidence.error)
       : renderEvidenceForm(card, evidence.error, evidence.draft);
 
-  return `<section class="card-detail" data-card-id="${escapedId}" data-state="${state}" aria-label="Card detail" tabindex="-1">
+  // Undiscovered cards stay face-down everywhere, including deep links: no
+  // name, no quest, no flavor. The back is all the detail page shows.
+  const face = state === "undiscovered"
+    ? `${renderCardBack(card)}<p class="card-detail__locked" role="status">Still undiscovered. Its face is shown when the deck deals it.</p>`
+    : renderCardFace(card, record);
+
+  return `<section class="card-detail" data-card-id="${escapedId}" data-state="${state}" aria-label="${territoryName} card ${collectorNumber} of 52, ${state}" tabindex="-1">
     <nav class="card-detail__navigation" aria-label="Card detail navigation">
       <button type="button" data-action="back-to-deck">Return to the deck</button>
     </nav>
-    ${drawError ? `<p class="draw-storage-error card-detail__error" role="alert" tabindex="-1">${escapeHtml(drawError)}</p>` : ""}
-    <div class="card-detail__face">${renderCardFace(card, record)}</div>
+    <div class="card-detail__face">${face}</div>
     ${evidenceSection}
     ${evidence.message && !evidence.open ? renderEvidenceSuccess(evidence.message) : ""}
     ${evidence.open ? "" : `<div class="card-detail__actions" aria-label="Card actions">${renderPrimaryAction(card.id, state)}</div>`}
@@ -89,13 +96,12 @@ export function mountCardDetail(
   record: CardFaceRecord | undefined,
   handlers: CardDetailHandlers,
   evidence: EvidenceEntryState = { open: false },
-  drawError?: string,
 ): () => void {
   // Track the record locally so the post-submit re-render shows the new state
   // even before the application's store subscription remounts this view.
   let currentRecord = record;
   const render = (): void => {
-    container.innerHTML = renderCardDetail(card, currentRecord, evidence, drawError);
+    container.innerHTML = renderCardDetail(card, currentRecord, evidence);
   };
   render();
 
@@ -120,7 +126,7 @@ export function mountCardDetail(
     if (!(target instanceof Element)) return;
 
     const action = target.closest<HTMLButtonElement>("button[data-action]")?.dataset.action;
-    if (action === "draw" || action === "open-archive" || action === "back-to-deck") {
+    if (action === "open-archive" || action === "back-to-deck") {
       handlers.onAction(action, card);
     } else if (action === "open-evidence") {
       openEvidence();

@@ -1,9 +1,8 @@
 import { DECK, territories, type Card } from "../data/cards";
-import { renderCardFace } from "../components/cardFace";
-import { DeckStorageError, type DeckStore } from "../state/store";
+import { renderCardBack, renderCardFace } from "../components/cardFace";
+import type { DeckStore } from "../state/store";
 import {
   DEFAULT_FILTERS,
-  escapeHtml,
   filterDeck,
   stateFor,
   territoryLabel,
@@ -19,14 +18,7 @@ function renderCardTile(card: Card, records: DeckRecords): string {
   const collectorNumber = String(card.number).padStart(2, "0");
 
   if (state === "undiscovered") {
-    const symbol = territories.find((item) => item.territory === card.territory)?.symbol;
-
-    return `<article class="deck-card-back deck-card-back--${card.territory}" data-card-id="${card.id}" data-state="undiscovered" aria-label="${territoryLabel(card)} ${collectorNumber} of 52, undiscovered card">
-      <span class="deck-card-back__territory">${territoryLabel(card)}</span>
-      <span class="deck-card-back__sigil" aria-hidden="true">${symbol}</span>
-      <span class="deck-card-back__number">${collectorNumber}<span aria-hidden="true">/52</span></span>
-      <span class="deck-card-back__state">Undiscovered</span>
-    </article>`;
+    return renderCardBack(card);
   }
 
   // Face-up cards are compact previews: nothing below the flavor window. The
@@ -49,31 +41,6 @@ function renderCards(cards: readonly Card[], records: DeckRecords): string {
   }
 
   return cards.map((card) => renderCardTile(card, records)).join("");
-}
-
-function renderDrawRitual(records: DeckRecords, lastDrawnCardId?: string, drawError?: string): string {
-  const card = lastDrawnCardId ? DECK.find((item) => item.id === lastDrawnCardId) : undefined;
-  const hasEligibleCard = DECK.some((item) => records[item.id]?.state !== "lived");
-  const message = card
-    ? `You have been dealt: ${card.name}.`
-    : hasEligibleCard
-      ? "The deck is ready when you are."
-      : "Every adventure in this deck has been Lived.";
-  const revealedCard = card
-    ? `<div class="draw-reveal__face" data-draw-animation="true" role="group" tabindex="-1" aria-label="Dealt card: ${escapeHtml(card.name)}">${renderCardFace(card, records[card.id])}<button class="card-detail__open" type="button" data-action="open-card" data-card-id="${card.id}">Open card details</button></div>`
-    : "";
-
-  return `<section class="draw-ritual" aria-labelledby="draw-ritual-title">
-    <div class="draw-ritual__intro">
-      <p class="draw-ritual__eyebrow">The deal</p>
-      <h2 id="draw-ritual-title">Let the deck deal your next adventure.</h2>
-      <p>A random card, not a task list. Take the invitation at your own pace.</p>
-    </div>
-    <button class="draw-ritual__button" type="button" data-action="draw"${hasEligibleCard ? "" : " disabled"}>Draw an adventure</button>
-    <p class="draw-ritual__message" role="status" aria-live="polite">${escapeHtml(message)}</p>
-    ${drawError ? `<p class="draw-storage-error" data-draw-error="random" role="alert" tabindex="-1">${escapeHtml(drawError)}</p>` : ""}
-    ${revealedCard ? `<div class="draw-reveal">${revealedCard}</div>` : ""}
-  </section>`;
 }
 
 function resultSummary(visible: number, lived: number): string {
@@ -116,12 +83,10 @@ function stateFilter(value: string): DeckStateFilter {
     : "all";
 }
 
-/** Render the dedicated gallery page: the random deal plus the whole deck. */
+/** Render the dedicated gallery page: the whole deck, dealt only by the daily ritual. */
 export function renderGalleryView(
   records: DeckRecords = {},
   filters: DeckFilters = DEFAULT_FILTERS,
-  lastDrawnCardId?: string,
-  randomDrawError?: string,
 ): string {
   const livedCount = DECK.filter((card) => stateFor(card, records) === "lived").length;
   const visibleCards = filterDeck(DECK, records, filters);
@@ -138,7 +103,6 @@ export function renderGalleryView(
         <button class="archive-view__back" type="button" data-action="back-to-deck">Return to the deck</button>
       </div>
     </div>
-    ${renderDrawRitual(records, lastDrawnCardId, randomDrawError)}
     <div class="deck-controls" role="group" aria-label="Filter the deck">
       <label for="deck-filter-territory">Territory
         <select id="deck-filter-territory" name="territory">${renderTerritoryOptions(filters.territory)}</select>
@@ -157,13 +121,10 @@ export function mountGalleryView(
   container: HTMLElement,
   store: DeckStore,
   onBackToDeck: () => void,
-  onOpenCard: (cardId: string) => void,
 ): () => void {
   let filters = { ...DEFAULT_FILTERS };
-  let lastDrawnCardId: string | undefined;
-  let randomDrawError: string | undefined;
   const render = (): void => {
-    container.innerHTML = renderGalleryView(store.getRecords(), filters, lastDrawnCardId, randomDrawError);
+    container.innerHTML = renderGalleryView(store.getRecords(), filters);
   };
   render();
 
@@ -175,31 +136,6 @@ export function mountGalleryView(
       onBackToDeck();
       return;
     }
-    const openCardButton = target.closest<HTMLButtonElement>('[data-action="open-card"]');
-    if (openCardButton?.dataset.cardId) {
-      onOpenCard(openCardButton.dataset.cardId);
-      return;
-    }
-    if (!target.closest('[data-action="draw"]')) return;
-
-    randomDrawError = undefined;
-    void (async () => {
-      try {
-        const card = await store.draw();
-        if (!card) {
-          render();
-          return;
-        }
-        lastDrawnCardId = card.id;
-        render();
-        container.querySelector<HTMLElement>(".draw-reveal__face")?.focus();
-      } catch (error) {
-        if (!(error instanceof DeckStorageError)) throw error;
-        randomDrawError = error.message;
-        render();
-        container.querySelector<HTMLElement>('[data-draw-error="random"]')?.focus();
-      }
-    })();
   });
 
   container.addEventListener("change", (event: Event) => {

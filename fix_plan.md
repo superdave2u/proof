@@ -16,6 +16,8 @@ Legend: `[ ]` incomplete · `[x]` done (verified) — prune `[x]` items periodic
 
 ## Operator-done (verified)
 
+- [x] Layout pass: atmosphere panel fills the card body (width 100%); home daily card centered in a column like detail; gallery/archive rows stretch so cards align per row; random "Draw an adventure" removed everywhere (daily flip is the only reveal); deep-linked undiscovered cards render face-down with no content leak; store.draw() removed.
+
 - [x] GitHub Pages pipeline: `.github/workflows/deploy.yml` — npm ci → wheel → build → publish dist/ on push to main/tags; Vite `base: "./"`
 - [x] Card face: art window removed — replaced by a territory atmosphere panel (4:3, procedural pattern within the territory's color/tonal range + sigil watermark; prismatic wild, deep-black mythic); flavor text moved inside the panel, centered vertically and horizontally in the negative space. Art direction strings stay frozen in card specs and in `Card.art` for later reintroduction.
 - [x] Deck view: revealed (face-up) cards no longer show a "Drawn" state label — being face up implies it; the "Lived · in the Archive" note remains because it is not implied by the face.

@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import { DECK } from "../data/cards";
-import { renderCardFace } from "../components/cardFace";
 import { renderCardDetail } from "./cardDetail";
 
 /**
@@ -10,20 +9,21 @@ import { renderCardDetail } from "./cardDetail";
  * evidence as a clean record rather than turning it into a worn-out trophy.
  */
 describe("card detail view", () => {
-  it("shows complete card anatomy and a Draw action for undiscovered cards", () => {
+  it("keeps undiscovered cards face-down on deep links without leaking their adventure", () => {
+    // WHY: the daily deal is the only reveal; a shared hash link must not be
+    // able to snoop a card's name, quest, or flavor before the deck deals it.
     const card = DECK[0]!;
     const html = renderCardDetail(card);
 
     expect(html).toContain('class="card-detail" data-card-id="pleasure-01" data-state="undiscovered"');
-    expect(html).toContain(renderCardFace(card));
-    expect(html).toContain(`<h2 class="card-face__name">${card.name}</h2>`);
-    expect(html).toContain("<h3>Quest</h3>");
-    expect(html).toContain("<h3>Proof of Life</h3>");
-    expect(html).toContain("card-atmosphere--");
-    expect(html.includes("Special Ability")).toBe(Boolean(card.ability));
-    expect(html).toContain("<span>Reward</span>");
-    expect(html).toContain("card-atmosphere__flavor");
-    expect(html).toContain('data-action="draw" data-card-id="pleasure-01">Draw</button>');
+    expect(html).toContain('class="deck-card-back deck-card-back--pleasure"');
+    expect(html).toContain("Undiscovered");
+    expect(html).toContain("Still undiscovered. Its face is shown when the deck deals it.");
+    expect(html).not.toContain(card.name);
+    expect(html).not.toContain("<h3>Quest</h3>");
+    expect(html).not.toContain("<h3>Proof of Life</h3>");
+    expect(html).not.toContain("card-atmosphere__flavor");
+    expect(html).not.toContain('data-action="draw"');
     expect(html).toContain('data-action="back-to-deck"');
     expect(html).not.toContain("Deposit your Proof of Life");
   });
@@ -56,13 +56,14 @@ describe("card detail view", () => {
     expect(html).not.toContain('data-action="open-evidence"');
   });
 
-  it("keeps an undiscovered card intact and announces when its Draw action could not be saved", () => {
+  it("shows the full face for a drawn card without a draw action", () => {
     const card = DECK[0]!;
-    const html = renderCardDetail(card, undefined, { open: false }, "This draw could not be saved in this browser.");
+    const html = renderCardDetail(card, { state: "drawn", drawnAt: "2026-09-22T12:30:00.000Z" });
 
-    expect(html).toContain('data-state="undiscovered"');
-    expect(html).toContain('role="alert" tabindex="-1">This draw could not be saved in this browser.</p>');
-    expect(html).toContain('data-action="draw" data-card-id="pleasure-01">Draw</button>');
+    expect(html).toContain('data-state="drawn"');
+    expect(html).toContain(`<h2 class="card-face__name">${card.name}</h2>`);
+    expect(html).toContain("<h3>Quest</h3>");
+    expect(html).not.toContain('data-action="draw"');
   });
 
   it("renders the deposit form here — the only place a card can be marked Lived", () => {

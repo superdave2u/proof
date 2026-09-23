@@ -23,29 +23,11 @@ describe("gallery view", () => {
     expect(html).toContain("✵");
     expect(html).not.toContain(DECK[0]?.name);
     expect(html).toContain("0 of 52 cards lived.");
-    expect(html).toContain('data-action="draw"');
-    expect(html).toContain("Draw an adventure");
-    expect(html).not.toContain("You have been dealt:");
+    expect(html).not.toContain('data-action="draw"');
+    expect(html).not.toContain("Draw an adventure");
+    expect(html).not.toContain("draw-ritual");
     expect(html).not.toContain("daily-draw");
     expect(html).toContain('data-action="back-to-deck"');
-  });
-
-  it("reveals and announces only the card that was dealt", () => {
-    const card = DECK[16]!;
-    const html = renderGalleryView({ [card.id]: { state: "drawn", drawnAt: "2026-09-22T12:30:00.000Z" } }, undefined, card.id);
-
-    expect(html).toContain(`You have been dealt: ${card.name.replaceAll("'", "&#39;")}.`);
-    expect(html).toContain('class="draw-reveal__face" data-draw-animation="true" role="group" tabindex="-1"');
-    expect(html).toContain('data-action="open-card" data-card-id="curiosity-17">Open card details</button>');
-    expect(html).not.toContain(DECK[0]!.name);
-    expect(html).toContain('role="status" aria-live="polite"');
-  });
-
-  it("announces a failed random deal as an escaped, focusable alert", () => {
-    const html = renderGalleryView({}, undefined, undefined, "Random draw <failed>");
-
-    expect(html).toContain('data-draw-error="random" role="alert" tabindex="-1">Random draw &lt;failed&gt;</p>');
-    expect(html).not.toContain(">Random draw <failed>");
   });
 
   it("keeps the lived count deck-wide and shows face-up records as compact preview links", () => {

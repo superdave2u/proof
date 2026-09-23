@@ -59,7 +59,7 @@ UNDISCOVERED → DRAWN → LIVED
 ```
 
 - **UNDISCOVERED** — pristine, face-down in the deck.
-- **DRAWN** — the deal. A random draw must feel like *"you've just been dealt an adventure"*, not "pick an activity".
+- **DRAWN** — the deal. The daily flip must feel like *"you've just been dealt an adventure"*, not "pick an activity".
 - **LIVED** — the player completed the quest and deposited Proof of Life in the **Archive**.
 
 ## 6. The Archive & the record of a life
@@ -74,10 +74,9 @@ The Archive is the collection of Lived cards. When a card becomes Lived, the pla
 
 ## 7. Mechanics
 
-- **Random draw** — from all non-Lived cards.
-- **Daily draw** — deterministic per calendar date (same card all day, no rerolls).
+- **Daily draw (the only reveal)** — one date-seeded card per day, deterministic, no rerolls. The daily flip is the only way a card becomes DRAWN; there is no manual draw button anywhere in the app.
 - **No deadlines, no streak requirements, no completion percentage pressure.** Progress is measured only in evidence accumulated.
-- **Wild Cards** — drawn like any other; visually spectacular (prismatic/iridescent).
+- **Wild Cards** — arrive through the daily deal like any other; visually spectacular (prismatic/iridescent).
 
 ## 8. Philosophy (must be preserved in all copy)
 

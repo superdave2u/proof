@@ -41,7 +41,16 @@ describe("app shell accessibility foundations", () => {
     expect(styles).toContain(".card-section h3, .card-ability h3 {");
     expect(styles).toMatch(/\.card-section h3, \.card-ability h3 \{[^}]*color: var\(--territory-text\);/s);
     expect(styles).toMatch(/\.card-atmosphere__flavor \{[^}]*color: var\(--territory-text\);/s);
+    expect(styles).toMatch(/\.card-atmosphere \{[^}]*width: 100%;/s);
     expect(styles).toMatch(/\.card-atmosphere \{[^}]*aspect-ratio: 4 \/ 3;/s);
+    // WHY: the flavor window must fill the card body (not shrink to its capped
+    // height), the home daily card sits in a centered column like detail, and
+    // gallery/archive rows align their cards vertically.
+    expect(styles).toMatch(/\.daily-draw \{[^}]*width: min\(100%, 480px\);/s);
+    expect(styles).toMatch(/\.daily-draw \{[^}]*margin: 2\.5rem auto 0;/s);
+    expect(styles).toMatch(/\.deck-grid \{[^}]*align-items: stretch;/s);
+    expect(styles).toMatch(/\.deck-card-back \{[^}]*height: 100%;/s);
+    expect(styles).toMatch(/\.archive-grid \{[^}]*align-items: stretch;/s);
   });
 
   it("preserves visible keyboard focus, narrow-screen layout, and reduced-motion overrides", () => {

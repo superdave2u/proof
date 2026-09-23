@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { DECK } from "../data/cards";
-import { renderCardFace } from "./cardFace";
+import { renderCardBack, renderCardFace } from "./cardFace";
 
 function escapeHtml(value: string): string {
   return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
@@ -40,6 +40,21 @@ describe("renderCardFace", () => {
       }
       expect(html).toContain(`rarity--${card.rarity}`);
     }
+  });
+
+  it("renders a face-down back that conceals the adventure completely", () => {
+    // WHY: undiscovered cards must be face-down everywhere (gallery tiles and
+    // deep-linked detail pages) without leaking name, quest, or flavor.
+    const card = DECK[0]!;
+    const html = renderCardBack(card);
+
+    expect(html).toContain('class="deck-card-back deck-card-back--pleasure"');
+    expect(html).toContain("Pleasure");
+    expect(html).toContain("01");
+    expect(html).toContain("Undiscovered");
+    expect(html).not.toContain(card.name);
+    expect(html).not.toContain(card.quest[0]!);
+    expect(html).not.toContain(card.flavor);
   });
 
   it("fills the atmosphere panel with flavor text instead of artwork", () => {

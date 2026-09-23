@@ -19,7 +19,6 @@ export interface DeckStore {
   getRecords(): DeckRecords;
   getDailyDraw(): Card | undefined;
   drawDaily(): Promise<Card | undefined>;
-  draw(cardId?: string): Promise<Card | undefined>;
   submitEvidence(cardId: string, evidence: Evidence): Promise<boolean>;
   subscribe(listener: () => void): () => void;
 }
@@ -161,12 +160,11 @@ function saveDeckRecords(
 }
 
 /**
- * Create the client-side deck store. Random draws choose from every card not yet
- * Lived; the daily draw is date-seeded and persisted so today's deal cannot reroll.
+ * Create the client-side deck store. The date-seeded daily deal is the only
+ * way a card becomes Drawn; it is persisted so today's deal cannot reroll.
  */
 export function createDeckStore(
   storage?: KeyValueStorage,
-  random: () => number = Math.random,
   now: () => Date = () => new Date(),
   decodeArtifact?: ArtifactImageDecoder,
 ): DeckStore {
@@ -273,42 +271,6 @@ export function createDeckStore(
       listeners.add(listener);
       return () => listeners.delete(listener);
     },
-    draw: (cardId) => transact(() => {
-      let card: Card | undefined;
-      if (cardId !== undefined) {
-        card = cardById(cardId);
-        if (!card || records[card.id]?.state === "lived") return undefined;
-      } else {
-        const eligible = DECK.filter((item) => records[item.id]?.state !== "lived");
-        if (eligible.length === 0) return undefined;
-
-        const sample = random();
-        if (!Number.isFinite(sample) || sample < 0 || sample >= 1) {
-          throw new RangeError("The random source must return a value in [0, 1).");
-        }
-        card = eligible[Math.floor(sample * eligible.length)];
-      }
-      if (!card) return undefined;
-
-      const previous = records[card.id];
-      if (previous?.state !== "drawn") {
-        const previousRecords = records;
-        records = {
-          ...records,
-          [card.id]: { state: "drawn", drawnAt: now().toISOString() },
-        };
-        if (!persist()) {
-          records = previousRecords;
-          throw new DeckStorageError();
-        }
-        const saved = loadDeckState(storage);
-        const merged = mergeDeckStates(currentState(), saved);
-        records = merged.records;
-        dailyDraw = merged.dailyDraw;
-        if (JSON.stringify(previousRecords) !== JSON.stringify(records)) notify();
-      }
-      return card;
-    }),
     submitEvidence: async (cardId, evidence) => {
       if (!deckIds.has(cardId) || records[cardId]?.state !== "drawn" || !isValidEvidence(evidence)) return false;
       if (evidence.artifact !== undefined && !await isDecodableArtifactDataUrl(evidence.artifact, decodeArtifact)) return false;

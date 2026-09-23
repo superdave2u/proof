@@ -63,11 +63,11 @@ interface DeckState { version: 1; cards: Record<string, CardRecord>; dailyDraw?:
 ## 5. Screens / UX flow
 
 1. **Home** (`#/deck`) — the daily card only: the date-seeded reveal (deterministic, shown once per day) plus small links to the Gallery and the Archive. Nothing else lives here.
-2. **Gallery** (`#/gallery`) — the whole deck on its own page, modeled on the Archive: the random deal ritual, all 52 cards (backs pristine, fronts by state) with territory/state filters and the deck-wide lived count.
-3. **Card detail** (`#/card/<id>`) — full anatomy; actions: `Draw` (undiscovered → drawn), `Deposited my Proof of Life` (opens evidence form: date, note, optional artifact photo → lived), `View in the Archive` (lived). Flavor moment of quiet: the flavor text reveals inside the atmosphere panel with a gentle fade.
+2. **Gallery** (`#/gallery`) — the whole deck on its own page, modeled on the Archive: all 52 cards (backs pristine, fronts by state) with territory/state filters, the deck-wide lived count, and rows whose cards align vertically with their peers. There is no manual draw button anywhere — the daily deal is the only reveal.
+3. **Card detail** (`#/card/<id>`) — revealed cards show the full anatomy with their state action (`Deposited my Proof of Life` for drawn → evidence form; `View in the Archive` for lived). Undiscovered cards stay face-down on deep links: the page shows the card back (territory, number, Undiscovered) and a status note — never the name, quest, or flavor. The atmosphere panel fills the card body width, flavor centered.
 4. **Archive** (`#/archive`) — Lived cards with their evidence; the collected-evidence gallery. The emotional payoff screen.
 
-The draw ritual lives on the Gallery page (it deals from the deck); the home page stays a single daily card.
+The home page holds only the daily card in a centered column (like the detail view's card column); the daily flip is the sole entry into DRAWN.
 
 ## 6. Lived presentation — no weathering (operator decision)
 
