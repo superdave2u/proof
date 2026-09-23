@@ -15,7 +15,7 @@ Borrow the *feel* of a deep collectible card game. **Do not copy Magic: The Gath
 2. Card name (display serif).
 3. Type line: `Adventure • Mode` (small caps).
 4. **Territory atmosphere panel (4:3)** — no rendered artwork in this release. A procedural background pattern within the territory's color and tonal range: layered washes, woven texture, and the territory sigil as a large watermark; wilds get a prismatic sheen, mythic stays deep black with a violet edge glow.
-5. **Flavor text** — italic, territory-tinted, rendered *inside* the atmosphere panel, flexing into the 4:3 negative space on a bottom scrim.
+5. **Flavor text** — italic, territory-tinted, rendered *inside* the atmosphere panel, centered vertically and horizontally in the 4:3 negative space over a soft radial scrim.
 6. **Quest** block.
 7. **Proof of Life** block.
 8. **Special Ability** box (if present) — distinct background, ability name bold.

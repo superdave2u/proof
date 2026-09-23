@@ -109,8 +109,12 @@ function renderCardTile(
     ? `<div class="deck-card-revealed__actions"><button class="card-detail__open" type="button" data-action="open-card" data-card-id="${card.id}">Open card details</button><button class="evidence-entry__open" type="button" data-action="open-evidence" data-card-id="${card.id}">Deposit my Proof of Life</button></div>${evidenceCardId === card.id ? renderEvidenceForm(card, evidenceError, evidenceDraft) : ""}`
     : `<button class="card-detail__open" type="button" data-action="open-card" data-card-id="${card.id}">Open card details</button>${state === "lived" && evidenceCardId === card.id ? renderRetainedEvidenceDraft(card, evidenceDraft, evidenceError) : ""}`;
 
+  // Revealed cards are face up, so "Drawn" is implied and never labeled.
+  // "Lived · in the Archive" is not implied by the face, so it stays.
+  const stateNote = state === "lived" ? '<p class="deck-card-revealed__state">Lived · in the Archive</p>' : "";
+
   return `<div class="deck-card-revealed" data-card-id="${card.id}" data-state="${state}">
-    <p class="deck-card-revealed__state">${state === "lived" ? "Lived · in the Archive" : "Drawn"}</p>
+    ${stateNote}
     ${renderCardFace(card, record)}
     ${evidenceControls}
   </div>`;

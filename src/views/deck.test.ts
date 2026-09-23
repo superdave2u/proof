@@ -98,7 +98,11 @@ describe("deck view", () => {
     expect(html).toContain("Flowers for No Occasion");
     expect(html).toContain("Found a quiet color.");
     expect(drawnHtml).toContain('<div class="deck-card-revealed" data-card-id="pleasure-01" data-state="drawn">');
-    expect(drawnHtml).toContain("Drawn");
+    // WHY: a revealed card is face up, so the drawn state is implied and must
+    // not be labeled on the card; the lived note is not implied and must remain.
+    // (The state filter's "Drawn" option is a control, not a card label.)
+    expect(drawnHtml).not.toContain("deck-card-revealed__state");
+    expect(html).toContain("Lived · in the Archive");
     expect(drawnHtml).toContain('data-action="open-card" data-card-id="pleasure-01">Open card details</button>');
     expect(html).toContain('aria-live="polite"');
     expect(html).toContain('for="deck-filter-territory"');
