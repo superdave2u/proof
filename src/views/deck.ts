@@ -229,7 +229,7 @@ export function renderDeckView(
     <div class="deck-view__heading">
       <div>
         <p class="deck-view__eyebrow">The deck</p>
-        <h2 id="deck-title">Your next adventure is in here.</h2>
+        <h2 id="deck-title" tabindex="-1">Your next adventure is in here.</h2>
         <p class="deck-view__description">A card is an invitation, not an obligation. The evidence is the life that happens along the way.</p>
       </div>
       <div class="deck-view__actions">

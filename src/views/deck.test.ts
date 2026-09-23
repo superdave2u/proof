@@ -15,6 +15,7 @@ describe("deck view", () => {
   it("shows all 52 cards as territory-marked backs without leaking undiscovered names", () => {
     const html = renderDeckView();
 
+    expect(html).toContain('<h2 id="deck-title" tabindex="-1">');
     expect((html.match(/class="deck-card-back /g) ?? [])).toHaveLength(52);
     expect((html.match(/data-card-id=/g) ?? [])).toHaveLength(52);
     expect(html).toContain("Pleasure");

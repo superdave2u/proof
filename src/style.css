@@ -12,6 +12,12 @@
   --connection: #1e8a5a;
   --wonder: #7a3fc9;
   --wild: #b8a4ee;
+  --territory-text-pleasure: #ff9ab0;
+  --territory-text-curiosity: #a9c0ff;
+  --territory-text-beauty: #f6da83;
+  --territory-text-connection: #8fe0b5;
+  --territory-text-wonder: #c7a6ff;
+  --territory-text-wild: #d6c7ff;
   --paper: #f5f1e8;
   --muted: #c4bdaf;
   --ink: #17171c;
@@ -72,6 +78,7 @@ button, input, textarea { font: inherit; }
 .deck-view__actions { display: flex; flex: 0 0 auto; align-items: center; gap: 1rem; }
 .deck-view__eyebrow { margin: 0 0 .5rem; color: #d8c9a4; font-size: .68rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
 .deck-view__heading h2 { margin: 0; font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif; font-size: clamp(1.65rem, 4vw, 2.45rem); font-weight: 500; line-height: 1.16; text-wrap: balance; }
+.deck-view__heading h2:focus { outline: 3px solid #e4c987; outline-offset: 5px; border-radius: 2px; }
 .deck-view__description { max-width: 39rem; margin: .65rem 0 0; color: var(--muted); font-size: .91rem; line-height: 1.6; }
 .deck-view__lived-count { flex: 0 0 auto; margin: 0 0 .15rem; color: #d4cbb9; font-size: .76rem; letter-spacing: .08em; text-align: right; text-transform: uppercase; }
 .deck-view__lived-count span { color: var(--paper); font-family: Georgia, serif; font-size: 2rem; letter-spacing: 0; }
@@ -170,6 +177,7 @@ button, input, textarea { font: inherit; }
 
 .card-face {
   --territory-color: var(--pleasure);
+  --territory-text: var(--territory-text-pleasure);
   --territory-wash: rgb(200 30 79 / 19%);
   position: relative;
   isolation: isolate;
@@ -182,12 +190,12 @@ button, input, textarea { font: inherit; }
   box-shadow: 0 22px 70px rgb(0 0 0 / 44%), 0 0 34px var(--territory-wash);
 }
 
-.card-face--pleasure { --territory-color: var(--pleasure); --territory-wash: rgb(200 30 79 / 18%); }
-.card-face--curiosity { --territory-color: var(--curiosity); --territory-wash: rgb(30 79 200 / 20%); }
-.card-face--beauty { --territory-color: var(--beauty); --territory-wash: rgb(201 162 39 / 17%); }
-.card-face--connection { --territory-color: var(--connection); --territory-wash: rgb(30 138 90 / 19%); }
-.card-face--wonder { --territory-color: var(--wonder); --territory-wash: rgb(122 63 201 / 20%); }
-.card-face--wild { --territory-color: var(--wild); --territory-wash: rgb(175 144 245 / 21%); }
+.card-face--pleasure { --territory-color: var(--pleasure); --territory-text: var(--territory-text-pleasure); --territory-wash: rgb(200 30 79 / 18%); }
+.card-face--curiosity { --territory-color: var(--curiosity); --territory-text: var(--territory-text-curiosity); --territory-wash: rgb(30 79 200 / 20%); }
+.card-face--beauty { --territory-color: var(--beauty); --territory-text: var(--territory-text-beauty); --territory-wash: rgb(201 162 39 / 17%); }
+.card-face--connection { --territory-color: var(--connection); --territory-text: var(--territory-text-connection); --territory-wash: rgb(30 138 90 / 19%); }
+.card-face--wonder { --territory-color: var(--wonder); --territory-text: var(--territory-text-wonder); --territory-wash: rgb(122 63 201 / 20%); }
+.card-face--wild { --territory-color: var(--wild); --territory-text: var(--territory-text-wild); --territory-wash: rgb(175 144 245 / 21%); }
 
 .card-face--wild::before {
   position: absolute;
@@ -338,7 +346,7 @@ button, input, textarea { font: inherit; }
 .card-section { margin: .78rem 0 0; }
 .card-section h3, .card-ability h3 {
   margin: 0 0 .28rem;
-  color: color-mix(in srgb, var(--territory-color), white 30%);
+  color: var(--territory-text);
   font-size: .65rem;
   font-weight: 700;
   letter-spacing: .15em;
@@ -348,14 +356,14 @@ button, input, textarea { font: inherit; }
 .card-section--quest ol { padding-left: 1.2rem; }
 .card-section--quest li { padding-left: .13rem; }
 .card-section--quest li + li { margin-top: .12rem; }
-.card-section--quest li::marker { color: color-mix(in srgb, var(--territory-color), white 30%); font-weight: 700; }
+.card-section--quest li::marker { color: var(--territory-text); font-weight: 700; }
 .card-ability { margin-top: .82rem; padding: .65rem .72rem; border: 1px solid color-mix(in srgb, var(--territory-color), transparent 52%); border-radius: 7px; background: color-mix(in srgb, var(--territory-color), #19191e 89%); }
 .card-ability h3 { display: flex; justify-content: space-between; }
-.card-ability h3 span { color: color-mix(in srgb, var(--territory-color), white 28%); }
+.card-ability h3 span { color: var(--territory-text); }
 .card-ability strong { color: #fff; }
 .card-face__reward { margin: .78rem 0 0; color: #e0d8c8; font-size: .7rem; line-height: 1.45; }
 .card-face__reward span { margin-right: .25rem; color: #d9c89f; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
-.card-face__flavor { margin: .85rem 0 .1rem; padding: .68rem 0 .1rem; border-top: 1px solid rgb(255 255 255 / 12%); color: color-mix(in srgb, var(--territory-color), white 38%); font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif; font-size: .93rem; font-style: italic; line-height: 1.4; text-align: center; }
+.card-face__flavor { margin: .85rem 0 .1rem; padding: .68rem 0 .1rem; border-top: 1px solid rgb(255 255 255 / 12%); color: var(--territory-text); font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif; font-size: .93rem; font-style: italic; line-height: 1.4; text-align: center; }
 
 .card-face--wild .card-face__header { background: linear-gradient(105deg, #69435d, #555a79 49%, #416c66); }
 .card-face--mythic .card-face__header { background: linear-gradient(105deg, #221d2b, #121217 53%, #272032); }

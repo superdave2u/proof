@@ -1,6 +1,7 @@
 import { describeApp } from "./app";
 import { mountDeckView } from "./views/deck";
 import { mountArchiveView } from "./views/archive";
+import { mountHashRouter, type AppRoute } from "./router";
 import { browserDeckStorage, createDeckStore } from "./state/store";
 import "./style.css";
 
@@ -21,19 +22,20 @@ if (app) {
   if (deckView && archiveView) {
     const store = createDeckStore(browserDeckStorage());
     let refreshArchive = (): void => undefined;
-    const showArchive = (): void => {
-      refreshArchive();
-      deckView.hidden = true;
-      archiveView.hidden = false;
-      archiveView.querySelector<HTMLElement>("#archive-title")?.focus();
-    };
-    const showDeck = (): void => {
-      archiveView.hidden = true;
-      deckView.hidden = false;
-      deckView.querySelector<HTMLElement>("#deck-title")?.focus();
+    let navigate = (_route: AppRoute): void => undefined;
+    const showRoute = (route: AppRoute, shouldFocus: boolean): void => {
+      const showArchive = route === "archive";
+      if (showArchive) refreshArchive();
+      deckView.hidden = showArchive;
+      archiveView.hidden = !showArchive;
+      if (shouldFocus) {
+        const heading = showArchive ? "#archive-title" : "#deck-title";
+        (showArchive ? archiveView : deckView).querySelector<HTMLElement>(heading)?.focus();
+      }
     };
 
-    refreshArchive = mountArchiveView(archiveView, store, showDeck);
-    mountDeckView(deckView, store, showArchive);
+    refreshArchive = mountArchiveView(archiveView, store, () => navigate("deck"));
+    mountDeckView(deckView, store, () => navigate("archive"));
+    navigate = mountHashRouter(window, showRoute).navigate;
   }
 }
