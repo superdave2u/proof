@@ -1,11 +1,291 @@
 :root {
-  font-family: system-ui, sans-serif;
-  color-scheme: light dark;
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #f5f1e8;
+  background: #101014;
+  color-scheme: dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  --pleasure: #c81e4f;
+  --curiosity: #1e4fc8;
+  --beauty: #c9a227;
+  --connection: #1e8a5a;
+  --wonder: #7a3fc9;
+  --wild: #b8a4ee;
+  --paper: #f5f1e8;
+  --muted: #c4bdaf;
+  --ink: #17171c;
 }
 
+* { box-sizing: border-box; }
+
 body {
-  margin: 0;
-  display: grid;
-  place-items: center;
+  min-width: 320px;
   min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(ellipse at 50% -12%, rgb(122 63 201 / 14%), transparent 52rem),
+    #101014;
+}
+
+button, input, textarea { font: inherit; }
+
+.app-shell {
+  width: min(100% - 2rem, 76rem);
+  margin-inline: auto;
+  padding: clamp(2.5rem, 8vh, 5rem) 0 4rem;
+}
+
+.app-intro {
+  max-width: 42rem;
+  margin: 0 auto 2.5rem;
+  text-align: center;
+}
+
+.app-intro__eyebrow {
+  margin: 0 0 .75rem;
+  color: #d8c9a4;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+}
+
+.app-intro h1 {
+  margin: 0;
+  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  font-size: clamp(2.3rem, 7vw, 4.3rem);
+  font-weight: 600;
+  letter-spacing: -.045em;
+}
+
+.app-intro__copy {
+  max-width: 33rem;
+  margin: .9rem auto 0;
+  color: #c4bdaf;
+  font-size: .98rem;
+  line-height: 1.7;
+}
+
+.featured-card {
+  display: flex;
+  justify-content: center;
+}
+
+.card-face {
+  --territory-color: var(--pleasure);
+  --territory-wash: rgb(200 30 79 / 19%);
+  position: relative;
+  isolation: isolate;
+  width: min(100%, 390px);
+  overflow: hidden;
+  padding: 5px;
+  border: 1px solid color-mix(in srgb, var(--territory-color), white 18%);
+  border-radius: 23px;
+  background: #201f25;
+  box-shadow: 0 22px 70px rgb(0 0 0 / 44%), 0 0 34px var(--territory-wash);
+}
+
+.card-face--pleasure { --territory-color: var(--pleasure); --territory-wash: rgb(200 30 79 / 18%); }
+.card-face--curiosity { --territory-color: var(--curiosity); --territory-wash: rgb(30 79 200 / 20%); }
+.card-face--beauty { --territory-color: var(--beauty); --territory-wash: rgb(201 162 39 / 17%); }
+.card-face--connection { --territory-color: var(--connection); --territory-wash: rgb(30 138 90 / 19%); }
+.card-face--wonder { --territory-color: var(--wonder); --territory-wash: rgb(122 63 201 / 20%); }
+.card-face--wild { --territory-color: var(--wild); --territory-wash: rgb(175 144 245 / 21%); }
+
+.card-face--wild::before {
+  position: absolute;
+  z-index: -1;
+  inset: -40%;
+  background: conic-gradient(from 25deg, #ff6b89, #ffdb78, #72e2c1, #7a9bff, #d17dff, #ff6b89);
+  content: "";
+  animation: foil-turn 18s linear infinite;
+}
+
+.card-face--legendary { background: linear-gradient(145deg, #27222f, #15151a 60%, #332641); }
+.card-face--mythic { background: #07070a; border-color: rgb(205 189 255 / 58%); box-shadow: 0 22px 70px #000, 0 0 25px rgb(158 135 219 / 13%); }
+.card-face--mythic::before { opacity: .3; filter: blur(15px); }
+
+.card-face__header {
+  position: relative;
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: space-between;
+  gap: .4rem;
+  overflow: hidden;
+  padding: .55rem .85rem;
+  border-radius: 17px 17px 7px 7px;
+  background: linear-gradient(105deg, color-mix(in srgb, var(--territory-color), #15151b 30%), color-mix(in srgb, var(--territory-color), #17161c 63%));
+}
+
+.card-face__collector {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .35rem;
+  color: #fff;
+  font-size: .69rem;
+  font-weight: 700;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+.card-face__territory { white-space: nowrap; }
+
+.rarity {
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  color: #fff;
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.rarity__gem { color: #e9e1cc; font-size: .75rem; text-shadow: 0 0 7px currentColor; }
+.rarity--common .rarity__gem { color: #eee8dc; }
+.rarity--uncommon .rarity__gem { color: #8bd5ad; }
+.rarity--rare .rarity__gem { color: #f2cb71; }
+.rarity--legendary .rarity__gem, .rarity--mythic .rarity__gem { color: #e8caff; }
+.rarity--legendary, .rarity--mythic { text-shadow: 0 0 9px rgb(255 255 255 / 52%); }
+
+.card-face__sigil {
+  position: absolute;
+  right: .75rem;
+  color: rgb(255 255 255 / 13%);
+  font-family: Georgia, serif;
+  font-size: 3rem;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.card-face__body {
+  position: relative;
+  padding: 1rem .95rem .8rem;
+  border-radius: 0 0 17px 17px;
+  background: linear-gradient(165deg, #242329, #19191e 42%, #151519);
+}
+
+.card-face--mythic .card-face__body { background: linear-gradient(165deg, #141318, #08080b 60%, #111016); }
+
+.card-face__name {
+  margin: .05rem 0 .28rem;
+  color: #fffaf0;
+  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  font-size: clamp(1.45rem, 6vw, 1.85rem);
+  font-weight: 600;
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+.card-face__type {
+  margin: 0 0 .8rem;
+  color: #d5cfc4;
+  font-size: .66rem;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+}
+
+.card-art {
+  position: relative;
+  height: clamp(155px, 50vw, 195px);
+  overflow: hidden;
+  margin: 0 0 .9rem;
+  border: 1px solid rgb(255 255 255 / 17%);
+  border-radius: 8px;
+  background:
+    radial-gradient(ellipse at 50% 43%, var(--territory-wash), transparent 58%),
+    linear-gradient(155deg, #34313c 0%, #20232c 47%, #17171d 100%);
+  box-shadow: inset 0 0 25px rgb(0 0 0 / 25%);
+}
+
+.card-art::before, .card-art::after, .card-art__glow, .card-art__horizon, .card-art__subject, .card-art__detail { position: absolute; display: block; pointer-events: none; }
+.card-art::before {
+  inset: 0;
+  background: radial-gradient(ellipse at 70% 15%, rgb(255 215 139 / 40%), transparent 35%), linear-gradient(180deg, transparent 42%, rgb(10 11 17 / 70%));
+  content: "";
+}
+.card-art::after { inset: auto 0 0; height: 32%; background: linear-gradient(0deg, rgb(9 9 13 / 65%), transparent); content: ""; }
+.card-art__glow { top: 8%; right: 13%; width: 38%; height: 55%; border-radius: 50%; background: radial-gradient(ellipse, rgb(255 218 154 / 34%), transparent 68%); filter: blur(8px); }
+.card-art__horizon { right: -10%; bottom: 17%; left: -10%; height: 35%; border-radius: 50% 50% 0 0; background: linear-gradient(180deg, rgb(31 28 37 / 20%), rgb(12 13 18 / 76%)); }
+.card-art__subject { z-index: 1; top: 30%; left: 42%; width: 20%; height: 34%; border-radius: 48% 48% 35% 35%; background: linear-gradient(125deg, #b98460, #513846 55%, #20212a); box-shadow: 0 9px 17px rgb(0 0 0 / 30%); }
+.card-art__detail { z-index: 2; right: 18%; bottom: 16%; left: 18%; height: 1px; background: rgb(255 228 181 / 48%); box-shadow: 0 0 12px rgb(255 215 141 / 75%); }
+
+.card-art--food .card-art__subject { top: 46%; left: 35%; width: 31%; height: 22%; border: 7px solid #d5b890; border-radius: 50%; background: radial-gradient(ellipse, #6b2522 0 27%, #9a5739 29% 47%, #362e35 51%); box-shadow: 0 15px 17px #09090d; }
+.card-art--food .card-art__detail { right: 20%; bottom: 31%; left: 20%; height: 2px; background: #ebc078; box-shadow: 0 -18px 18px rgb(255 220 153 / 30%); }
+.card-art--sky { background: radial-gradient(circle at 70% 22%, #f5d796 0 4%, transparent 4.5%), radial-gradient(circle at 17% 20%, #fff 0 1px, transparent 2px), radial-gradient(circle at 28% 33%, #fff 0 1px, transparent 2px), radial-gradient(circle at 88% 39%, #fff 0 1px, transparent 2px), linear-gradient(180deg, #1c233e, #6a526a 62%, #242332); }
+.card-art--sky .card-art__subject { top: 17%; left: 63%; width: 13%; height: 25%; border-radius: 50%; background: radial-gradient(circle at 37% 35%, #fff1c4, #dfa96d 68%, transparent 72%); box-shadow: 0 0 35px #f0bb74; }
+.card-art--sky .card-art__horizon { bottom: 10%; height: 42%; background: linear-gradient(170deg, transparent 10%, #22212d 11% 32%, transparent 33%), linear-gradient(180deg, #393040, #10131d); }
+.card-art--water { background: radial-gradient(ellipse at 68% 23%, rgb(255 222 174 / 70%), transparent 14%), linear-gradient(180deg, #31344c 0%, #527889 47%, #142f3d 49%, #0c1a25 100%); }
+.card-art--water .card-art__horizon { bottom: 14%; height: 28%; border-radius: 0; background: repeating-linear-gradient(180deg, transparent 0 9px, rgb(151 215 220 / 25%) 10px, transparent 12px); }
+.card-art--water .card-art__subject { top: 33%; left: 43%; width: 13%; height: 30%; border-radius: 50% 50% 35% 35%; background: linear-gradient(90deg, #d9ad88, #8a6473); }
+.card-art--flower .card-art__subject { top: 17%; left: 40%; width: 23%; height: 29%; border-radius: 50%; background: radial-gradient(circle at 50% 50%, #e8c46b 0 17%, transparent 19%), radial-gradient(ellipse at 50% 5%, #d87488 0 24%, transparent 27%), radial-gradient(ellipse at 96% 50%, #d87488 0 24%, transparent 27%), radial-gradient(ellipse at 50% 95%, #d87488 0 24%, transparent 27%), radial-gradient(ellipse at 4% 50%, #d87488 0 24%, transparent 27%); filter: drop-shadow(0 0 13px rgb(236 162 133 / 58%)); }
+.card-art--flower .card-art__detail { right: 49%; bottom: 18%; left: 49%; height: 42%; background: linear-gradient(#6f9b75, #314f43); }
+.card-art--book .card-art__subject { top: 26%; left: 37%; width: 27%; height: 43%; border: 1px solid #ddc394; border-radius: 3px 7px 7px 3px; background: linear-gradient(90deg, #4b344b 0 8%, #bb9662 9% 12%, #293752 13% 100%); box-shadow: 12px 5px 0 -2px #684852, 0 9px 16px #111; transform: rotate(-8deg); }
+.card-art--book .card-art__detail { top: 36%; right: 40%; bottom: auto; left: 42%; height: 1px; background: #eed9a4; box-shadow: 0 8px #eed9a4, 0 16px #eed9a4; }
+.card-art--architecture .card-art__subject { top: 17%; left: 36%; width: 28%; height: 62%; border: 7px solid #b89a7b; border-bottom: 0; border-radius: 48% 48% 0 0; background: linear-gradient(90deg, rgb(25 26 35 / 70%), rgb(238 190 122 / 28%), rgb(25 26 35 / 70%)); box-shadow: -36px 10px 0 -27px #9b826f, 36px 10px 0 -27px #9b826f; }
+.card-art--architecture .card-art__horizon { bottom: 11%; height: 18%; background: linear-gradient(180deg, transparent, #14151d); }
+.card-art--city .card-art__subject { top: 28%; left: 42%; width: 17%; height: 43%; border-radius: 2px; background: repeating-linear-gradient(0deg, transparent 0 12px, rgb(244 198 125 / 70%) 13px 15px), linear-gradient(90deg, #2a2936, #454050); box-shadow: -43px 21px 0 -8px #262633, 46px 9px 0 -3px #383443; }
+.card-art--city .card-art__detail { bottom: 18%; height: 2px; }
+.card-art--transport .card-art__subject { top: 38%; left: 31%; width: 38%; height: 25%; border: 2px solid #c5a884; border-radius: 9px 9px 3px 3px; background: linear-gradient(180deg, #9eb0b0 0 43%, #394551 45%); box-shadow: -4px 13px 0 -4px #171820, 4px 13px 0 -4px #171820; }
+.card-art--transport .card-art__horizon { bottom: 18%; height: 12%; background: linear-gradient(90deg, transparent, #dec289, transparent); }
+.card-art--hands .card-art__subject { top: 35%; left: 39%; width: 25%; height: 25%; border-radius: 45% 45% 30% 30%; background: linear-gradient(120deg, #deb28e, #76534d 65%, #38313b); transform: rotate(-15deg); }
+.card-art--hands .card-art__detail { right: 28%; bottom: 22%; left: 30%; height: 2px; background: #e8c98e; box-shadow: 0 0 13px #ffd891; }
+.card-art--interior .card-art__subject { top: 23%; left: 40%; width: 22%; height: 39%; border: 5px solid #b3906d; border-bottom-width: 8px; border-radius: 2px; background: linear-gradient(145deg, rgb(238 185 119 / 56%), rgb(54 57 76 / 62%)); box-shadow: 0 12px 17px #101016; }
+.card-art--interior .card-art__detail { right: 20%; bottom: 25%; left: 20%; height: 4px; background: #a9805a; box-shadow: 0 0 15px rgb(251 200 134 / 55%); }
+
+.card-section { margin: .78rem 0 0; }
+.card-section h3, .card-ability h3 {
+  margin: 0 0 .28rem;
+  color: color-mix(in srgb, var(--territory-color), white 30%);
+  font-size: .65rem;
+  font-weight: 700;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+}
+.card-section p, .card-ability p, .card-section ol { margin: 0; color: #f0ece4; font-size: .79rem; line-height: 1.48; }
+.card-section--quest ol { padding-left: 1.2rem; }
+.card-section--quest li { padding-left: .13rem; }
+.card-section--quest li + li { margin-top: .12rem; }
+.card-section--quest li::marker { color: color-mix(in srgb, var(--territory-color), white 30%); font-weight: 700; }
+.card-ability { margin-top: .82rem; padding: .65rem .72rem; border: 1px solid color-mix(in srgb, var(--territory-color), transparent 52%); border-radius: 7px; background: color-mix(in srgb, var(--territory-color), #19191e 89%); }
+.card-ability h3 { display: flex; justify-content: space-between; }
+.card-ability h3 span { color: color-mix(in srgb, var(--territory-color), white 28%); }
+.card-ability strong { color: #fff; }
+.card-face__reward { margin: .78rem 0 0; color: #e0d8c8; font-size: .7rem; line-height: 1.45; }
+.card-face__reward span { margin-right: .25rem; color: #d9c89f; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.card-face__flavor { margin: .85rem 0 .1rem; padding: .68rem 0 .1rem; border-top: 1px solid rgb(255 255 255 / 12%); color: color-mix(in srgb, var(--territory-color), white 38%); font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif; font-size: .93rem; font-style: italic; line-height: 1.4; text-align: center; }
+
+.card-face--wild .card-face__header { background: linear-gradient(105deg, #69435d, #555a79 49%, #416c66); }
+.card-face--mythic .card-face__header { background: linear-gradient(105deg, #221d2b, #121217 53%, #272032); }
+.card-face--mythic .card-face__sigil { color: rgb(224 209 255 / 12%); }
+.card-face--wild .card-art { border-color: rgb(229 208 255 / 47%); }
+.card-face--mythic .card-art { background-color: #07070a; box-shadow: inset 0 0 35px rgb(162 133 225 / 13%); }
+
+.lived-record { margin-top: .9rem; padding: .8rem; border: 1px solid rgb(255 255 255 / 17%); border-radius: 8px; background: #202027; }
+.lived-record__stamp { display: flex; justify-content: space-between; gap: .6rem; margin: 0; color: #c9bfae; font-size: .61rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.lived-record__stamp time { color: #fff; text-align: right; }
+.lived-record__note { margin: .55rem 0 0; color: #fffaf0; font-size: .82rem; line-height: 1.5; white-space: pre-wrap; }
+.lived-record__vow { margin: .65rem 0 0; color: #d7c8f2; font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif; font-size: .77rem; letter-spacing: .12em; line-height: 1.7; text-align: center; }
+.lived-artifact { display: block; width: 100%; max-height: 15rem; margin-top: .7rem; border-radius: 5px; object-fit: cover; }
+
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; clip-path: inset(50%); }
+
+@keyframes foil-turn { to { transform: rotate(1turn); } }
+
+@media (max-width: 360px) {
+  .app-shell { width: min(100% - 1rem, 76rem); }
+  .card-face__body { padding-inline: .72rem; }
+  .card-face__header { padding-inline: .65rem; }
+  .card-face__collector { font-size: .62rem; }
+  .rarity__name { font-size: .57rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }

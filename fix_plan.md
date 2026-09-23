@@ -36,11 +36,19 @@ Legend: `[ ]` incomplete · `[x]` done (verified) — prune `[x]` items periodic
 - Rarity assignments use ordinal 1–5 common, 6–8 uncommon, and 9–10 rare within each territory; wilds are 51 legendary and 52 mythic.
 - Check passed: `npx tsc --noEmit && npx vitest run` (3 files, 17 tests).
 
+### Learnings — card face pass (loop 0.0.11)
+
+- The renderer is `src/components/cardFace.ts`; it uses existing territory metadata for symbols, escapes all authored text, and supports clean lived evidence presentation, including card 52's required vow.
+- CSS art is composed from scene motifs selected from the authored art direction, with reduced-motion foil behavior.
+- Proof text preserves authored line breaks as explicit HTML breaks, important for card 52's required statements.
+- Tests cover all 52 cards, wild rarity, escaping, and lived presentation.
+- Validation passed: `npx tsc --noEmit && npx vitest run` (4 files, 26 tests).
+
 - [x] Deck integrity pass: 52 cards verified — numbering 01–52 no gaps/duplicates, unique titles/ids, complete anatomy, 7 canon anchors exact, no placeholder content (durable audit: src/data/specDeck.test.ts + src/data/specDeck.ts)
 - [x] Data pipeline: `src/data/cards.ts` — transcribe all 52 specs into typed `Card[]`; assign rarity per SPEC §3 (5 common / 3 uncommon / 2 rare per territory; wilds canon legendary/mythic)
 - [x] Schema tests: exactly 52, 10 per territory + 2 wilds, unique ids/numbers/names, anatomy completeness, frozen card text verbatim, no placeholder content; independent canon baselines and parser validation tests
 - [x] Current verification after schema audit changes: `npx tsc --noEmit && npx vitest run` passed (3 test files, 21 tests).
-- [ ] Card face component: territory theming + symbols (♥ ◉ ✦ ∞ ✧, ✵ wilds), type line, art window (CSS-composed scenes from art direction), quest/proof/ability/reward/flavor blocks, collector line `TERRITORY NN/52`, rarity gems, prismatic wilds
+- [x] Card face component: territory theming + symbols (♥ ◉ ✦ ∞ ✧, ✵ wilds), type line, art window (CSS-composed scenes from art direction), quest/proof/ability/reward/flavor blocks, collector line `TERRITORY NN/52`, rarity gems, prismatic wilds
 - [ ] Deck view: grid, card backs w/ territory glint, filters (territory, state), lived counts
 - [ ] Draw ritual: deal/flip animation (reduced-motion aware), UNDISCOVERED → DRAWN
 - [ ] Daily draw: date-seeded, deterministic, shown once per day
