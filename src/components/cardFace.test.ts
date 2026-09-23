@@ -23,8 +23,10 @@ describe("renderCardFace", () => {
       expect(html).toContain(`${String(card.number).padStart(2, "0")}/52`);
       expect(html).toContain(escapeHtml(card.name));
       expect(html).toContain(escapeHtml(card.typeLine));
-      expect(html).toContain("card-art--");
-      expect(html).toContain(escapeHtml(card.art));
+      expect(html).toContain(`card-atmosphere--${card.territory}`);
+      // The art window was replaced by a territory atmosphere pattern; the
+      // authored art-direction string is not rendered on the face.
+      expect(html).not.toContain(escapeHtml(card.art));
       expect(html).toContain(card.proof.split("\n").map(escapeHtml).join("<br>"));
       expect(html).toContain(escapeHtml(card.reward));
       expect(html).toContain(escapeHtml(card.flavor));
@@ -38,6 +40,21 @@ describe("renderCardFace", () => {
       }
       expect(html).toContain(`rarity--${card.rarity}`);
     }
+  });
+
+  it("fills the atmosphere panel with flavor text instead of artwork", () => {
+    // WHY: the art window was replaced by a territory-pattern panel; flavor
+    // text now flexes into that 4:3 space, so it must render inside the panel.
+    const card = DECK[0]!;
+    const html = renderCardFace(card);
+    const panel = html.slice(html.indexOf('class="card-atmosphere'), html.indexOf("</figure>"));
+
+    expect(panel).toContain("card-atmosphere__sigil");
+    expect(panel).toContain("card-atmosphere__flavor");
+    expect(panel).toContain(escapeHtml(card.flavor));
+    // No scene-art leftovers: no illustration layers or flavor footer remain.
+    expect(html).not.toContain("card-art");
+    expect(html).not.toContain("card-face__flavor");
   });
 
   it("gives both wild cards their prismatic and legendary/mythic identities", () => {

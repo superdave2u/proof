@@ -14,13 +14,15 @@ Borrow the *feel* of a deep collectible card game. **Do not copy Magic: The Gath
 1. Header band: `TERRITORY NN/52` (collector line) + rarity gem + territory symbol watermark.
 2. Card name (display serif).
 3. Type line: `Adventure • Mode` (small caps).
-4. Art window: cinematic illustration from the art-direction string. V1 renders CSS-composed scenes (palette gradients + mood) per card; art may be upgraded later.
-5. **Quest** block.
-6. **Proof of Life** block.
-7. **Special Ability** box (if present) — distinct background, ability name bold.
-8. **Reward** line.
-9. **Flavor text** footer — italic, territory-tinted.
+4. **Territory atmosphere panel (4:3)** — no rendered artwork in this release. A procedural background pattern within the territory's color and tonal range: layered washes, woven texture, and the territory sigil as a large watermark; wilds get a prismatic sheen, mythic stays deep black with a violet edge glow.
+5. **Flavor text** — italic, territory-tinted, rendered *inside* the atmosphere panel, flexing into the 4:3 negative space on a bottom scrim.
+6. **Quest** block.
+7. **Proof of Life** block.
+8. **Special Ability** box (if present) — distinct background, ability name bold.
+9. **Reward** line.
 10. Lived overlays: date stamp, evidence note, evidence photo thumb — clean, no wear effects.
+
+Note: authored art-direction strings remain in the frozen card specs and in `Card.art` — they are reintroduced as rendered artwork in a later update. They are not displayed on the face in this release.
 
 ## 3. Data model (`src/data/`)
 
@@ -36,7 +38,7 @@ interface Card {
   name: string;
   typeLine: string;     // "Adventure • Indulgence"
   rarity: Rarity;       // assigned in data pass per SPEC §3
-  art: string;          // authored art-direction string, rendered as a CSS scene
+  art: string;          // authored art-direction string — preserved, NOT rendered (atmosphere panel replaces artwork this release; reintroduced later)
   quest: string[];      // line-separated steps
   proof: string;
   ability?: { name: string; text: string };
@@ -62,7 +64,7 @@ interface DeckState { version: 1; cards: Record<string, CardRecord>; dailyDraw?:
 
 1. **Deck** (home) — grid of card backs (pristine, territory-glint) and fronts by state; filters by territory and state; counts (X/52 lived). Slow shuffle shimmer on hover.
 2. **Draw ritual** — deck cut animation → card flips to reveal → lands in hand. This must feel like being *dealt an adventure*. Honors `prefers-reduced-motion`.
-3. **Card detail** — full anatomy; actions: `Draw` (undiscovered → drawn), `Deposited my Proof of Life` (opens evidence form: date, note, optional artifact photo → lived). Flavor-footer moment of quiet: reveal flavor text with a gentle fade.
+3. **Card detail** — full anatomy; actions: `Draw` (undiscovered → drawn), `Deposited my Proof of Life` (opens evidence form: date, note, optional artifact photo → lived). Flavor moment of quiet: the flavor text reveals inside the atmosphere panel with a gentle fade.
 4. **Daily draw** — date-seeded card of the day, deterministic; shown once per day.
 5. **Archive** — Lived cards with their evidence; the collected-evidence gallery. The emotional payoff screen.
 

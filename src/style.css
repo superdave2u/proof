@@ -311,53 +311,97 @@ button, input, textarea { font: inherit; }
   text-transform: uppercase;
 }
 
-.card-art {
+/* Territory atmosphere panel (4:3) — replaces rendered artwork in this
+   release. The panel carries only the territory's own color and tonal range:
+   layered washes, a woven texture, and the territory sigil as watermark.
+   Flavor text fills the negative space (see __flavor). Authored art-direction
+   strings stay frozen in specs and are reintroduced as artwork later. */
+.card-atmosphere {
   position: relative;
-  height: clamp(155px, 50vw, 195px);
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
+  aspect-ratio: 4 / 3;
+  max-height: 205px;
   margin: 0 0 .9rem;
   border: 1px solid rgb(255 255 255 / 17%);
   border-radius: 8px;
   background:
-    radial-gradient(ellipse at 50% 43%, var(--territory-wash), transparent 58%),
-    linear-gradient(155deg, #34313c 0%, #20232c 47%, #17171d 100%);
-  box-shadow: inset 0 0 25px rgb(0 0 0 / 25%);
+    radial-gradient(ellipse at 22% 16%, color-mix(in srgb, var(--territory-color) 38%, transparent), transparent 58%),
+    radial-gradient(ellipse at 80% 78%, color-mix(in srgb, var(--territory-color) 24%, transparent), transparent 55%),
+    repeating-linear-gradient(118deg, color-mix(in srgb, var(--territory-color) 8%, transparent) 0 1.5px, transparent 1.5px 9px),
+    linear-gradient(158deg, color-mix(in srgb, var(--territory-color) 15%, #26252c) 0%, #1a1a20 52%, #131318 100%);
+  box-shadow: inset 0 0 32px rgb(0 0 0 / 35%);
 }
 
-.card-art::before, .card-art::after, .card-art__glow, .card-art__horizon, .card-art__subject, .card-art__detail { position: absolute; display: block; pointer-events: none; }
-.card-art::before {
-  inset: 0;
-  background: radial-gradient(ellipse at 70% 15%, rgb(255 215 139 / 40%), transparent 35%), linear-gradient(180deg, transparent 42%, rgb(10 11 17 / 70%));
+.card-atmosphere::before {
   content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(rgb(255 255 255 / 5%) 1px, transparent 1.4px) 0 0 / 15px 15px,
+    repeating-linear-gradient(0deg, transparent 0 4px, rgb(0 0 0 / 8%) 4px 5px);
+  mask-image: radial-gradient(ellipse at 50% 38%, black, transparent 76%);
 }
-.card-art::after { inset: auto 0 0; height: 32%; background: linear-gradient(0deg, rgb(9 9 13 / 65%), transparent); content: ""; }
-.card-art__glow { top: 8%; right: 13%; width: 38%; height: 55%; border-radius: 50%; background: radial-gradient(ellipse, rgb(255 218 154 / 34%), transparent 68%); filter: blur(8px); }
-.card-art__horizon { right: -10%; bottom: 17%; left: -10%; height: 35%; border-radius: 50% 50% 0 0; background: linear-gradient(180deg, rgb(31 28 37 / 20%), rgb(12 13 18 / 76%)); }
-.card-art__subject { z-index: 1; top: 30%; left: 42%; width: 20%; height: 34%; border-radius: 48% 48% 35% 35%; background: linear-gradient(125deg, #b98460, #513846 55%, #20212a); box-shadow: 0 9px 17px rgb(0 0 0 / 30%); }
-.card-art__detail { z-index: 2; right: 18%; bottom: 16%; left: 18%; height: 1px; background: rgb(255 228 181 / 48%); box-shadow: 0 0 12px rgb(255 215 141 / 75%); }
 
-.card-art--food .card-art__subject { top: 46%; left: 35%; width: 31%; height: 22%; border: 7px solid #d5b890; border-radius: 50%; background: radial-gradient(ellipse, #6b2522 0 27%, #9a5739 29% 47%, #362e35 51%); box-shadow: 0 15px 17px #09090d; }
-.card-art--food .card-art__detail { right: 20%; bottom: 31%; left: 20%; height: 2px; background: #ebc078; box-shadow: 0 -18px 18px rgb(255 220 153 / 30%); }
-.card-art--sky { background: radial-gradient(circle at 70% 22%, #f5d796 0 4%, transparent 4.5%), radial-gradient(circle at 17% 20%, #fff 0 1px, transparent 2px), radial-gradient(circle at 28% 33%, #fff 0 1px, transparent 2px), radial-gradient(circle at 88% 39%, #fff 0 1px, transparent 2px), linear-gradient(180deg, #1c233e, #6a526a 62%, #242332); }
-.card-art--sky .card-art__subject { top: 17%; left: 63%; width: 13%; height: 25%; border-radius: 50%; background: radial-gradient(circle at 37% 35%, #fff1c4, #dfa96d 68%, transparent 72%); box-shadow: 0 0 35px #f0bb74; }
-.card-art--sky .card-art__horizon { bottom: 10%; height: 42%; background: linear-gradient(170deg, transparent 10%, #22212d 11% 32%, transparent 33%), linear-gradient(180deg, #393040, #10131d); }
-.card-art--water { background: radial-gradient(ellipse at 68% 23%, rgb(255 222 174 / 70%), transparent 14%), linear-gradient(180deg, #31344c 0%, #527889 47%, #142f3d 49%, #0c1a25 100%); }
-.card-art--water .card-art__horizon { bottom: 14%; height: 28%; border-radius: 0; background: repeating-linear-gradient(180deg, transparent 0 9px, rgb(151 215 220 / 25%) 10px, transparent 12px); }
-.card-art--water .card-art__subject { top: 33%; left: 43%; width: 13%; height: 30%; border-radius: 50% 50% 35% 35%; background: linear-gradient(90deg, #d9ad88, #8a6473); }
-.card-art--flower .card-art__subject { top: 17%; left: 40%; width: 23%; height: 29%; border-radius: 50%; background: radial-gradient(circle at 50% 50%, #e8c46b 0 17%, transparent 19%), radial-gradient(ellipse at 50% 5%, #d87488 0 24%, transparent 27%), radial-gradient(ellipse at 96% 50%, #d87488 0 24%, transparent 27%), radial-gradient(ellipse at 50% 95%, #d87488 0 24%, transparent 27%), radial-gradient(ellipse at 4% 50%, #d87488 0 24%, transparent 27%); filter: drop-shadow(0 0 13px rgb(236 162 133 / 58%)); }
-.card-art--flower .card-art__detail { right: 49%; bottom: 18%; left: 49%; height: 42%; background: linear-gradient(#6f9b75, #314f43); }
-.card-art--book .card-art__subject { top: 26%; left: 37%; width: 27%; height: 43%; border: 1px solid #ddc394; border-radius: 3px 7px 7px 3px; background: linear-gradient(90deg, #4b344b 0 8%, #bb9662 9% 12%, #293752 13% 100%); box-shadow: 12px 5px 0 -2px #684852, 0 9px 16px #111; transform: rotate(-8deg); }
-.card-art--book .card-art__detail { top: 36%; right: 40%; bottom: auto; left: 42%; height: 1px; background: #eed9a4; box-shadow: 0 8px #eed9a4, 0 16px #eed9a4; }
-.card-art--architecture .card-art__subject { top: 17%; left: 36%; width: 28%; height: 62%; border: 7px solid #b89a7b; border-bottom: 0; border-radius: 48% 48% 0 0; background: linear-gradient(90deg, rgb(25 26 35 / 70%), rgb(238 190 122 / 28%), rgb(25 26 35 / 70%)); box-shadow: -36px 10px 0 -27px #9b826f, 36px 10px 0 -27px #9b826f; }
-.card-art--architecture .card-art__horizon { bottom: 11%; height: 18%; background: linear-gradient(180deg, transparent, #14151d); }
-.card-art--city .card-art__subject { top: 28%; left: 42%; width: 17%; height: 43%; border-radius: 2px; background: repeating-linear-gradient(0deg, transparent 0 12px, rgb(244 198 125 / 70%) 13px 15px), linear-gradient(90deg, #2a2936, #454050); box-shadow: -43px 21px 0 -8px #262633, 46px 9px 0 -3px #383443; }
-.card-art--city .card-art__detail { bottom: 18%; height: 2px; }
-.card-art--transport .card-art__subject { top: 38%; left: 31%; width: 38%; height: 25%; border: 2px solid #c5a884; border-radius: 9px 9px 3px 3px; background: linear-gradient(180deg, #9eb0b0 0 43%, #394551 45%); box-shadow: -4px 13px 0 -4px #171820, 4px 13px 0 -4px #171820; }
-.card-art--transport .card-art__horizon { bottom: 18%; height: 12%; background: linear-gradient(90deg, transparent, #dec289, transparent); }
-.card-art--hands .card-art__subject { top: 35%; left: 39%; width: 25%; height: 25%; border-radius: 45% 45% 30% 30%; background: linear-gradient(120deg, #deb28e, #76534d 65%, #38313b); transform: rotate(-15deg); }
-.card-art--hands .card-art__detail { right: 28%; bottom: 22%; left: 30%; height: 2px; background: #e8c98e; box-shadow: 0 0 13px #ffd891; }
-.card-art--interior .card-art__subject { top: 23%; left: 40%; width: 22%; height: 39%; border: 5px solid #b3906d; border-bottom-width: 8px; border-radius: 2px; background: linear-gradient(145deg, rgb(238 185 119 / 56%), rgb(54 57 76 / 62%)); box-shadow: 0 12px 17px #101016; }
-.card-art--interior .card-art__detail { right: 20%; bottom: 25%; left: 20%; height: 4px; background: #a9805a; box-shadow: 0 0 15px rgb(251 200 134 / 55%); }
+.card-atmosphere::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 64%;
+  pointer-events: none;
+  background: linear-gradient(0deg, rgb(9 10 14 / 82%), transparent);
+}
+
+/* Flavor text lives inside the atmosphere panel, flexing into the 4:3
+   negative space left behind when rendered artwork was removed. */
+.card-atmosphere__flavor {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  margin: 0;
+  padding: .7rem .8rem;
+  color: var(--territory-text);
+  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  font-size: .93rem;
+  font-style: italic;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.card-atmosphere__sigil {
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: Georgia, serif;
+  font-size: clamp(4.2rem, 17vw, 6.2rem);
+  line-height: 1;
+  pointer-events: none;
+  color: color-mix(in srgb, var(--territory-color) 32%, transparent);
+  text-shadow: 0 0 42px color-mix(in srgb, var(--territory-color) 55%, transparent);
+}
+
+.card-atmosphere__flavor {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  margin: 0;
+  padding: .7rem .8rem;
+  color: var(--territory-text);
+  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+  font-size: .93rem;
+  font-style: italic;
+  line-height: 1.4;
+  text-align: center;
+}
 
 .card-section { margin: .78rem 0 0; }
 .card-section h3, .card-ability h3 {
@@ -379,13 +423,26 @@ button, input, textarea { font: inherit; }
 .card-ability strong { color: #fff; }
 .card-face__reward { margin: .78rem 0 0; color: #e0d8c8; font-size: .7rem; line-height: 1.45; }
 .card-face__reward span { margin-right: .25rem; color: #d9c89f; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
-.card-face__flavor { margin: .85rem 0 .1rem; padding: .68rem 0 .1rem; border-top: 1px solid rgb(255 255 255 / 12%); color: var(--territory-text); font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif; font-size: .93rem; font-style: italic; line-height: 1.4; text-align: center; }
 
 .card-face--wild .card-face__header { background: linear-gradient(105deg, #69435d, #555a79 49%, #416c66); }
 .card-face--mythic .card-face__header { background: linear-gradient(105deg, #221d2b, #121217 53%, #272032); }
 .card-face--mythic .card-face__sigil { color: rgb(224 209 255 / 12%); }
-.card-face--wild .card-art { border-color: rgb(229 208 255 / 47%); }
-.card-face--mythic .card-art { background-color: #07070a; box-shadow: inset 0 0 35px rgb(162 133 225 / 13%); }
+.card-face--wild .card-atmosphere {
+  border-color: rgb(229 208 255 / 47%);
+  background:
+    radial-gradient(ellipse at 30% 20%, rgb(255 214 244 / 26%), transparent 55%),
+    radial-gradient(ellipse at 72% 76%, rgb(178 255 232 / 20%), transparent 55%),
+    conic-gradient(from 210deg at 60% 40%, rgb(233 150 217 / 14%), rgb(150 173 241 / 14%), rgb(150 241 203 / 14%), rgb(241 224 150 / 14%), rgb(233 150 217 / 14%)),
+    linear-gradient(158deg, #2c2740, #1a1a24 55%, #131318);
+}
+.card-face--mythic .card-atmosphere {
+  border-color: rgb(162 133 225 / 30%);
+  background:
+    radial-gradient(ellipse at 50% 30%, rgb(162 133 225 / 14%), transparent 60%),
+    #0a0a0e;
+  box-shadow: inset 0 0 35px rgb(162 133 225 / 13%);
+}
+.card-face--mythic .card-atmosphere__sigil { color: rgb(224 209 255 / 16%); text-shadow: 0 0 34px rgb(162 133 225 / 40%); }
 
 .lived-record { margin-top: .9rem; padding: .8rem; border: 1px solid rgb(255 255 255 / 17%); border-radius: 8px; background: #202027; }
 .lived-record__stamp { display: flex; justify-content: space-between; gap: .6rem; margin: 0; color: #c9bfae; font-size: .61rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }

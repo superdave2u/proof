@@ -17,6 +17,7 @@ Legend: `[ ]` incomplete · `[x]` done (verified) — prune `[x]` items periodic
 ## Operator-done (verified)
 
 - [x] GitHub Pages pipeline: `.github/workflows/deploy.yml` — npm ci → wheel → build → publish dist/ on push to main/tags; Vite `base: "./"`
+- [x] Card face: art window removed — replaced by a territory atmosphere panel (4:3, procedural pattern within the territory's color/tonal range + sigil watermark; prismatic wild, deep-black mythic); flavor text moved inside the panel, flexing into the negative space. Art direction strings stay frozen in card specs and in `Card.art` for later reintroduction.
 
 ## Build phase (P0 first — the deck is the product, schema is the contract)
 
@@ -118,6 +119,7 @@ Legend: `[ ]` incomplete · `[x]` done (verified) — prune `[x]` items periodic
 - [ ] P2 — Keep evidence entry reachable when opened from card detail despite active deck filters: the filtered-out card can leave the form hidden, blocking the intended flow.
 - [ ] P2 — Restore focus when canceling the evidence form: removing the focused form element strands keyboard users without a predictable focus target.
 - [ ] P3 — Give evidence artifact images descriptive alt text: generic alt text does not convey the image's relevant content to screen-reader users.
+- [ ] Deferred (later update) — reintroduce rendered card artwork from the authored art-direction strings, replacing or layering over the territory atmosphere panels.
 
 - [x] Deck integrity pass: 52 cards verified — numbering 01–52 no gaps/duplicates, unique titles/ids, complete anatomy, 7 canon anchors exact, no placeholder content (durable audit: src/data/specDeck.test.ts + src/data/specDeck.ts)
 - [x] Data pipeline: `src/data/cards.ts` — transcribe all 52 specs into typed `Card[]`; assign rarity per SPEC §3 (5 common / 3 uncommon / 2 rare per territory; wilds canon legendary/mythic)

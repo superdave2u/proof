@@ -19,10 +19,10 @@ describe("card detail view", () => {
     expect(html).toContain(`<h2 class="card-face__name">${card.name}</h2>`);
     expect(html).toContain("<h3>Quest</h3>");
     expect(html).toContain("<h3>Proof of Life</h3>");
-    expect(html).toContain("card-art--");
+    expect(html).toContain("card-atmosphere--");
     expect(html.includes("Special Ability")).toBe(Boolean(card.ability));
     expect(html).toContain("<span>Reward</span>");
-    expect(html).toContain("card-face__flavor");
+    expect(html).toContain("card-atmosphere__flavor");
     expect(html).toContain('data-action="draw" data-card-id="pleasure-01">Draw</button>');
     expect(html).toContain('data-action="back-to-deck"');
     expect(html).not.toContain("Deposit your Proof of Life");

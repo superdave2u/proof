@@ -8,21 +8,6 @@ export interface CardFaceRecord {
   evidence?: Evidence;
 }
 
-const sceneKinds = [
-  "flower",
-  "water",
-  "sky",
-  "book",
-  "food",
-  "architecture",
-  "city",
-  "transport",
-  "hands",
-  "interior",
-] as const;
-
-type SceneKind = (typeof sceneKinds)[number];
-
 function escapeHtml(value: string): string {
   return value.replace(/[&<>"']/g, (character) => {
     switch (character) {
@@ -34,24 +19,6 @@ function escapeHtml(value: string): string {
       default: return character;
     }
   });
-}
-
-function sceneKindFor(art: string): SceneKind {
-  const direction = art.toLowerCase();
-  const patterns: Record<SceneKind, RegExp> = {
-    flower: /flower|garden|petal|rose|blossom|leaf|leaves|fern/,
-    water: /water|river|sea|lake|rain|rain-streaked|steam|bath|shore|pier|ocean|tide/,
-    sky: /sky|stars|starry|moon|cloud|sunset|sunrise|horizon|milky way/,
-    book: /book|books|shelf|library|pages|spines|atlas/,
-    food: /cake|dessert|bread|meal|dish|food|fruit|bottle|glass|coffee|bakery|café|cafe|kitchen|table/,
-    architecture: /cathedral|bridge|station hall|vault|museum|gallery|building|window|room|bathroom|bedroom/,
-    city: /street|city|alley|market|shop|crossroads|doorway|rooftop|urban/,
-    transport: /bus|train|theater|theatre|cinema|road|journey|ticket|carriage/,
-    hands: /hands|hand |fingers|stitch|needle|craft|workshop|potter|tools|mending/,
-    interior: /table|chair|bed|candle|lamp|desk|shelf|room|interior|window/,
-  };
-
-  return sceneKinds.find((kind) => patterns[kind].test(direction)) ?? "interior";
 }
 
 function rarityLabel(rarity: Card["rarity"]): string {
@@ -88,7 +55,6 @@ export function renderCardFace(card: Card, record?: CardFaceRecord): string {
   const territoryName = card.territory.charAt(0).toUpperCase() + card.territory.slice(1);
   const symbol = territoryMeta.symbol;
   const isWild = card.territory === "wild";
-  const sceneKind = sceneKindFor(card.art);
   const quest = card.quest.map((step) => `<li>${escapeHtml(step)}</li>`).join("");
   const proof = card.proof.split("\n").map(escapeHtml).join("<br>");
   const ability = card.ability
@@ -106,18 +72,14 @@ export function renderCardFace(card: Card, record?: CardFaceRecord): string {
     <div class="card-face__body">
       <h2 class="card-face__name">${escapeHtml(card.name)}</h2>
       <p class="card-face__type">${escapeHtml(card.typeLine)}</p>
-      <figure class="card-art card-art--${sceneKind}" aria-label="Illustration: ${escapeHtml(card.art)}">
-        <span class="card-art__glow" aria-hidden="true"></span>
-        <span class="card-art__horizon" aria-hidden="true"></span>
-        <span class="card-art__subject" aria-hidden="true"></span>
-        <span class="card-art__detail" aria-hidden="true"></span>
-        <figcaption class="sr-only">${escapeHtml(card.art)}</figcaption>
+      <figure class="card-atmosphere card-atmosphere--${card.territory}">
+        <span class="card-atmosphere__sigil" aria-hidden="true">${symbol}</span>
+        <blockquote class="card-atmosphere__flavor">“${escapeHtml(card.flavor)}”</blockquote>
       </figure>
       <section class="card-section card-section--quest"><h3>Quest</h3><ol>${quest}</ol></section>
       <section class="card-section card-section--proof"><h3>Proof of Life</h3><p>${proof}</p></section>
       ${ability}
       <p class="card-face__reward"><span>Reward</span> ${escapeHtml(card.reward)}</p>
-      <blockquote class="card-face__flavor">“${escapeHtml(card.flavor)}”</blockquote>
       ${renderLivedRecord(card, record)}
     </div>
   </article>`;

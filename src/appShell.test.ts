@@ -40,7 +40,8 @@ describe("app shell accessibility foundations", () => {
     }
     expect(styles).toContain(".card-section h3, .card-ability h3 {");
     expect(styles).toMatch(/\.card-section h3, \.card-ability h3 \{[^}]*color: var\(--territory-text\);/s);
-    expect(styles).toMatch(/\.card-face__flavor \{[^}]*color: var\(--territory-text\);/s);
+    expect(styles).toMatch(/\.card-atmosphere__flavor \{[^}]*color: var\(--territory-text\);/s);
+    expect(styles).toMatch(/\.card-atmosphere \{[^}]*aspect-ratio: 4 \/ 3;/s);
   });
 
   it("preserves visible keyboard focus, narrow-screen layout, and reduced-motion overrides", () => {
