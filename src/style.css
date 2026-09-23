@@ -100,6 +100,30 @@ button, input, textarea { font: inherit; }
 .deck-card-revealed .card-face { margin-inline: auto; }
 .deck-empty { grid-column: 1 / -1; margin: 0; padding: 2.5rem 1rem; border: 1px dashed #55505a; border-radius: 12px; color: #d1c7b6; line-height: 1.6; text-align: center; }
 
+.draw-ritual { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .75rem 2rem; margin: 2.5rem 0 0; padding: clamp(1.1rem, 3vw, 1.8rem); border: 1px solid rgb(220 201 161 / 24%); border-radius: 16px; background: linear-gradient(120deg, rgb(201 162 39 / 9%), rgb(122 63 201 / 7%) 58%, rgb(30 79 200 / 7%)); }
+.draw-ritual__eyebrow { margin: 0 0 .4rem; color: #d8c9a4; font-size: .65rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
+.draw-ritual__intro h2 { margin: 0; font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif; font-size: clamp(1.35rem, 3vw, 1.85rem); font-weight: 500; line-height: 1.2; }
+.draw-ritual__intro > p:last-child { margin: .45rem 0 0; color: var(--muted); font-size: .84rem; line-height: 1.5; }
+.draw-ritual__button { min-height: 3rem; padding: .65rem 1.15rem; border: 1px solid #ead39e; border-radius: 99px; background: linear-gradient(130deg, #d7b86b, #a77d38); color: #17151a; cursor: pointer; font-size: .78rem; font-weight: 800; letter-spacing: .045em; box-shadow: 0 5px 20px rgb(201 162 39 / 19%); transition: transform .2s ease, filter .2s ease; }
+.draw-ritual__button:hover:not(:disabled) { filter: brightness(1.12); transform: translateY(-2px); }
+.draw-ritual__button:focus-visible { outline: 3px solid #fff1c6; outline-offset: 3px; }
+.draw-ritual__button:disabled { cursor: not-allowed; filter: grayscale(.55); opacity: .65; }
+.draw-ritual__message { grid-column: 1 / -1; margin: 0; color: #e4d7bb; font-size: .78rem; }
+.draw-reveal { grid-column: 1 / -1; display: flex; justify-content: center; width: 100%; padding: .5rem 0 0; perspective: 1100px; }
+.draw-reveal__face { transform-origin: center; animation: deal-flip .82s cubic-bezier(.2, .75, .25, 1) both; }
+.draw-reveal__face:focus { outline: 3px solid #e4c987; outline-offset: 4px; border-radius: 23px; }
+
+@keyframes deal-flip {
+  0% { opacity: 0; transform: translateY(-1.75rem) rotateY(88deg) scale(.94); }
+  55% { opacity: 1; transform: translateY(.2rem) rotateY(-9deg) scale(1.01); }
+  100% { opacity: 1; transform: translateY(0) rotateY(0) scale(1); }
+}
+
+@media (max-width: 520px) {
+  .draw-ritual { grid-template-columns: 1fr; gap: 1rem; }
+  .draw-ritual__button { justify-self: start; }
+}
+
 @media (max-width: 520px) {
   .deck-view__heading { align-items: start; gap: 1rem; }
   .deck-view__lived-count { font-size: .64rem; }
@@ -329,4 +353,5 @@ button, input, textarea { font: inherit; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  .draw-reveal__face { animation: none; }
 }

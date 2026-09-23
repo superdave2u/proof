@@ -1,5 +1,6 @@
 import { DECK, territories, type Card, type Territory } from "../data/cards";
 import { renderCardFace, type CardFaceRecord } from "../components/cardFace";
+import { browserDeckStorage, createDeckStore, type DeckStore } from "../state/store";
 
 export type DeckStateFilter = "all" | CardFaceRecord["state"];
 export type DeckTerritoryFilter = "all" | Territory;
@@ -61,6 +62,43 @@ function renderCards(cards: readonly Card[], records: DeckRecords): string {
   return cards.map((card) => renderCardTile(card, records)).join("");
 }
 
+function escapeHtml(value: string): string {
+  return value.replace(/[&<>"']/g, (character) => {
+    switch (character) {
+      case "&": return "&amp;";
+      case "<": return "&lt;";
+      case ">": return "&gt;";
+      case '"': return "&quot;";
+      case "'": return "&#39;";
+      default: return character;
+    }
+  });
+}
+
+function renderDrawRitual(records: DeckRecords, lastDrawnCardId?: string): string {
+  const card = lastDrawnCardId ? DECK.find((item) => item.id === lastDrawnCardId) : undefined;
+  const hasEligibleCard = DECK.some((item) => records[item.id]?.state !== "lived");
+  const message = card
+    ? `You have been dealt: ${card.name}.`
+    : hasEligibleCard
+      ? "The deck is ready when you are."
+      : "Every adventure in this deck has been Lived.";
+  const revealedCard = card
+    ? `<div class="draw-reveal__face" data-draw-animation="true" role="group" tabindex="-1" aria-label="Dealt card: ${escapeHtml(card.name)}">${renderCardFace(card, records[card.id])}</div>`
+    : "";
+
+  return `<section class="draw-ritual" aria-labelledby="draw-ritual-title">
+    <div class="draw-ritual__intro">
+      <p class="draw-ritual__eyebrow">The deal</p>
+      <h2 id="draw-ritual-title">Let the deck deal your next adventure.</h2>
+      <p>A random card, not a task list. Take the invitation at your own pace.</p>
+    </div>
+    <button class="draw-ritual__button" type="button" data-action="draw"${hasEligibleCard ? "" : " disabled"}>Draw an adventure</button>
+    <p class="draw-ritual__message" role="status" aria-live="polite">${escapeHtml(message)}</p>
+    ${revealedCard ? `<div class="draw-reveal">${revealedCard}</div>` : ""}
+  </section>`;
+}
+
 function resultSummary(visible: number, lived: number): string {
   const cardWord = visible === 1 ? "card" : "cards";
   return `Showing ${visible} ${cardWord}. ${lived} of ${DECK.length} cards lived.`;
@@ -93,11 +131,13 @@ function renderStateOptions(selected: DeckStateFilter): string {
 export function renderDeckView(
   records: DeckRecords = {},
   filters: DeckFilters = DEFAULT_FILTERS,
+  lastDrawnCardId?: string,
 ): string {
   const livedCount = DECK.filter((card) => stateFor(card, records) === "lived").length;
   const visibleCards = filterDeck(DECK, records, filters);
 
-  return `<section class="deck-view" aria-labelledby="deck-title">
+  return `${renderDrawRitual(records, lastDrawnCardId)}
+  <section class="deck-view" aria-labelledby="deck-title">
     <div class="deck-view__heading">
       <div>
         <p class="deck-view__eyebrow">The deck</p>
@@ -132,9 +172,27 @@ function stateFilter(value: string): DeckStateFilter {
 }
 
 /** Mount a responsive, accessible deck and update only its results when filters change. */
-export function mountDeckView(container: HTMLElement, records: DeckRecords = {}): void {
+export function mountDeckView(
+  container: HTMLElement,
+  store: DeckStore = createDeckStore(browserDeckStorage()),
+): void {
   let filters = { ...DEFAULT_FILTERS };
-  container.innerHTML = renderDeckView(records, filters);
+  let lastDrawnCardId: string | undefined;
+  const render = (): void => {
+    container.innerHTML = renderDeckView(store.getRecords(), filters, lastDrawnCardId);
+  };
+  render();
+
+  container.addEventListener("click", (event: Event) => {
+    const target = event.target;
+    if (!(target instanceof Element) || !target.closest('[data-action="draw"]')) return;
+
+    const card = store.draw();
+    if (!card) return;
+    lastDrawnCardId = card.id;
+    render();
+    container.querySelector<HTMLElement>(".draw-reveal__face")?.focus();
+  });
 
   container.addEventListener("change", (event: Event) => {
     const target = event.target;
@@ -144,6 +202,7 @@ export function mountDeckView(container: HTMLElement, records: DeckRecords = {})
     else if (target.name === "state") filters = { ...filters, state: stateFilter(target.value) };
     else return;
 
+    const records = store.getRecords();
     const cards = filterDeck(DECK, records, filters);
     const grid = container.querySelector<HTMLElement>("#deck-grid");
     const summary = container.querySelector<HTMLElement>("#deck-result-summary");

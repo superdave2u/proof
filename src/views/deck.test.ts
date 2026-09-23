@@ -19,6 +19,20 @@ describe("deck view", () => {
     expect(html).toContain("✵");
     expect(html).not.toContain(DECK[0]?.name);
     expect(html).toContain("0 of 52 cards lived.");
+    expect(html).toContain('data-action="draw"');
+    expect(html).toContain("Draw an adventure");
+    expect(html).not.toContain("You have been dealt:");
+  });
+
+  it("reveals and announces only the card that was dealt", () => {
+    const card = DECK[16]!;
+    const html = renderDeckView({ [card.id]: { state: "drawn", drawnAt: "2026-09-22T12:30:00.000Z" } }, undefined, card.id);
+
+    expect(html).toContain(`You have been dealt: ${card.name.replaceAll("'", "&#39;")}.`);
+    expect(html).toContain('class="draw-reveal__face" data-draw-animation="true" role="group" tabindex="-1"');
+    expect(html).toContain('data-state="drawn"');
+    expect(html).not.toContain(DECK[0]!.name);
+    expect(html).toContain('role="status" aria-live="polite"');
   });
 
   it("filters by territory and state together while retaining wild as its own territory", () => {
