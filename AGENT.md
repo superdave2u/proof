@@ -4,7 +4,13 @@ Brief instructions for any agent working here. Keep this file brief and current.
 
 ## Project
 
-A 52-card personal development deck, shipped as a TypeScript + Vite web app. Specs live in `SPEC.md`, `DESIGN.md`, and `specs/`.
+**Proof of Life** — a 52-card collectible adventure game for personal development, shipped as a TypeScript + Vite web app. Specs live in `SPEC.md` (product), `DESIGN.md` (technical), and `specs/cards/*.md` (the deck).
+
+## Content rules
+
+- `specs/cards/*.md` cards marked **CANON** are operator-authored — never edit them; match their voice for new cards.
+- `specs/cards/wilds.md` is complete (cards 51–52). Do not touch it.
+- Rarity is assigned in the data pass, not in specs (SPEC §3).
 
 ## Commands
 
@@ -19,5 +25,5 @@ A 52-card personal development deck, shipped as a TypeScript + Vite web app. Spe
 
 - Back pressure = `npm run check` must be green before every commit.
 - Tests live next to source (`*.test.ts`), with a docblock explaining WHY the test exists.
-- Deck data is typed in `src/data/`; schema tests assert 52 cards, 13 per suit, unique ids, no empty fields.
+- Deck data is typed in `src/data/`; schema tests assert 52 cards (10 per territory + 2 wilds), unique ids/numbers/names, complete anatomy, and canon text preserved verbatim.
 - One fix_plan item per loop. See `PROMPT.md`.
