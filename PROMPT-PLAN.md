@@ -13,6 +13,7 @@ Task:
 3. Commit plan work: `git add -A && git commit -m "docs: ..."`. No implementation, no tags.
 
 Rules:
+- Plan domain-first, testable slices (see the mandatory engineering standards in @AGENT.md: TDD, DDD, SOLID, no smells/duplication, no premature work, fast fixtures/fakes). Do not plan browser-automation work.
 - The deck is frozen. If you believe a card is flawed, document the concern in fix_plan.md for the operator — do not edit the card.
 - Keep fix_plan.md honest: only mark items done if the work actually exists.
 - Think hard; use subagents for cross-file verification.

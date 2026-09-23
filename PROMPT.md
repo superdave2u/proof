@@ -2,13 +2,15 @@
 
 0a. Study @SPEC.md and @DESIGN.md to learn what the product is. They are the source of truth for WHAT to build.
 
-0b. Study @specs/** (one file per suit/category of cards) and @AGENT.md to learn HOW this repo builds, runs, and tests.
+0b. Study @specs/** (one file per suit/category of cards) and @AGENT.md to learn HOW this repo builds, runs, tests, and the mandatory engineering standards (TDD, DDD, SOLID, no smells/duplication, no premature work, fast fixture/fake tests, no browser automation).
 
 0c. Study @fix_plan.md. It is the single source of truth for what remains.
 
 1. Your task: pick THE single most important incomplete item from @fix_plan.md and implement it fully, using parallel subagents. Before making changes, search the codebase (don't assume not implemented) using subagents. You may use unlimited parallel subagents for searching/reading/writing files, but exactly ONE subagent for build/tests so the wheel does not jam.
 
-2. After implementing functionality or resolving problems, run the tests for that unit of code that was improved (`npx tsc --noEmit && npx vitest run`). If functionality is missing then it's your job to add it per the specs. Think hard. If tests unrelated to your work fail, resolve them as part of this increment.
+2. After implementing functionality or resolving problems, run the tests for that unit of code that was improved (`npx tsc --noEmit && npx vitest run`). Follow strict TDD: the test exists and fails first, then implementation makes it pass. If functionality is missing then it's your job to add it per the specs. Think hard. If tests unrelated to your work fail, resolve them as part of this increment.
+
+2b. Engineering standards are mandatory (see @AGENT.md): domain-driven design, SOLID, clean code, no smells, no duplication, no premature or speculative code. Tests use fast fixtures and injected fakes; never add or run browser automation (Playwright et al.) unless the operator explicitly asks in that turn.
 
 3. When tests pass: update @fix_plan.md (mark done / add new learnings) using a subagent, then `git add -A` and `git commit` with a message describing the change. When there are no build or test errors, create a git tag: if no tags exist start at `0.0.0`, else increment the patch (e.g. `0.0.1`). If a git remote exists, `git push --tags`; if not, skip pushing silently.
 

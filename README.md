@@ -35,6 +35,8 @@ TypeScript + Vite, vanilla DOM, vitest. No backend, no accounts — when browser
 
 ## Getting started
 
+Engineering standards for all code here live in [`AGENT.md`](AGENT.md) — TDD, domain-driven design, SOLID, clean code, fast fixture/fake tests. Browser automation is not part of the test suite.
+
 ```bash
 npm install
 npm run dev        # Vite dev server
