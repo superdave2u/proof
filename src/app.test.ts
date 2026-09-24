@@ -11,6 +11,6 @@ describe("wheel smoke", () => {
   it("wires the app module into the test wheel", () => {
     expect(APP_TITLE).toBe("Proof");
     expect(APP_TAGLINE).toBe("A Collectible Life Game");
-    expect(APP_SUBHEADLINE).toBe("Each card is an invitation to bring back evidence of the life that happened.");
+    expect(APP_SUBHEADLINE).toBe("Each card is an invitation back to living.");
   });
 });
