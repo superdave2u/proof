@@ -24,7 +24,8 @@ describe("archive view", () => {
     const html = renderArchiveView();
 
     expect(html).toContain("Your Archive is waiting for its first piece of evidence.");
-    expect(html).toContain('data-action="back-to-deck"');
+    // Page navigation moved to the header menu.
+    expect(html).not.toContain('data-action="back-to-deck"');
     expect(html).not.toContain("0 / 52");
     expect(html).not.toContain("deck-card-back");
   });

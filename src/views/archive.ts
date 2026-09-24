@@ -32,22 +32,16 @@ export function renderArchiveView(records: ArchiveRecords = {}, cards: readonly 
         <h2 id="archive-title" tabindex="-1">Evidence of a life lived.</h2>
         <p class="archive-view__description">Each card here holds a date, a note, and any artifact you kept. This is the life that happened.</p>
       </div>
-      <button class="archive-view__back" type="button" data-action="back-to-deck">Return to the deck</button>
     </header>
     ${entries}
   </section>`;
 }
 
 /** Mount the collected-evidence gallery and return a refresh hook for newly Lived cards. */
-export function mountArchiveView(container: HTMLElement, store: DeckStore, onBack: () => void): () => void {
+export function mountArchiveView(container: HTMLElement, store: DeckStore): () => void {
   const render = (): void => {
     container.innerHTML = renderArchiveView(store.getRecords());
   };
-
-  container.addEventListener("click", (event: Event) => {
-    const target = event.target;
-    if (target instanceof Element && target.closest('[data-action="back-to-deck"]')) onBack();
-  });
 
   render();
   return render;

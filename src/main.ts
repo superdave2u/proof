@@ -2,6 +2,7 @@ import { APP_SUBHEADLINE, APP_TAGLINE, APP_TITLE } from "./app";
 import { DECK } from "./data/cards";
 import { loadCardImage } from "./data/cardImages";
 import { mountLazyCardArt } from "./components/cardArt";
+import { renderAppMenu } from "./components/appMenu";
 import { mountHomeView } from "./views/home";
 import { mountGalleryView } from "./views/gallery";
 import { mountArchiveView } from "./views/archive";
@@ -15,6 +16,7 @@ const app = document.querySelector<HTMLDivElement>("#app");
 if (app) {
   app.innerHTML = `<main class="app-shell">
     <header class="app-intro">
+      ${renderAppMenu()}
       <p class="app-intro__eyebrow">${APP_TAGLINE}</p>
       <h1>${APP_TITLE}</h1>
       <p class="app-intro__copy">${APP_SUBHEADLINE}</p>
@@ -43,6 +45,36 @@ if (app) {
     // Owned here so an unsaved deposit draft survives re-renders (e.g. when
     // another tab changes the card while the form is open).
     const detailEvidence: EvidenceEntryState = { open: false };
+
+    // The header popout is the one page-navigation control: open it from the
+    // toggle, close it on any navigation, outside click, or Escape.
+    const menuToggle = app.querySelector<HTMLButtonElement>('[data-action="toggle-menu"]');
+    const menuPopout = app.querySelector<HTMLElement>("#app-menu-popout");
+    const closeMenu = (): void => {
+      menuPopout?.setAttribute("hidden", "");
+      menuToggle?.setAttribute("aria-expanded", "false");
+    };
+    menuToggle?.addEventListener("click", () => {
+      if (!menuPopout?.hasAttribute("hidden")) {
+        closeMenu();
+        return;
+      }
+      menuPopout.removeAttribute("hidden");
+      menuToggle.setAttribute("aria-expanded", "true");
+      menuPopout.querySelector<HTMLAnchorElement>(".app-menu__link")?.focus();
+    });
+    menuPopout?.addEventListener("click", (event) => {
+      if (event.target instanceof Element && event.target.closest(".app-menu__link")) closeMenu();
+    });
+    app.addEventListener("click", (event) => {
+      if (event.target instanceof Element && !event.target.closest(".app-menu")) closeMenu();
+    });
+    app.addEventListener("keydown", (event) => {
+      if (event.key !== "Escape") return;
+      if (menuPopout?.hasAttribute("hidden")) return;
+      closeMenu();
+      menuToggle?.focus();
+    });
 
     const showCardDetail = (cardId: string, shouldFocus: boolean): void => {
       const card = DECK.find((item) => item.id === cardId);
@@ -75,6 +107,7 @@ if (app) {
     };
 
     const showRoute = (route: AppRoute, shouldFocus: boolean): void => {
+      closeMenu();
       activeRoute = route;
       const showHome = route === "deck";
       const showGallery = route === "gallery";
@@ -99,13 +132,9 @@ if (app) {
       }
     };
 
-    refreshArchive = mountArchiveView(archiveView, store, () => navigate("deck"));
-    refreshHome = mountHomeView(homeView, store, {
-      onOpenGallery: () => navigate("gallery"),
-      onOpenArchive: () => navigate("archive"),
-      onOpenCard: (cardId) => navigate({ type: "card", cardId }),
-    });
-    refreshGallery = mountGalleryView(galleryView, store, () => navigate("deck"), isLocalDevelopment());
+    refreshArchive = mountArchiveView(archiveView, store);
+    refreshHome = mountHomeView(homeView, store);
+    refreshGallery = mountGalleryView(galleryView, store, isLocalDevelopment());
     navigate = mountHashRouter(window, showRoute).navigate;
 
     store.subscribe(() => {

@@ -27,7 +27,8 @@ describe("gallery view", () => {
     expect(html).not.toContain("Draw an invitation");
     expect(html).not.toContain("draw-ritual");
     expect(html).not.toContain("daily-draw");
-    expect(html).toContain('data-action="back-to-deck"');
+    // Page navigation moved to the header menu.
+    expect(html).not.toContain('data-action="back-to-deck"');
   });
 
   it("offers a manual flip for undiscovered cards only in local development", () => {

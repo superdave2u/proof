@@ -43,6 +43,7 @@ button, input, textarea { font: inherit; }
 }
 
 .app-intro {
+  position: relative;
   max-width: 42rem;
   margin: 0 auto 2.5rem;
   text-align: center;
@@ -73,8 +74,19 @@ button, input, textarea { font: inherit; }
   line-height: 1.7;
 }
 
-.deck-view { margin-top: clamp(3rem, 8vw, 5.5rem); }
-.deck-view__heading { display: flex; align-items: end; justify-content: space-between; gap: 2rem; margin-bottom: 1.6rem; }
+/* The one page-navigation control: a hidden popout anchored to the header. */
+.app-menu { position: absolute; top: -.25rem; right: 0; }
+.app-menu__toggle { min-height: 2.8rem; padding: .6rem .9rem; border: 1px solid #b9a6df; border-radius: 99px; background: rgb(122 63 201 / 12%); color: #eee5ff; cursor: pointer; font-size: .73rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+.app-menu__toggle:hover, .app-menu__toggle[aria-expanded="true"] { background: rgb(122 63 201 / 23%); }
+.app-menu__toggle:focus-visible { outline: 3px solid #dfd0ff; outline-offset: 3px; }
+.app-menu__popout { position: absolute; top: calc(100% + .55rem); right: 0; z-index: 40; display: grid; min-width: 11rem; padding: .45rem; border: 1px solid rgb(185 164 238 / 34%); border-radius: 14px; background: #201f25; box-shadow: 0 22px 60px rgb(0 0 0 / 55%); }
+.app-menu__popout[hidden] { display: none; }
+.app-menu__link { padding: .6rem .8rem; border-radius: 9px; color: #f6efdf; font-size: .86rem; text-decoration: none; }
+.app-menu__link:hover { background: rgb(255 255 255 / 6%); }
+.app-menu__link:focus-visible { outline: 3px solid #dfd0ff; outline-offset: -3px; }
+
+.deck-view { margin-top: clamp(3.5rem, 9vw, 6.5rem); }
+.deck-view__heading { display: flex; align-items: end; justify-content: space-between; gap: 2rem; margin-bottom: 2rem; }
 .deck-view__actions { display: flex; flex: 0 0 auto; align-items: center; gap: 1rem; }
 .deck-view__eyebrow { margin: 0 0 .5rem; color: #d8c9a4; font-size: .68rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
 .deck-view__heading h2 { margin: 0; font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif; font-size: clamp(1.65rem, 4vw, 2.45rem); font-weight: 500; line-height: 1.16; text-wrap: balance; }
@@ -119,9 +131,6 @@ button, input, textarea { font: inherit; }
 .deck-card-revealed__link:hover { transform: translateY(-2px); }
 .deck-card-revealed__link:focus-visible { outline: 3px solid #e4c987; outline-offset: 3px; }
 .deck-empty { grid-column: 1 / -1; margin: 0; padding: 2.5rem 1rem; border: 1px dashed #55505a; border-radius: 12px; color: #d1c7b6; line-height: 1.6; text-align: center; }
-.archive-open, .gallery-open, .archive-view__back { min-height: 2.8rem; padding: .6rem .9rem; border: 1px solid #b9a6df; border-radius: 99px; background: rgb(122 63 201 / 12%); color: #eee5ff; cursor: pointer; font-size: .73rem; font-weight: 700; }
-.archive-open:hover, .gallery-open:hover, .archive-view__back:hover { background: rgb(122 63 201 / 23%); }
-.archive-open:focus-visible, .gallery-open:focus-visible, .archive-view__back:focus-visible { outline: 3px solid #dfd0ff; outline-offset: 3px; }
 
 .archive-view { margin-top: clamp(3rem, 8vw, 5.5rem); }
 .archive-view__heading { display: flex; align-items: end; justify-content: space-between; gap: 2rem; margin-bottom: 1.6rem; }

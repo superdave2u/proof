@@ -113,7 +113,6 @@ export function renderGalleryView(
       </div>
       <div class="deck-view__actions">
         <p class="deck-view__lived-count" aria-label="${livedCount} of ${DECK.length} cards lived"><span>${livedCount}</span> / ${DECK.length}<small>lived</small></p>
-        <button class="archive-view__back" type="button" data-action="back-to-deck">Return to the deck</button>
       </div>
     </div>
     <div class="deck-controls" role="group" aria-label="Filter the deck">
@@ -133,7 +132,6 @@ export function renderGalleryView(
 export function mountGalleryView(
   container: HTMLElement,
   store: DeckStore,
-  onBackToDeck: () => void,
   devMode = false,
 ): () => void {
   let filters = { ...DEFAULT_FILTERS };
@@ -145,11 +143,6 @@ export function mountGalleryView(
   container.addEventListener("click", (event: Event) => {
     const target = event.target;
     if (!(target instanceof Element)) return;
-
-    if (target.closest('[data-action="back-to-deck"]')) {
-      onBackToDeck();
-      return;
-    }
 
     const flipButton = target.closest<HTMLButtonElement>('[data-action="flip-card"]');
     const flipCardId = flipButton?.dataset.cardId;
