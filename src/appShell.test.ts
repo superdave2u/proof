@@ -62,6 +62,12 @@ describe("app shell accessibility foundations", () => {
 
   it("preserves visible keyboard focus, narrow-screen layout, and reduced-motion overrides", () => {
     expect(styles).toContain(":focus-visible");
+    // WHY: route transitions programmatically focus the view headings and the
+    // card-detail container. A bare :focus outline paints a gold ring after a
+    // pointer-click navigation until the user clicks elsewhere (reported on
+    // desktop and mobile), so every focus outline must be gated on
+    // :focus-visible — pointer navigation stays clean, keyboard focus stays visible.
+    expect(styles).not.toMatch(/:focus(?![-\w])/);
     expect(styles).toContain("body {\n  min-width: 320px;");
     expect(styles).toContain("@media (max-width: 360px)");
     // WHY: the gallery must be a single column on phones, not two cards wide.
