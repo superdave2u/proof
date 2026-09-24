@@ -287,6 +287,28 @@ describe("deck store draw ritual", () => {
     expect((await store.drawDaily())?.id).toBe(dealt!.id);
   });
 
+  it("peeks today's deterministic deal without drawing it", async () => {
+    const storage = new MemoryStorage();
+    const store = createDeckStore(storage, () => new Date("2026-09-22T12:00:00.000Z"));
+
+    // The home screen shows this card face-down before the tap, so peeking
+    // must be pure: no record, no persisted deal, no state mutation.
+    const peeked = store.peekDailyDraw();
+    expect(peeked).toBeDefined();
+    expect(store.getRecords()).toEqual({});
+    expect(storage.getItem(DECK_STORAGE_KEY)).toBeNull();
+    // Drawing keeps the promise the face-down card made: the same deal.
+    expect(await store.drawDaily()).toBe(peeked);
+  });
+
+  it("peeks an already-revealed deal as the same card", async () => {
+    const storage = new MemoryStorage();
+    const store = createDeckStore(storage, () => new Date("2026-09-22T12:00:00.000Z"));
+
+    const drawn = await store.drawDaily();
+    expect(store.peekDailyDraw()).toBe(drawn);
+  });
+
   it("loads only valid records belonging to this exact 52-card deck", () => {
     const storage = new MemoryStorage();
     storage.setItem(DECK_STORAGE_KEY, JSON.stringify({

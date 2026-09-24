@@ -23,6 +23,8 @@ export interface DeckStore {
   revealCard(cardId: string): Promise<boolean>;
   /** Development-only: revert a manually revealed card to undiscovered. Lived stays terminal. */
   hideCard(cardId: string): Promise<boolean>;
+  /** The deterministic deal for today, without drawing it — the home screen shows this card face-down before the tap. */
+  peekDailyDraw(): Card | undefined;
   submitEvidence(cardId: string, evidence: Evidence): Promise<boolean>;
   subscribe(listener: () => void): () => void;
 }
@@ -229,21 +231,34 @@ export function createDeckStore(
     return cardById(dailyDraw.cardId);
   };
 
-  const drawDaily = (): Promise<Card | undefined> => transact(() => {
+  const peekDailyDraw = (): Card | undefined => {
+    const today = dateFor(now());
+    if (dailyDraw?.date === today) return cardById(dailyDraw.cardId);
+    return deterministicDeal(today, records);
+  };
+
+  /**
+ * FNV-1a makes the same calendar date and eligible deck produce the same deal,
+ * whether it is peeked at face-down or actually drawn.
+ */
+function deterministicDeal(today: string, records: DeckRecords): Card | undefined {
+  const eligible = DECK.filter((card) => records[card.id]?.state !== "lived");
+  if (eligible.length === 0) return undefined;
+
+  let hash = 0x811c9dc5;
+  for (let index = 0; index < today.length; index += 1) {
+    hash ^= today.charCodeAt(index);
+    hash = Math.imul(hash, 0x01000193);
+  }
+  return eligible[(hash >>> 0) % eligible.length];
+}
+
+const drawDaily = (): Promise<Card | undefined> => transact(() => {
     const drawnAt = now();
     const today = dateFor(drawnAt);
     if (dailyDraw?.date === today) return cardById(dailyDraw.cardId);
 
-    const eligible = DECK.filter((card) => records[card.id]?.state !== "lived");
-    if (eligible.length === 0) return undefined;
-
-    // FNV-1a makes the same calendar date and eligible deck produce the same deal.
-    let hash = 0x811c9dc5;
-    for (let index = 0; index < today.length; index += 1) {
-      hash ^= today.charCodeAt(index);
-      hash = Math.imul(hash, 0x01000193);
-    }
-    const card = eligible[(hash >>> 0) % eligible.length];
+    const card = deterministicDeal(today, records);
     if (!card) return undefined;
 
     const previousRecords = records;
@@ -318,6 +333,7 @@ export function createDeckStore(
     drawDaily,
     revealCard,
     hideCard,
+    peekDailyDraw,
     subscribe: (listener) => {
       listeners.add(listener);
       return () => listeners.delete(listener);
