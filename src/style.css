@@ -179,6 +179,7 @@ button, input, textarea { font: inherit; }
 .card-detail__primary { min-height: 3rem; padding-inline: 1.25rem; border-color: #dfc789; background: linear-gradient(130deg, #d7b86b, #a77d38); color: #17151a; }
 .deck-card-revealed__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; margin: .75rem 0; }
 .deck-card-revealed > .card-detail__open { display: block; margin: .75rem auto; }
+.deck-card-revealed > .deck-card-dev__flip { display: block; margin: .75rem auto 0; }
 
 @keyframes deal-flip {
   0% { opacity: 0; transform: translateY(-1.75rem) rotateY(88deg) scale(.94); }

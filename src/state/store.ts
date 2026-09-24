@@ -21,6 +21,8 @@ export interface DeckStore {
   drawDaily(): Promise<Card | undefined>;
   /** Development-only: reveal one card directly, outside the once-per-day deal. */
   revealCard(cardId: string): Promise<boolean>;
+  /** Development-only: revert a manually revealed card to undiscovered. Lived stays terminal. */
+  hideCard(cardId: string): Promise<boolean>;
   submitEvidence(cardId: string, evidence: Evidence): Promise<boolean>;
   subscribe(listener: () => void): () => void;
 }
@@ -286,11 +288,36 @@ export function createDeckStore(
     return records[cardId]?.state === "drawn" || records[cardId]?.state === "lived";
   });
 
+  const hideCard = (cardId: string): Promise<boolean> => transact(() => {
+    if (!deckIds.has(cardId) || records[cardId]?.state !== "drawn") return false;
+
+    const previousRecords = records;
+    const previousDailyDraw = dailyDraw;
+    const nextRecords = { ...records };
+    delete nextRecords[cardId];
+    records = nextRecords;
+    // Clearing the deal lets the same calendar date deal again after a dev hide.
+    if (dailyDraw?.cardId === cardId) dailyDraw = undefined;
+    if (!persist()) {
+      records = previousRecords;
+      dailyDraw = previousDailyDraw;
+      return false;
+    }
+    // Another tab may have committed a deal or evidence meanwhile; converge on it.
+    const saved = loadDeckState(storage);
+    const merged = mergeDeckStates(currentState(), saved);
+    records = merged.records;
+    dailyDraw = merged.dailyDraw;
+    notify();
+    return records[cardId]?.state !== "drawn";
+  });
+
   return {
     getRecords: () => records,
     getDailyDraw,
     drawDaily,
     revealCard,
+    hideCard,
     subscribe: (listener) => {
       listeners.add(listener);
       return () => listeners.delete(listener);

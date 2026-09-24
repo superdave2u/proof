@@ -32,12 +32,18 @@ function renderCardTile(card: Card, records: DeckRecords, devMode: boolean): str
   // the whole preview links to.
   // "Drawn" is implied by a face-up card; "Lived" is not, so it stays labeled.
   const stateNote = state === "lived" ? '<p class="deck-card-revealed__state">Lived · in the Archive</p>' : "";
+  // Development-only hide control: the manual flip works both ways so card
+  // states can be re-exercised; Lived is terminal and production ships neither control.
+  const hideControl = devMode && state === "drawn"
+    ? `<button class="deck-card-dev__flip" type="button" data-action="hide-card" data-card-id="${card.id}" aria-label="Hide ${territoryLabel(card)} card ${collectorNumber} of 52 again (development only)">Hide card</button>`
+    : "";
 
   return `<div class="deck-card-revealed" data-card-id="${card.id}" data-state="${state}">
     ${stateNote}
     <a class="deck-card-revealed__link" href="#/card/${encodeURIComponent(card.id)}" aria-label="${territoryLabel(card)} card ${collectorNumber} of 52: ${card.name} — open card details">
       ${renderCardFace(card, record, { preview: true })}
     </a>
+    ${hideControl}
   </div>`;
 }
 
@@ -152,6 +158,22 @@ export function mountGalleryView(
       void (async () => {
         if (await store.revealCard(flipCardId)) {
           container.querySelector<HTMLElement>(`.deck-card-revealed[data-card-id="${flipCardId}"] a`)?.focus();
+        } else {
+          render();
+        }
+      })();
+      return;
+    }
+
+    const hideButton = target.closest<HTMLButtonElement>('[data-action="hide-card"]');
+    const hideCardId = hideButton?.dataset.cardId;
+    if (hideCardId) {
+      hideButton.disabled = true;
+      void (async () => {
+        if (await store.hideCard(hideCardId)) {
+          // The store subscription re-rendered the grid; put focus on the
+          // restored face-down tile's flip control.
+          container.querySelector<HTMLElement>(`.deck-card-dev[data-card-id="${hideCardId}"] .deck-card-dev__flip`)?.focus();
         } else {
           render();
         }

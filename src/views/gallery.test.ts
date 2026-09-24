@@ -38,6 +38,16 @@ describe("gallery view", () => {
 
     const partlyRevealed = renderGalleryView({ "pleasure-01": { state: "drawn" } }, DEFAULT_FILTERS, true);
     expect((partlyRevealed.match(/data-action="flip-card"/g) ?? [])).toHaveLength(51);
+    // The dev toggle flips both ways: revealed tiles offer to hide again, but
+    // Lived cards are terminal and production never sees either control.
+    expect((partlyRevealed.match(/data-action="hide-card"/g) ?? [])).toHaveLength(1);
+    expect(renderGalleryView({ "pleasure-01": { state: "drawn" } })).not.toContain('data-action="hide-card"');
+    const livedHtml = renderGalleryView(
+      { "pleasure-01": { state: "lived", evidence: { date: "2026-09-22", note: "Lived." } } },
+      DEFAULT_FILTERS,
+      true,
+    );
+    expect(livedHtml).not.toContain('data-action="hide-card"');
   });
 
   it("keeps the lived count deck-wide and shows face-up records as compact preview links", () => {    const records: DeckRecords = {

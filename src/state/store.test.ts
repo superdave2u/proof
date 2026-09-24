@@ -248,6 +248,45 @@ describe("deck store draw ritual", () => {
     expect(store.getRecords()).toEqual({});
   });
 
+  it("hides a manually revealed card again (development-only toggle)", async () => {
+    const storage = new MemoryStorage();
+    const store = createDeckStore(storage, () => new Date("2026-09-22T12:00:00.000Z"));
+
+    await store.revealCard("pleasure-01");
+    expect(await store.hideCard("pleasure-01")).toBe(true);
+    expect(store.getRecords()["pleasure-01"]).toBeUndefined();
+    expect(JSON.parse(storage.getItem(DECK_STORAGE_KEY)!).cards["pleasure-01"]).toBeUndefined();
+
+    // Hiding never touches absent, unknown, or terminal states.
+    expect(await store.hideCard("pleasure-01")).toBe(false);
+    expect(await store.hideCard("not-a-card")).toBe(false);
+  });
+
+  it("never hides a Lived card — the Archive is forward-only", async () => {
+    const storage = new MemoryStorage();
+    const store = createDeckStore(storage, () => new Date("2026-09-22T12:00:00.000Z"));
+
+    await store.revealCard("pleasure-01");
+    await store.submitEvidence("pleasure-01", { date: "2026-09-22", note: "Lived." });
+    expect(await store.hideCard("pleasure-01")).toBe(false);
+    expect(store.getRecords()["pleasure-01"]?.state).toBe("lived");
+  });
+
+  it("hiding today's dealt card clears the deal so the ritual can run again", async () => {
+    const date = new Date(2026, 8, 22, 12);
+    const storage = new MemoryStorage();
+    const store = createDeckStore(storage, () => date);
+
+    const dealt = await store.drawDaily();
+    expect(dealt).toBeDefined();
+    expect(await store.hideCard(dealt!.id)).toBe(true);
+    expect(store.getRecords()[dealt!.id]).toBeUndefined();
+    expect(store.getDailyDraw()).toBeUndefined();
+
+    // The same calendar date deals again after the development-only hide.
+    expect((await store.drawDaily())?.id).toBe(dealt!.id);
+  });
+
   it("loads only valid records belonging to this exact 52-card deck", () => {
     const storage = new MemoryStorage();
     storage.setItem(DECK_STORAGE_KEY, JSON.stringify({
