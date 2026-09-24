@@ -122,6 +122,7 @@ Legend: `[ ]` incomplete · `[x]` done (verified) — prune `[x]` items periodic
 - UI: `src/components/cardArt.ts` renders the src-less lazy `<img>`, the black mask, and the flavor caption, and `mountLazyCardArt` attaches art on reveal/scroll; `main.ts` mounts it once on the shell. The territory pattern is the fallback.
 - Shared `escapeHtml` was consolidated into `src/util/html.ts` (was copied in cardFace/cardDetail/evidenceForm/deckShared).
 - Generator: `scripts/generate-card-art.ts` via `vite-node`; `npm run art:prompts` needs no key, `npm run art:generate` writes normalized PNG JSON. OpenRouter credentials resolve from the environment, `.env`, or `~/.local/share/opencode/auth.json` and are never logged.
+- Container drift fix: the pinned `google/gemini-3.1-flash-lite-image` sometimes ignores `output_format: png` and returns JPEG despite the request. `scripts/generate-card-art.ts` used to hard-reject any non-PNG `media_type`, wasting a paid generation; it now delegates to `normalizeProviderImage` (`scripts/cardImageOutput.ts`), which sniffs the actual bytes and transcodes any decodable raster into the 800×600 palette-PNG contract, failing with the card id + reported media type only when nothing decodable was returned.
 - Verification: `npm run check` green (17 files, 88 tests) and `npm run build` green. The one visual test image was removed after review. The accept-all art loop has now structurally accepted `pleasure-01`; `pleasure-02` is next.
 
 ### Unaddressed backlog — parallel audit (prioritized)

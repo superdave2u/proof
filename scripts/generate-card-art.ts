@@ -27,7 +27,7 @@ import { fileURLToPath } from "node:url";
 import { DECK } from "../src/data/cards";
 import { readOpenRouterApiKey } from "./openrouterAuth";
 import { buildCardArtPrompt, cardArtAlt } from "../src/data/cardArt";
-import { normalizeCardPng, pngDimensions } from "./cardImageOutput";
+import { normalizeCardPng, normalizeProviderImage, pngDimensions } from "./cardImageOutput";
 
 const here = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(here, "..");
@@ -191,11 +191,11 @@ async function main(): Promise<void> {
     const result = await requestImage(config, payload);
     const first = result.data?.[0];
     if (!first?.b64_json) throw new Error(`${card.id}: image API returned no b64_json payload`);
-    if (first.media_type && first.media_type !== "image/png") {
-      throw new Error(`${card.id}: expected PNG, got ${first.media_type}; the card registry only accepts base64 PNG`);
-    }
 
-    const normalized = await normalizeCardPng(Buffer.from(first.b64_json, "base64"));
+    const normalized = await normalizeProviderImage(
+      { bytes: Buffer.from(first.b64_json, "base64"), media_type: first.media_type },
+      card.id,
+    );
     const artifact: GeneratedArtifact = {
       dataUrl: `data:image/png;base64,${normalized.toString("base64")}`,
       alt: cardArtAlt(card),

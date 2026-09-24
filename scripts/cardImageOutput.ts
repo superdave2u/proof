@@ -16,6 +16,28 @@ export async function normalizeCardPng(source: Uint8Array): Promise<Uint8Array> 
     .toBuffer();
 }
 
+export interface ProviderImage {
+  bytes: Uint8Array;
+  media_type?: string | undefined;
+}
+
+/**
+ * Accept whatever raster the provider returned — the pinned model may ignore
+ * `output_format: png` and send JPEG — and transcode it into the 800x600
+ * palette PNG the artifact registry requires, so a container mismatch never
+ * discards a paid generation. The reported media type is attribution only:
+ * sharp sniffs the actual bytes, and undecodable payloads fail with the
+ * caller's label so the loop can pause for operator review.
+ */
+export async function normalizeProviderImage(image: ProviderImage, label: string): Promise<Uint8Array> {
+  try {
+    return await normalizeCardPng(image.bytes);
+  } catch (cause) {
+    const reported = image.media_type ? ` reported as ${image.media_type}` : "";
+    throw new Error(`${label}: provider image${reported} could not be decoded into the 800x600 PNG contract`, { cause });
+  }
+}
+
 function ascii(bytes: Uint8Array, offset: number, length: number): string {
   return String.fromCharCode(...bytes.subarray(offset, offset + length));
 }
