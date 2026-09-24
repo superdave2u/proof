@@ -82,7 +82,7 @@ The Archive is the collection of Lived cards. When a card becomes Lived, the pla
 
 ## 7. Mechanics
 
-- **Daily draw (the only reveal)** — one date-seeded card per day, deterministic, no rerolls. The daily flip is the only way a card becomes DRAWN; there is no manual draw button anywhere in the app.
+- **Daily draw (the only reveal)** — one date-seeded card per day, deterministic, no rerolls. The daily flip is the only way a card becomes DRAWN; there is no manual draw button anywhere in the shipped app. Exception: while running the Vite dev server or serving from localhost, the Gallery offers a manual flip per undiscovered card (`store.revealCard`) so states can be exercised without waiting a day.
 - **No deadlines, no streak requirements, no completion percentage pressure.** Progress is measured only in evidence accumulated.
 - **Wild Cards** — arrive through the daily deal like any other; visually spectacular (prismatic/iridescent).
 

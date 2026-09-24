@@ -12,13 +12,19 @@ import {
   type DeckTerritoryFilter,
 } from "./deckShared";
 
-function renderCardTile(card: Card, records: DeckRecords): string {
+function renderCardTile(card: Card, records: DeckRecords, devMode: boolean): string {
   const record = records[card.id];
   const state = stateFor(card, records);
   const collectorNumber = String(card.number).padStart(2, "0");
 
   if (state === "undiscovered") {
-    return renderCardBack(card);
+    // Local development gets a manual flip so card states can be exercised
+    // without waiting for the once-per-day deal; production ships only the back.
+    if (!devMode) return renderCardBack(card);
+    return `<div class="deck-card-dev" data-card-id="${card.id}">
+      ${renderCardBack(card)}
+      <button class="deck-card-dev__flip" type="button" data-action="flip-card" data-card-id="${card.id}" aria-label="Reveal ${territoryLabel(card)} card ${collectorNumber} of 52 now (development only)">Flip card</button>
+    </div>`;
   }
 
   // Face-up cards are compact previews: nothing below the flavor window. The
@@ -35,12 +41,12 @@ function renderCardTile(card: Card, records: DeckRecords): string {
   </div>`;
 }
 
-function renderCards(cards: readonly Card[], records: DeckRecords): string {
+function renderCards(cards: readonly Card[], records: DeckRecords, devMode: boolean): string {
   if (cards.length === 0) {
     return '<p class="deck-empty">No cards match these filters. The rest of the deck is still here when you are ready.</p>';
   }
 
-  return cards.map((card) => renderCardTile(card, records)).join("");
+  return cards.map((card) => renderCardTile(card, records, devMode)).join("");
 }
 
 function resultSummary(visible: number, lived: number): string {
@@ -87,6 +93,7 @@ function stateFilter(value: string): DeckStateFilter {
 export function renderGalleryView(
   records: DeckRecords = {},
   filters: DeckFilters = DEFAULT_FILTERS,
+  devMode = false,
 ): string {
   const livedCount = DECK.filter((card) => stateFor(card, records) === "lived").length;
   const visibleCards = filterDeck(DECK, records, filters);
@@ -112,7 +119,7 @@ export function renderGalleryView(
       </label>
     </div>
      <p class="deck-results" id="deck-result-summary" aria-live="polite">${resultSummary(visibleCards.length, livedCount)}</p>
-     <div class="deck-grid" id="deck-grid" aria-label="Adventure cards">${renderCards(visibleCards, records)}</div>
+     <div class="deck-grid" id="deck-grid" aria-label="Adventure cards">${renderCards(visibleCards, records, devMode)}</div>
   </section>`;
 }
 
@@ -121,10 +128,11 @@ export function mountGalleryView(
   container: HTMLElement,
   store: DeckStore,
   onBackToDeck: () => void,
+  devMode = false,
 ): () => void {
   let filters = { ...DEFAULT_FILTERS };
   const render = (): void => {
-    container.innerHTML = renderGalleryView(store.getRecords(), filters);
+    container.innerHTML = renderGalleryView(store.getRecords(), filters, devMode);
   };
   render();
 
@@ -135,6 +143,19 @@ export function mountGalleryView(
     if (target.closest('[data-action="back-to-deck"]')) {
       onBackToDeck();
       return;
+    }
+
+    const flipButton = target.closest<HTMLButtonElement>('[data-action="flip-card"]');
+    const flipCardId = flipButton?.dataset.cardId;
+    if (flipCardId) {
+      flipButton.disabled = true;
+      void (async () => {
+        if (await store.revealCard(flipCardId)) {
+          container.querySelector<HTMLElement>(`.deck-card-revealed[data-card-id="${flipCardId}"] a`)?.focus();
+        } else {
+          render();
+        }
+      })();
     }
   });
 
@@ -150,7 +171,7 @@ export function mountGalleryView(
     const cards = filterDeck(DECK, records, filters);
     const grid = container.querySelector<HTMLElement>("#deck-grid");
     const summary = container.querySelector<HTMLElement>("#deck-result-summary");
-    if (grid) grid.innerHTML = renderCards(cards, records);
+    if (grid) grid.innerHTML = renderCards(cards, records, devMode);
     if (summary) {
       const livedCount = DECK.filter((card) => stateFor(card, records) === "lived").length;
       summary.textContent = resultSummary(cards.length, livedCount);

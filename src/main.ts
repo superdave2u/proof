@@ -8,6 +8,7 @@ import { mountArchiveView } from "./views/archive";
 import { mountCardDetail, type CardDetailAction, type EvidenceEntryState } from "./views/cardDetail";
 import { mountHashRouter, type AppRoute } from "./router";
 import { browserDeckStorage, createDeckStore } from "./state/store";
+import { isLocalDevelopment } from "./util/devMode";
 import "./style.css";
 
 const app = document.querySelector<HTMLDivElement>("#app");
@@ -104,7 +105,7 @@ if (app) {
       onOpenArchive: () => navigate("archive"),
       onOpenCard: (cardId) => navigate({ type: "card", cardId }),
     });
-    refreshGallery = mountGalleryView(galleryView, store, () => navigate("deck"));
+    refreshGallery = mountGalleryView(galleryView, store, () => navigate("deck"), isLocalDevelopment());
     navigate = mountHashRouter(window, showRoute).navigate;
 
     store.subscribe(() => {

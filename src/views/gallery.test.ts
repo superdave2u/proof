@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { DECK } from "../data/cards";
-import { filterDeck, type DeckFilters, type DeckRecords } from "./deckShared";
+import { DEFAULT_FILTERS, filterDeck, type DeckFilters, type DeckRecords } from "./deckShared";
 import { renderGalleryView } from "./gallery";
 
 /**
@@ -30,8 +30,17 @@ describe("gallery view", () => {
     expect(html).toContain('data-action="back-to-deck"');
   });
 
-  it("keeps the lived count deck-wide and shows face-up records as compact preview links", () => {
-    const records: DeckRecords = {
+  it("offers a manual flip for undiscovered cards only in local development", () => {
+    const devHtml = renderGalleryView({}, DEFAULT_FILTERS, true);
+
+    expect((devHtml.match(/data-action="flip-card"/g) ?? [])).toHaveLength(52);
+    expect(renderGalleryView()).not.toContain('data-action="flip-card"');
+
+    const partlyRevealed = renderGalleryView({ "pleasure-01": { state: "drawn" } }, DEFAULT_FILTERS, true);
+    expect((partlyRevealed.match(/data-action="flip-card"/g) ?? [])).toHaveLength(51);
+  });
+
+  it("keeps the lived count deck-wide and shows face-up records as compact preview links", () => {    const records: DeckRecords = {
       "pleasure-01": { state: "drawn" },
       "beauty-23": { state: "lived", livedAt: "2026-09-22", evidence: { date: "2026-09-22", note: "Found a quiet color." } },
     };

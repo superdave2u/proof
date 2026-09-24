@@ -19,6 +19,8 @@ export interface DeckStore {
   getRecords(): DeckRecords;
   getDailyDraw(): Card | undefined;
   drawDaily(): Promise<Card | undefined>;
+  /** Development-only: reveal one card directly, outside the once-per-day deal. */
+  revealCard(cardId: string): Promise<boolean>;
   submitEvidence(cardId: string, evidence: Evidence): Promise<boolean>;
   subscribe(listener: () => void): () => void;
 }
@@ -263,10 +265,32 @@ export function createDeckStore(
     return dailyDraw?.date === today ? cardById(dailyDraw.cardId) : card;
   });
 
+  const revealCard = (cardId: string): Promise<boolean> => transact(() => {
+    if (!deckIds.has(cardId)) return false;
+    const state = records[cardId]?.state;
+    if (state === "lived") return false;
+    if (state === "drawn") return true;
+
+    const previousRecords = records;
+    records = { ...records, [cardId]: { state: "drawn", drawnAt: now().toISOString() } };
+    if (!persist()) {
+      records = previousRecords;
+      return false;
+    }
+    // Another tab may have committed a deal or evidence meanwhile; converge on it.
+    const saved = loadDeckState(storage);
+    const merged = mergeDeckStates(currentState(), saved);
+    records = merged.records;
+    dailyDraw = merged.dailyDraw;
+    notify();
+    return records[cardId]?.state === "drawn" || records[cardId]?.state === "lived";
+  });
+
   return {
     getRecords: () => records,
     getDailyDraw,
     drawDaily,
+    revealCard,
     subscribe: (listener) => {
       listeners.add(listener);
       return () => listeners.delete(listener);

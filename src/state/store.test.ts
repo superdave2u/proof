@@ -223,6 +223,31 @@ describe("deck store draw ritual", () => {
     expect(await nextDay.drawDaily()).toBeUndefined();
   });
 
+  it("reveals one card manually without consuming or rerolling the daily deal", async () => {
+    const storage = new MemoryStorage();
+    const store = createDeckStore(storage, () => new Date("2026-09-22T12:00:00.000Z"));
+
+    expect(await store.revealCard("pleasure-01")).toBe(true);
+    expect(store.getRecords()["pleasure-01"]?.state).toBe("drawn");
+    expect(JSON.parse(storage.getItem(DECK_STORAGE_KEY)!).cards["pleasure-01"].state).toBe("drawn");
+    // The manual flip neither sets nor blocks the date-seeded daily deal.
+    expect(store.getDailyDraw()).toBeUndefined();
+    expect(await store.revealCard("pleasure-01")).toBe(true);
+    expect(await store.revealCard("beauty-23")).toBe(true);
+    expect(await store.revealCard("not-a-card")).toBe(false);
+  });
+
+  it("reports a failed manual flip without retaining the card", async () => {
+    const storage: KeyValueStorage = {
+      getItem: () => null,
+      setItem: () => { throw new Error("quota exceeded"); },
+    };
+    const store = createDeckStore(storage, () => new Date(2026, 8, 22, 12));
+
+    expect(await store.revealCard("pleasure-01")).toBe(false);
+    expect(store.getRecords()).toEqual({});
+  });
+
   it("loads only valid records belonging to this exact 52-card deck", () => {
     const storage = new MemoryStorage();
     storage.setItem(DECK_STORAGE_KEY, JSON.stringify({

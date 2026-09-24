@@ -68,7 +68,7 @@ interface CardImageSource { load(cardId: string): Promise<string | undefined> }
 ## 5. Screens / UX flow
 
 1. **Home** (`#/deck`) — the daily card only: the date-seeded reveal (deterministic, shown once per day) plus small links to the Gallery and the Archive. Nothing else lives here.
-2. **Gallery** (`#/gallery`) — the whole deck on its own page, modeled on the Archive: all 52 cards (backs pristine, fronts by state) with territory/state filters, the deck-wide lived count, and rows whose cards align vertically with their peers. There is no manual draw button anywhere — the daily deal is the only reveal.
+2. **Gallery** (`#/gallery`) — the whole deck on its own page, modeled on the Archive: all 52 cards (backs pristine, fronts by state) with territory/state filters, the deck-wide lived count, and rows whose cards align vertically with their peers. There is no manual draw button anywhere — the daily deal is the only reveal. Local development is the exception: the dev server and localhost show a per-card "Flip card" control (`store.revealCard`) so states can be exercised without waiting a day.
 3. **Card detail** (`#/card/<id>`) — revealed cards show the full anatomy with their state action (`Deposited my Proof of Life` for drawn → evidence form; `View in the Archive` for lived). Undiscovered cards stay face-down on deep links: the page shows the card back (territory, number, Undiscovered) and a status note — never the name, quest, or flavor. The artwork panel fills the card body width; the flavor is its caption.
 4. **Archive** (`#/archive`) — Lived cards with their evidence; the collected-evidence gallery. The emotional payoff screen.
 
