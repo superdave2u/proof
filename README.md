@@ -19,7 +19,7 @@ Five territories — five schools of magic — plus two prismatic Wild Cards:
 | Wonder     | Violet       | ✧      | Awe       | 41–50 |
 | Wild       | Prismatic    | ✵      | —         | 51–52 |
 
-Every card: **name · territory + symbol · type line · rarity · artwork · quest · Proof of Life · reward · special ability · flavor text**. The Wilds sit above all — 51 _Follow the Thread_ (Legendary) and 52 _Proof of Life_ (Mythic), the philosophical center of the game.
+Every card: **name · territory + symbol · type line · rarity · artwork · quest · Proof of Life · special ability · flavor text**. The Wilds sit above all — 51 _Follow the Thread_ (Legendary) and 52 _Proof of Life_ (Mythic), the philosophical center of the game.
 
 ### Card art
 

@@ -438,8 +438,6 @@ button, input, textarea { font: inherit; }
 .card-ability h3 { display: flex; justify-content: space-between; }
 .card-ability h3 span { color: var(--territory-text); }
 .card-ability strong { color: #fff; }
-.card-face__reward { margin: .78rem 0 0; color: #e0d8c8; font-size: .7rem; line-height: 1.45; }
-.card-face__reward span { margin-right: .25rem; color: #d9c89f; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
 
 .card-face--wild .card-face__header { background: linear-gradient(105deg, #69435d, #555a79 49%, #416c66); }
 .card-face--mythic .card-face__header { background: linear-gradient(105deg, #221d2b, #121217 53%, #272032); }

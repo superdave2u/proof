@@ -20,8 +20,7 @@ Borrow the *feel* of a deep collectible card game. **Do not copy Magic: The Gath
 6. **Quest** block.
 7. **Proof of Life** block.
 8. **Special Ability** box (if present) — distinct background, ability name bold.
-9. **Reward** line.
-10. Lived overlays: date stamp, evidence note, evidence photo thumb — clean, no wear effects.
+9. Lived overlays: date stamp, evidence note, evidence photo thumb — clean, no wear effects.
 
 Note: authored art-direction strings remain in the frozen card specs and in `Card.art`. They are not rendered as visible text on the face; they drive generation (alongside flavor, territory palette, and the figure bible) and appear only in the loaded image's `alt` description.
 
@@ -43,7 +42,6 @@ interface Card {
   quest: string[];      // line-separated steps
   proof: string;
   ability?: { name: string; text: string };
-  reward: string;
   flavor: string;
 }
 

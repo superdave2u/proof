@@ -35,9 +35,8 @@ Five territories function like five schools of magic, plus two Wild Cards with p
 5. **ARTWORK / ART DIRECTION** — a 4:3 landscape watercolor illustration of the adventure, painted in the territory's tonal range and starring the recurring heroine (the Wayfarer) inhabiting the scene — never literally showing someone completing the quest. Almost magical realism. Authored as an art-direction string (scene, mood, light) that drives generation; the full imagery canon lives in `specs/art/ART-DIRECTION.md`.
 6. **THE QUEST** — the actual action the player must undertake.
 7. **PROOF OF LIFE** — the physical evidence required to claim the card.
-8. **REWARD** — placing evidence in the Archive; the card becomes **Lived**.
-9. **SPECIAL ABILITY** (optional) — a named rule that modifies how the quest is performed or what it yields (e.g. *Unknown Territory*, *Useless Beauty*, *Inheritance*, *Encore*, *Serendipity*, *Alive*). Abilities are experiential modifiers, never scored points.
-10. **FLAVOR TEXT** — the philosophy woven through the game. On the rendered face it is the caption of the artwork, set at the foot of the image over a translucent black mask.
+8. **SPECIAL ABILITY** (optional) — a named rule that modifies how the quest is performed or what it yields (e.g. *Unknown Territory*, *Useless Beauty*, *Inheritance*, *Encore*, *Serendipity*, *Alive*). Abilities are experiential modifiers, never scored points.
+9. **FLAVOR TEXT** — the philosophy woven through the game. On the rendered face it is the caption of the artwork, set at the foot of the image over a translucent black mask.
 
 ### 3.1 Imagery standard
 

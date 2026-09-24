@@ -10,7 +10,6 @@ Territory energy: **Belonging.** Some treasures can only be inherited by asking.
   Three pages minimum — or until you write something you did not know you thought.
   Address it, stamp it, walk it to a postbox.
 - **Proof of Life**: Photograph the sealed envelope; keep a copy of the first page.
-- **Reward**: Place your evidence in the Archive. This card is now **Lived**.
 - **Special Ability**: **The Unsaid Paragraph** — include one thing you have never said out loud.
 - **Art direction**: a desk at midnight, a letter mid-sentence with ink still drying, a red postbox waiting outside the window under falling snow.
 - **Flavor**: "Some words only travel by post."
@@ -25,7 +24,6 @@ Territory energy: **Belonging.** Some treasures can only be inherited by asking.
   Listen.
 - **Proof of Life**: Write one sentence from their story that you never want to forget.
 - **Special Ability**: **Inheritance** — if the story changes something you believed about this person, write that beneath the first sentence.
-- **Reward**: Place your evidence in the Archive. This card is now **Lived**.
 - **Art direction**: two people across a kitchen table, late-afternoon sunlight, old photographs scattered between them, with scenes from another lifetime almost ghostlike in the background.
 - **Flavor**: *"Some treasures can only be inherited by asking."*
 
@@ -37,7 +35,6 @@ Territory energy: **Belonging.** Some treasures can only be inherited by asking.
   Ask them about the dish first.
   Let them talk while it cooks.
 - **Proof of Life**: Keep the recipe, written in their words, and one sentence they said at the table.
-- **Reward**: Place your evidence in the Archive. This card is now **Lived**.
 - **Special Ability**: **No Apologies** — the meal may not be defended or explained.
 - **Art direction**: a steam-filled kitchen, an older generation's hands ghosted over younger hands stirring the same pot, two eras sharing one stove.
 - **Flavor**: "Feeding someone their own memory is a form of time travel."
@@ -50,7 +47,6 @@ Territory energy: **Belonging.** Some treasures can only be inherited by asking.
   Call instead. No agenda.
   Talk until the call finds something texts cannot carry.
 - **Proof of Life**: Write the sentence that could never have been typed.
-- **Reward**: Place your evidence in the Archive. This card is now **Lived**.
 - **Special Ability**: **No Agenda** — you may not open with logistics.
 - **Art direction**: a night balcony lit by phone-glow that dissolves into warm lamplight as the call deepens, the city below turning to soft watercolor.
 - **Flavor**: "A voice is a room text cannot build."
@@ -64,7 +60,6 @@ Territory energy: **Belonging.** Some treasures can only be inherited by asking.
   Order the same thing.
   Learn one staff member's name; let them learn yours.
 - **Proof of Life**: Keep a receipt from each visit, dated.
-- **Reward**: Place your evidence in the Archive. This card is now **Lived**.
 - **Special Ability**: **The Same Seat** — sit or stand in the same spot each time.
 - **Art direction**: morning fog outside a café window, a cup mid-pour, a barista's hand beginning a small doodle beside a familiar order.
 - **Flavor**: "Belonging is built from repetition, not invitations."
@@ -77,7 +72,6 @@ Territory energy: **Belonging.** Some treasures can only be inherited by asking.
   Make one — together, properly, both of you in the frame.
   Print it. Date the back.
 - **Proof of Life**: The printed photograph itself.
-- **Reward**: Place your evidence in the Archive. This card is now **Lived**.
 - **Special Ability**: **Paper Only** — it must exist in the physical world, not only the cloud.
 - **Art direction**: two half-visible figures at a sunlit pier, a polaroid developing in mid-air above them, the sea glittering like struck glass.
 - **Flavor**: "One day this will be the only proof that the afternoon happened."
@@ -90,7 +84,6 @@ Territory energy: **Belonging.** Some treasures can only be inherited by asking.
   Write and send the thanks.
   If they cannot be reached, write it in full and read it aloud to their memory.
 - **Proof of Life**: Keep the letter — sent or kept.
-- **Reward**: Place your evidence in the Archive. This card is now **Lived**.
 - **Special Ability**: **No Reply Required** — you may not wait for one.
 - **Art direction**: a lighthouse beam crossing a night sea toward a small distant figure, envelopes fluttering along the beam like migrating birds.
 - **Flavor**: "Some debts are only paid by naming them."
@@ -103,7 +96,6 @@ Territory energy: **Belonging.** Some treasures can only be inherited by asking.
   Offer one real sentence beyond "excuse me."
   Receive one back.
 - **Proof of Life**: Keep the napkin, ticket, or menu from the bench.
-- **Reward**: Place your evidence in the Archive. This card is now **Lived**.
 - **Special Ability**: **Elbow Distance** — no phone at the bench; the strangers are the entertainment.
 - **Art direction**: a lantern-lit communal table at a night market, steam rising from bowls, conversations rendered as visible threads crossing the table.
 - **Flavor**: "Every stranger is a friend you have not been seated next to yet."
@@ -116,7 +108,6 @@ Territory energy: **Belonging.** Some treasures can only be inherited by asking.
   Do not catch up on news.
   Tell them what they meant to you — specifically.
 - **Proof of Life**: Keep their reply — a screenshot, a message, a note of the call.
-- **Reward**: Place your evidence in the Archive. This card is now **Lived**.
 - **Special Ability**: **No Apology Required** — you may not explain the gap.
 - **Art direction**: an overgrown stone bridge at dawn being crossed for the first time in years, ferns parting on their own to make a path.
 - **Flavor**: "Friendships rarely die of wounds. They die of silence."
@@ -128,7 +119,6 @@ Territory energy: **Belonging.** Some treasures can only be inherited by asking.
   Ask an elder in your life to teach you one thing their hands know — a recipe, a repair, a knot, a card game.
   Do it beside them, badly, until it is yours.
 - **Proof of Life**: Make the thing, and write the steps in their words, verbatim.
-- **Reward**: Place your evidence in the Archive. This card is now **Lived**.
 - **Special Ability**: **The Recipe Card** — you must write their words, not your translation.
 - **Art direction**: an evening kitchen, four hands working one dough over flour-dusted wood, the light holding the shape of everyone who ever learned this at this counter.
 - **Flavor**: "Some inheritance skips the will entirely."

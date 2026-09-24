@@ -21,7 +21,6 @@ The Wild Cards use iridescent/prismatic treatments and sit above all territory r
   Continue for at least two hours.
 - **Proof of Life**: Return with one object that **could not possibly have entered your life if you'd planned the day.**
 - **Legendary Ability**: **Serendipity** — during this adventure, the question *"What is the point of this?"* has no power.
-- **Reward**: Place your evidence in the Archive. This card is now **Lived**.
 - **Art direction**: a figure walking away down an unplanned street, threads of light tugging from doorways and alley mouths in different directions, prismatic light refracting off everything.
 - **Flavor**: *"You cannot discover what you refuse to wander toward."*
 
@@ -40,7 +39,6 @@ The Wild Cards use iridescent/prismatic treatments and sit above all territory r
   **I WANTED THIS.**
   **THAT WAS ENOUGH.**
 - **Mythic Ability**: **Alive** — this card cannot be completed for points. It cannot be optimized. It cannot be compared with another player's experience. Once lived, place it somewhere you will encounter it again.
-- **Reward**: Place your evidence in the Archive. This card is now **Lived**.
 - **Art direction**: hands holding a small ordinary object — a stone, a shell, a pressed leaf — glowing softly as if lit from within, the rest of the world dimmed away.
 - **Flavor**: *"That space is not outside the work. It is what keeps the work human."*
 

@@ -28,7 +28,6 @@ describe("application deck data", () => {
       expect(card.typeLine, card.id).toBe(spec.typeLine);
       expect(card.quest, card.id).toEqual(spec.quest);
       expect(card.proof, card.id).toBe(spec.proof);
-      expect(card.reward, card.id).toBe(spec.reward);
       expect(card.art, card.id).toBe(spec.art);
       expect(card.flavor, card.id).toBe(spec.flavor);
       expect(card.ability, card.id).toEqual(spec.ability);

@@ -28,7 +28,9 @@ describe("renderCardFace", () => {
       // never dumped onto the face as visible paragraph text.
       expect(html).not.toContain(`>${escapeHtml(card.art)}<`);
       expect(html).toContain(card.proof.split("\n").map(escapeHtml).join("<br>"));
-      expect(html).toContain(escapeHtml(card.reward));
+      // The Reward line was removed from the card anatomy entirely.
+      expect(html).not.toContain('class="card-face__reward"');
+      expect(html).not.toContain("<span>Reward</span>");
       expect(html).toContain(escapeHtml(card.flavor));
       for (const step of card.quest) expect(html).toContain(escapeHtml(step));
       expect(html).toContain("<h3>Quest</h3>");

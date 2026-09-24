@@ -98,14 +98,13 @@ describe("deck integrity — anatomy (SPEC §3)", () => {
     }
   });
 
-  it("gives every card non-empty quest, proof, reward, art and flavor", () => {
+  it("gives every card non-empty quest, proof, art and flavor", () => {
     for (const card of cards) {
       expect(card.quest.length, `${card.id} quest steps`).toBeGreaterThan(0);
       for (const step of card.quest) {
         expect(step.trim(), `${card.id} quest step`).not.toBe("");
       }
       expect(card.proof.length, `${card.id} proof`).toBeGreaterThan(0);
-      expect(card.reward.length, `${card.id} reward`).toBeGreaterThan(0);
       expect(card.art.length, `${card.id} art`).toBeGreaterThan(0);
       expect(card.flavor.length, `${card.id} flavor`).toBeGreaterThan(0);
     }
@@ -170,7 +169,6 @@ describe("deck integrity — canon anchors (SPEC §4)", () => {
       proof: card.proof,
       abilityKind: card.abilityKind,
       ability: card.ability,
-      reward: card.reward,
       art: card.art,
       flavor: card.flavor,
     });
@@ -187,7 +185,6 @@ describe("deck integrity — canon anchors (SPEC §4)", () => {
         proof: "Keep the receipt, wrapper, menu, or photograph the first bite.",
         abilityKind: null,
         ability: undefined,
-        reward: "Place your evidence in the Archive. This card is now Lived.",
         art: "candlelit European café, extravagant chocolate cake sitting alone on a tiny marble table, evening rain outside, warm amber light, almost magical realism.",
         flavor: "Pleasure does not have to earn its place in your life.",
       },
@@ -204,7 +201,6 @@ describe("deck integrity — canon anchors (SPEC §4)", () => {
           name: "Unknown Territory",
           text: "if you've never heard of the place they recommend, the card gains +1 Wonder.",
         },
-        reward: "Place your evidence in the Archive. This card is now Lived.",
         art: "a woman standing at a nighttime crossroads while a stranger sketches directions onto the back of a receipt. One road seems to glow faintly.",
         flavor: "Curiosity begins when you stop needing to know where you're going.",
       },
@@ -224,7 +220,6 @@ describe("deck integrity — canon anchors (SPEC §4)", () => {
           name: "Useless Beauty",
           text: "you may not explain or justify the purchase.",
         },
-        reward: "Place your evidence in the Archive. This card is now Lived.",
         art: "an enormous, almost enchanted flower stall appearing unexpectedly on a gray city street.",
         flavor: "Some things should exist simply because they make being alive feel like being alive.",
       },
@@ -242,7 +237,6 @@ describe("deck integrity — canon anchors (SPEC §4)", () => {
           name: "Inheritance",
           text: "if the story changes something you believed about this person, write that beneath the first sentence.",
         },
-        reward: "Place your evidence in the Archive. This card is now Lived.",
         art: "two people across a kitchen table, late-afternoon sunlight, old photographs scattered between them, with scenes from another lifetime almost ghostlike in the background.",
         flavor: "Some treasures can only be inherited by asking.",
       },
@@ -259,7 +253,6 @@ describe("deck integrity — canon anchors (SPEC §4)", () => {
           name: "Encore",
           text: "if you lose track of time, remain until you naturally want to leave.",
         },
-        reward: "Place your evidence in the Archive. This card is now Lived.",
         art: "narrow cobblestone alley at night, music represented by glowing golden particles drifting from a doorway.",
         flavor: "Wonder rarely sends a calendar invitation.",
       },
@@ -286,7 +279,6 @@ describe("deck integrity — canon anchors (SPEC §4)", () => {
           name: "Serendipity",
           text: 'during this adventure, the question "What is the point of this?" has no power.',
         },
-        reward: "Place your evidence in the Archive. This card is now Lived.",
         art: "a figure walking away down an unplanned street, threads of light tugging from doorways and alley mouths in different directions, prismatic light refracting off everything.",
         flavor: "You cannot discover what you refuse to wander toward.",
       },
@@ -307,7 +299,6 @@ describe("deck integrity — canon anchors (SPEC §4)", () => {
           name: "Alive",
           text: "this card cannot be completed for points. It cannot be optimized. It cannot be compared with another player's experience. Once lived, place it somewhere you will encounter it again.",
         },
-        reward: "Place your evidence in the Archive. This card is now Lived.",
         art: "hands holding a small ordinary object — a stone, a shell, a pressed leaf — glowing softly as if lit from within, the rest of the world dimmed away.",
         flavor: "That space is not outside the work. It is what keeps the work human.",
       },
@@ -335,7 +326,6 @@ describe("spec parser — malformed content (SPEC §3 contract)", () => {
 - **Quest**:
   Take the adventure.
 - **Proof of Life**: Keep an artifact.
-- **Reward**: Place it in the Archive.
 - **Art direction**: A cinematic scene.
 - **Flavor**: "A complete sentence."
 `;
@@ -343,11 +333,16 @@ describe("spec parser — malformed content (SPEC §3 contract)", () => {
   const parse = (source: string) => parseSpecFile("pleasure", "pleasure", source);
 
   it("rejects unknown, duplicate, and missing anatomy fields", () => {
-    expect(() => parse(validCard.replace("- **Reward**", "- **Rewards**"))).toThrow(
-      'unknown field "**Rewards**"',
+    // WHY: Reward was removed from the card anatomy; the parser must treat a
+    // stray Reward field as an unknown field rather than silently accepting it.
+    expect(() => parse(validCard.replace("- **Art direction**", "- **Reward**: Place it in the Archive.\n- **Art direction**"))).toThrow(
+      'unknown field "**Reward**"',
     );
-    expect(() => parse(validCard.replace("- **Reward**: Place it in the Archive.", "- **Reward**: Place it in the Archive.\n- **Reward**: Again."))).toThrow(
-      'repeats field "**Reward**"',
+    expect(() => parse(validCard.replace("- **Art direction**", "- **Art Directions**"))).toThrow(
+      'unknown field "**Art Directions**"',
+    );
+    expect(() => parse(validCard.replace("- **Proof of Life**: Keep an artifact.", "- **Proof of Life**: Keep an artifact.\n- **Proof of Life**: Again."))).toThrow(
+      'repeats field "**Proof of Life**"',
     );
     expect(() => parse(validCard.replace("- **Type**: Adventure • Discovery\n", ""))).toThrow(
       'missing **Type**',
@@ -355,16 +350,16 @@ describe("spec parser — malformed content (SPEC §3 contract)", () => {
   });
 
   it("rejects stray prose and conflicting or empty abilities", () => {
-    expect(() => parse(validCard.replace("- **Reward**", "unexpected prose\n- **Reward**"))).toThrow(
+    expect(() => parse(validCard.replace("- **Art direction**", "unexpected prose\n- **Art direction**"))).toThrow(
       "unexpected unindented content",
     );
     expect(() => parse(validCard.replace(
-      "- **Reward**",
-      "- **Special Ability**: **One** — a rule.\n- **Mythic Ability**: **Two** — another rule.\n- **Reward**",
+      "- **Art direction**",
+      "- **Special Ability**: **One** — a rule.\n- **Mythic Ability**: **Two** — another rule.\n- **Art direction**",
     ))).toThrow("more than one ability field");
     expect(() => parse(validCard.replace(
-      "- **Reward**",
-      "- **Special Ability**: **One** — \n- **Reward**",
+      "- **Art direction**",
+      "- **Special Ability**: **One** — \n- **Art direction**",
     ))).toThrow("empty ability name or text");
   });
 
@@ -394,7 +389,6 @@ describe("deck integrity — no stubs (SPEC §10 acceptance)", () => {
       card.mode,
       ...card.quest,
       card.proof,
-      card.reward,
       card.art,
       card.flavor,
     ];

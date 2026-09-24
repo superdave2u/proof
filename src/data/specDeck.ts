@@ -47,7 +47,6 @@ export interface SpecCard {
   rarityTag: RarityTag | null; // wilds only, from the heading suffix
   quest: string[]; // line-separated steps
   proof: string;
-  reward: string;
   abilityKind: AbilityKind | null;
   ability?: SpecAbility;
   art: string;
@@ -131,7 +130,6 @@ const KNOWN_FIELDS: ReadonlySet<string> = new Set([
   "Type",
   "Quest",
   "Proof of Life",
-  "Reward",
   "Special Ability",
   "Legendary Ability",
   "Mythic Ability",
@@ -325,8 +323,6 @@ function buildCard(territory: Territory, fileBase: string, section: Section): Sp
 
   const proof = scalar("Proof of Life");
   if (proof === "") throw new Error(`${fileBase}.md: card ${number} has an empty Proof of Life`);
-  const reward = scalar("Reward");
-  if (reward === "") throw new Error(`${fileBase}.md: card ${number} has an empty Reward`);
   const art = scalar("Art direction");
   if (art === "") throw new Error(`${fileBase}.md: card ${number} has empty Art direction`);
   const flavor = cleanFlavor(fieldLines("Flavor").join("\n"));
@@ -371,7 +367,6 @@ function buildCard(territory: Territory, fileBase: string, section: Section): Sp
     rarityTag,
     quest,
     proof,
-    reward,
     abilityKind,
     ...(ability ? { ability } : {}),
     art,
