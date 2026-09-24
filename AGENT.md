@@ -43,6 +43,7 @@ GitHub Pages via `.github/workflows/deploy.yml` — runs on push to `main`/tags:
 ## Conventions
 
 - Back pressure = `npm run check` must be green before every commit.
+- **Smallest change per commit**: one logical change, staged file-by-file, with a conventional-commit type (`feat:`, `fix:`, `art:`, `ui:`, `docs:`, `refactor:`) — never batch unrelated changes into one commit.
 - Tests live next to source (`*.test.ts`), with a docblock explaining WHY the test exists.
 - Vitest runs in node and stubs CSS imports; stylesheet assertions should read `src/style.css` from disk, as `appShell.test.ts` does.
 - Deck data is typed in `src/data/`; schema tests assert 52 cards (10 per territory + 2 wilds), unique ids/numbers/names, complete anatomy, and canon text preserved verbatim.

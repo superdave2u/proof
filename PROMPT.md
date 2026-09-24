@@ -14,7 +14,7 @@
 
 2b. Engineering standards are mandatory (see @AGENT.md): domain-driven design, SOLID, clean code, no smells, no duplication, no premature or speculative code. Tests use fast fixtures and injected fakes; never add or run browser automation (Playwright et al.) unless the operator explicitly asks in that turn.
 
-3. When tests pass: update @fix_plan.md (mark done / add new learnings) using a subagent, then `git add -A` and `git commit` with a message describing the change. When there are no build or test errors, create a git tag: if no tags exist start at `0.0.0`, else increment the patch (e.g. `0.0.1`). If a git remote exists, `git push --tags`; if not, skip pushing silently.
+3. When tests pass: update @fix_plan.md (mark done / add new learnings) using a subagent, then commit the smallest possible logical change: stage only that change's files (never `git add -A` across unrelated work) and write a conventional-commit message (`feat:`, `fix:`, `art:`, `ui:`, `docs:`, `refactor:`) describing it. When there are no build or test errors, create a git tag: if no tags exist start at `0.0.0`, else increment the patch (e.g. `0.0.1`). If a git remote exists, `git push --tags`; if not, skip pushing silently.
 
 999. IMPORTANT: DO NOT IMPLEMENT PLACEHOLDER OR SIMPLE IMPLEMENTATIONS. WE WANT FULL IMPLEMENTATIONS. DO IT OR I WILL YELL AT YOU.
 
