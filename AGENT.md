@@ -10,6 +10,8 @@ Brief instructions for any agent working here. Keep this file brief and current.
 
 - **The 52-card deck in `specs/cards/*.md` is frozen operator content** — never edit card text; code transcribes it.
 - Rarity is assigned in the data pass, not in specs (SPEC §3: 5 common / 3 uncommon / 2 rare per territory; wilds canon legendary/mythic).
+- **Card art is generated, not hand-authored.** The imagery canon lives in `specs/art/ART-DIRECTION.md`; its executable form is `src/data/cardArt.ts` (figure bible, territory palettes, deterministic prompt builder). Never rewrite the frozen scene/flavor strings into a prompt.
+- Generated artifacts are base64 PNGs at `src/data/generated/card-images/<id>.json`, committed so the Pages build ships them; they are loaded lazily and the atmosphere panel is the fallback when absent.
 
 ## Commands
 
@@ -19,6 +21,11 @@ Brief instructions for any agent working here. Keep this file brief and current.
 - Unit tests: `npm test` (vitest run) — REQUIRED before commit
 - Both at once (the wheel): `npm run check`
 - Production build: `npm run build`
+- Card-art prompts (no key): `npm run art:prompts` (writes `*.prompt.txt`, gitignored)
+- Card-art smoke test: `npm run art:test` (one card, OpenRouter `inclusionai/ming-image-0.1-design`; uses env, `.env`, or opencode auth store)
+- Card-art generation: `npm run art:generate` (`-- --card=<id>` for one card; defaults to OpenRouter `inclusionai/ming-image-0.1-design`)
+- Ralph card-art loop: `npm run art:loop` (one reviewed image per Ralph iteration; uses `PROMPT-ART.md`, stops on `.ralph-art.stop`)
+- Optimize existing card art offline: `npm run art:optimize` (sharp center-crops to 800×600 and palette-PNG encodes; `-- --card=<id>` for one card)
 
 ## Deployment
 

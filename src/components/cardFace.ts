@@ -1,5 +1,7 @@
 import { territories, type Card } from "../data/cards";
 import { isValidArtifactDataUrl, type Evidence } from "../state/evidence";
+import { escapeHtml } from "../util/html";
+import { renderCardArt } from "./cardArt";
 
 export interface CardFaceRecord {
   state: "undiscovered" | "drawn" | "lived";
@@ -11,19 +13,6 @@ export interface CardFaceRecord {
 export interface CardFaceOptions {
   /** Gallery preview: header, name, type line, and atmosphere/flavor only — nothing below the flavor window. */
   preview?: boolean;
-}
-
-function escapeHtml(value: string): string {
-  return value.replace(/[&<>"']/g, (character) => {
-    switch (character) {
-      case "&": return "&amp;";
-      case "<": return "&lt;";
-      case ">": return "&gt;";
-      case '"': return "&quot;";
-      case "'": return "&#39;";
-      default: return character;
-    }
-  });
 }
 
 function rarityLabel(rarity: Card["rarity"]): string {
@@ -103,10 +92,7 @@ export function renderCardFace(card: Card, record?: CardFaceRecord, options?: Ca
     <div class="card-face__body">
       <h2 class="card-face__name">${escapeHtml(card.name)}</h2>
       <p class="card-face__type">${escapeHtml(card.typeLine)}</p>
-      <figure class="card-atmosphere card-atmosphere--${card.territory}">
-        <span class="card-atmosphere__sigil" aria-hidden="true">${symbol}</span>
-        <blockquote class="card-atmosphere__flavor">“${escapeHtml(card.flavor)}”</blockquote>
-      </figure>
+      ${renderCardArt(card)}
       ${details}
     </div>
   </article>`;

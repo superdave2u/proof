@@ -19,7 +19,11 @@ Five territories — five schools of magic — plus two prismatic Wild Cards:
 | Wonder     | Violet       | ✧      | Awe       | 41–50 |
 | Wild       | Prismatic    | ✵      | —         | 51–52 |
 
-Every card: **name · territory + symbol · type line · rarity · art direction · quest · Proof of Life · reward · special ability · flavor text**. The Wilds sit above all — 51 _Follow the Thread_ (Legendary) and 52 _Proof of Life_ (Mythic), the philosophical center of the game.
+Every card: **name · territory + symbol · type line · rarity · artwork · quest · Proof of Life · reward · special ability · flavor text**. The Wilds sit above all — 51 _Follow the Thread_ (Legendary) and 52 _Proof of Life_ (Mythic), the philosophical center of the game.
+
+### Card art
+
+Each card's artwork is a **4:3 landscape watercolor** of the scene in its art direction, painted through its flavor and intention in the territory's tonal range, starring one recurring heroine (the Wayfarer). The canon — figure bible, territory palettes, prompt recipe, generation standard — lives in [`specs/art/ART-DIRECTION.md`](specs/art/ART-DIRECTION.md). Art is generated offline as **base64 PNGs**, committed per card, and **lazily attached** when a card is flipped or scrolled into view; the flavor text is its caption over a translucent black mask. The territory atmosphere panel is the fallback when art is absent.
 
 ### Card states
 
@@ -42,6 +46,11 @@ npm install
 npm run dev        # Vite dev server
 npm run check      # tsc --noEmit && vitest run — must be green before any commit
 npm run build      # production build
+npm run art:prompts    # write the deterministic art prompt for every card
+npm run art:test       # generate one card via OpenRouter (inclusionai/ming-image-0.1-design)
+npm run art:generate   # generate base64 PNGs (OpenRouter auth store or OPENROUTER_API_KEY)
+npm run art:optimize   # crop/resize/re-encode existing PNGs to compact 800x600
+npm run art:loop       # Ralph: one reviewed OpenRouter image per iteration
 ```
 
 ## Deployment (GitHub Pages)
@@ -63,11 +72,15 @@ One-time setup after adding the GitHub remote:
 ├── SPEC.md            product spec — the source of truth for WHAT
 ├── DESIGN.md          technical design — the source of truth for HOW
 ├── specs/cards/       the frozen 52-card deck, one file per territory + wilds
+├── specs/art/         the watercolor canon — figure bible, palettes, prompt recipe
+├── scripts/           offline card-art generation
 ├── PROMPT.md          Ralph build-loop prompt stack
+├── PROMPT-ART.md      one-image-per-iteration OpenRouter art prompt
 ├── PROMPT-PLAN.md     Ralph planning-loop prompt
 ├── fix_plan.md        living, priority-sorted build plan
 ├── AGENT.md           brief run/build/test instructions for agents
 ├── ralph.sh           the Ralph Wiggum loop (build mode)
+├── ralph-art.sh       the OpenRouter one-image-at-a-time loop
 ├── ralph-plan.sh      the Ralph loop (planning mode)
 └── src/               the app
 ```
@@ -80,6 +93,7 @@ This repo is built with the [Ralph Wiggum technique](https://ghuntley.com/ralph/
 ./ralph.sh                          # build loops (default 25)
 MAX_ITERATIONS=5 ./ralph.sh         # smaller run
 ./ralph-plan.sh                     # planning loops — specs and plan only
+npm run art:loop                    # OpenRouter image loop — one reviewed image per iteration
 ```
 
 Loop configuration lives in `.env` (see `.env.example`): `RALPH_MODEL` defaults to **openai luna** (`openrouter/~openai/gpt-luna-latest`), and visibility is on by default — thinking blocks (`--thinking`), harness logs (`--print-logs`), and a heartbeat whenever opencode goes silent (`RALPH_IDLE_SECONDS`). Every iteration is bannered with iteration count, HEAD, and tag, then streamed live and logged to `logs/`. Real environment variables override `.env`.

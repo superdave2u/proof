@@ -8,6 +8,7 @@ import {
 } from "../components/evidenceForm";
 import type { Card } from "../data/cards";
 import type { Evidence } from "../state/evidence";
+import { escapeHtml } from "../util/html";
 
 export type CardDetailAction = "open-evidence" | "open-archive" | "back-to-deck";
 
@@ -27,19 +28,6 @@ export interface EvidenceEntryState {
 export interface CardDetailHandlers {
   onAction(action: CardDetailAction, card: Card): void;
   onSubmitEvidence(cardId: string, evidence: Evidence): Promise<boolean>;
-}
-
-function escapeHtml(value: string): string {
-  return value.replace(/[&<>"']/g, (character) => {
-    switch (character) {
-      case "&": return "&amp;";
-      case "<": return "&lt;";
-      case ">": return "&gt;";
-      case '"': return "&quot;";
-      case "'": return "&#39;";
-      default: return character;
-    }
-  });
 }
 
 function renderPrimaryAction(cardId: string, state: CardFaceRecord["state"]): string {

@@ -1,23 +1,11 @@
 import type { Card } from "../data/cards";
 import { isDecodableArtifactDataUrl, isValidEvidence, MAX_ARTIFACT_BYTES, type Evidence } from "../state/evidence";
+import { escapeHtml } from "../util/html";
 
 export interface EvidenceDraft {
   date: string;
   note: string;
   fileName?: string;
-}
-
-function escapeHtml(value: string): string {
-  return value.replace(/[&<>"']/g, (character) => {
-    switch (character) {
-      case "&": return "&amp;";
-      case "<": return "&lt;";
-      case ">": return "&gt;";
-      case '"': return "&quot;";
-      case "'": return "&#39;";
-      default: return character;
-    }
-  });
 }
 
 export function localDateValue(date: Date): string {

@@ -1,5 +1,7 @@
 import { APP_SUBHEADLINE, APP_TAGLINE, APP_TITLE } from "./app";
 import { DECK } from "./data/cards";
+import { loadCardImage } from "./data/cardImages";
+import { mountLazyCardArt } from "./components/cardArt";
 import { mountHomeView } from "./views/home";
 import { mountGalleryView } from "./views/gallery";
 import { mountArchiveView } from "./views/archive";
@@ -21,6 +23,9 @@ if (app) {
     <div id="archive-view" hidden></div>
     <div id="card-detail-view" hidden></div>
   </main>`;
+
+  // Attach generated card art lazily as faces are revealed or scrolled into view.
+  mountLazyCardArt(app, loadCardImage);
 
   const homeView = app.querySelector<HTMLElement>("#home-view");
   const galleryView = app.querySelector<HTMLElement>("#gallery-view");

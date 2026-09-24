@@ -321,15 +321,14 @@ button, input, textarea { font: inherit; }
   text-transform: uppercase;
 }
 
-/* Territory atmosphere panel (4:3) — replaces rendered artwork in this
-   release. The panel carries only the territory's own color and tonal range:
-   layered washes, a woven texture, and the territory sigil as watermark.
-   Flavor text fills the negative space (see __flavor). Authored art-direction
-   strings stay frozen in specs and are reintroduced as artwork later. */
-.card-atmosphere {
+/* Artwork panel (4:3) — the card's watercolor illustration, lazily attached on
+   flip/scroll over a procedural territory atmosphere. The flavor text is the
+   caption pinned to the foot of the panel, sitting above a translucent black
+   gradient mask so it stays readable over any painting. The atmosphere remains
+   the fallback until art loads, or when a card has none. */
+.card-art {
   position: relative;
-  display: flex;
-  flex-direction: column;
+  display: block;
   overflow: hidden;
   width: 100%;
   aspect-ratio: 4 / 3;
@@ -345,7 +344,7 @@ button, input, textarea { font: inherit; }
   box-shadow: inset 0 0 32px rgb(0 0 0 / 35%);
 }
 
-.card-atmosphere::before {
+.card-art::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -356,35 +355,22 @@ button, input, textarea { font: inherit; }
   mask-image: radial-gradient(ellipse at 50% 38%, black, transparent 76%);
 }
 
-.card-atmosphere::after {
-  content: "";
+/* The image starts src-less (the loader attaches the base64 PNG when the card
+   is revealed or scrolled into view); opacity hides it until it has loaded. */
+.card-art__image {
   position: absolute;
+  z-index: 0;
   inset: 0;
-  pointer-events: none;
-  background: radial-gradient(ellipse at 50% 50%, rgb(9 10 14 / 58%), rgb(9 10 14 / 26%) 72%, transparent);
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity .5s ease;
 }
 
-/* Flavor text lives inside the atmosphere panel, centered vertically and
-   horizontally in the 4:3 negative space left behind when rendered artwork
-   was removed. */
-.card-atmosphere__flavor {
-  position: relative;
-  z-index: 1;
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0;
-  padding: .7rem .8rem;
-  color: var(--territory-text);
-  font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
-  font-size: .93rem;
-  font-style: italic;
-  line-height: 1.4;
-  text-align: center;
-}
+.card-art--loaded .card-art__image { opacity: 1; }
 
-.card-atmosphere__sigil {
+.card-art__sigil {
   position: absolute;
   top: 42%;
   left: 50%;
@@ -397,20 +383,35 @@ button, input, textarea { font: inherit; }
   text-shadow: 0 0 42px color-mix(in srgb, var(--territory-color) 55%, transparent);
 }
 
-.card-atmosphere__flavor {
-  position: relative;
+.card-art--loaded .card-art__sigil { opacity: 0; }
+
+/* The black transparent mask sits between the painting and the caption. */
+.card-art__mask {
+  position: absolute;
   z-index: 1;
-  flex: 1;
-  display: flex;
-  justify-content: center;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 62%;
+  pointer-events: none;
+  background: linear-gradient(to top, rgb(0 0 0 / 82%) 0%, rgb(0 0 0 / 54%) 44%, transparent 100%);
+}
+
+.card-art__caption {
+  position: absolute;
+  z-index: 2;
+  right: 0;
+  bottom: 0;
+  left: 0;
   margin: 0;
-  padding: .7rem .8rem;
+  padding: .7rem .85rem .8rem;
   color: var(--territory-text);
   font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
   font-size: .93rem;
   font-style: italic;
   line-height: 1.4;
   text-align: center;
+  text-shadow: 0 1px 4px rgb(0 0 0 / 88%);
 }
 
 .card-section { margin: .78rem 0 0; }
@@ -437,7 +438,7 @@ button, input, textarea { font: inherit; }
 .card-face--wild .card-face__header { background: linear-gradient(105deg, #69435d, #555a79 49%, #416c66); }
 .card-face--mythic .card-face__header { background: linear-gradient(105deg, #221d2b, #121217 53%, #272032); }
 .card-face--mythic .card-face__sigil { color: rgb(224 209 255 / 12%); }
-.card-face--wild .card-atmosphere {
+.card-face--wild .card-art {
   border-color: rgb(229 208 255 / 47%);
   background:
     radial-gradient(ellipse at 30% 20%, rgb(255 214 244 / 26%), transparent 55%),
@@ -445,14 +446,14 @@ button, input, textarea { font: inherit; }
     conic-gradient(from 210deg at 60% 40%, rgb(233 150 217 / 14%), rgb(150 173 241 / 14%), rgb(150 241 203 / 14%), rgb(241 224 150 / 14%), rgb(233 150 217 / 14%)),
     linear-gradient(158deg, #2c2740, #1a1a24 55%, #131318);
 }
-.card-face--mythic .card-atmosphere {
+.card-face--mythic .card-art {
   border-color: rgb(162 133 225 / 30%);
   background:
     radial-gradient(ellipse at 50% 30%, rgb(162 133 225 / 14%), transparent 60%),
     #0a0a0e;
   box-shadow: inset 0 0 35px rgb(162 133 225 / 13%);
 }
-.card-face--mythic .card-atmosphere__sigil { color: rgb(224 209 255 / 16%); text-shadow: 0 0 34px rgb(162 133 225 / 40%); }
+.card-face--mythic .card-art__sigil { color: rgb(224 209 255 / 16%); text-shadow: 0 0 34px rgb(162 133 225 / 40%); }
 
 .lived-record { margin-top: .9rem; padding: .8rem; border: 1px solid rgb(255 255 255 / 17%); border-radius: 8px; background: #202027; }
 .lived-record__stamp { display: flex; justify-content: space-between; gap: .6rem; margin: 0; color: #c9bfae; font-size: .61rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }

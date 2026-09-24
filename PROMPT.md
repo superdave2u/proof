@@ -6,6 +6,8 @@
 
 0c. Study @fix_plan.md. It is the single source of truth for what remains.
 
+0d. Paid image generation is reserved for the dedicated `PROMPT-ART.md` selected by `npm run art:loop`. The normal build loop must not call `art:generate` or make image API requests.
+
 1. Your task: pick THE single most important incomplete item from @fix_plan.md and implement it fully, using parallel subagents. Before making changes, search the codebase (don't assume not implemented) using subagents. You may use unlimited parallel subagents for searching/reading/writing files, but exactly ONE subagent for build/tests so the wheel does not jam.
 
 2. After implementing functionality or resolving problems, run the tests for that unit of code that was improved (`npx tsc --noEmit && npx vitest run`). Follow strict TDD: the test exists and fails first, then implementation makes it pass. If functionality is missing then it's your job to add it per the specs. Think hard. If tests unrelated to your work fail, resolve them as part of this increment.

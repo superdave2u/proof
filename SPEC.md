@@ -32,12 +32,20 @@ Five territories function like five schools of magic, plus two Wild Cards with p
 2. **TERRITORY + SYMBOL** — color and glyph from the table above.
 3. **CARD TYPE** — `Adventure • <Mode>`. Modes: Discovery, Encounter, Indulgence, Pilgrimage, Creation, Offering, Pursuit.
 4. **RARITY** — within each territory: 5 common, 3 uncommon, 2 rare. The Wilds sit above all: **51 = Legendary**, **52 = Mythic** (the philosophical center of the game — its Black Lotus, valuable for meaning, not money).
-5. **ARTWORK / ART DIRECTION** — cinematic illustration of the adventure, never literally showing someone completing it. Almost magical realism. Authored as an art-direction string (scene, mood, light).
+5. **ARTWORK / ART DIRECTION** — a 4:3 landscape watercolor illustration of the adventure, painted in the territory's tonal range and starring the recurring heroine (the Wayfarer) inhabiting the scene — never literally showing someone completing the quest. Almost magical realism. Authored as an art-direction string (scene, mood, light) that drives generation; the full imagery canon lives in `specs/art/ART-DIRECTION.md`.
 6. **THE QUEST** — the actual action the player must undertake.
 7. **PROOF OF LIFE** — the physical evidence required to claim the card.
 8. **REWARD** — placing evidence in the Archive; the card becomes **Lived**.
 9. **SPECIAL ABILITY** (optional) — a named rule that modifies how the quest is performed or what it yields (e.g. *Unknown Territory*, *Useless Beauty*, *Inheritance*, *Encore*, *Serendipity*, *Alive*). Abilities are experiential modifiers, never scored points.
-10. **FLAVOR TEXT** — the philosophy woven through the game.
+10. **FLAVOR TEXT** — the philosophy woven through the game. On the rendered face it is the caption of the artwork, set at the foot of the image over a translucent black mask.
+
+### 3.1 Imagery standard
+
+- Every card resolves a **deterministic art prompt** from its frozen `flavor` and `art` strings, its territory, and the fixed figure bible in `specs/art/ART-DIRECTION.md`. The prompt is pure: same card, same words.
+- The illustration is a **4:3 landscape watercolor** of the scene, in the territory's color tonal range, starring one consistent heroine (the Wayfarer) whose wardrobe and palette anchors never change scene to scene.
+- The heroine **inhabits** the scene; she never performs the quest. No text, borders, or watermarks are baked into the image.
+- Card art is delivered as a **base64 PNG data URL**, stored per card, and **lazily attached** when the card is flipped or scrolled into view — never eagerly.
+- The flavor text becomes a **caption over the bottom of the image**, separated from it by a black transparent mask. Until art loads (or when a card has none) the territory atmosphere panel is the fallback.
 
 ## 4. Canon exemplar cards
 
@@ -99,3 +107,5 @@ The Archive is the collection of Lived cards. When a card becomes Lived, the pla
 4. State machine enforces `UNDISCOVERED → DRAWN → LIVED` (forward-only).
 5. Daily draw is deterministic per date and stable across reloads.
 6. `npm run check` green at every commit.
+7. Every card resolves an art prompt from its flavor, art direction, territory palette, and the fixed figure bible; prompts are deterministic and cover all 52 cards.
+8. Rendered art is a base64 PNG, 4:3, lazily attached on reveal/scroll, and captions the flavor text over a dark mask at the image's foot; the territory atmosphere panel is the fallback when art is absent.

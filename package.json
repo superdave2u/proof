@@ -9,9 +9,15 @@
     "preview": "vite preview",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "check": "npm run typecheck && npm test"
+    "check": "npm run typecheck && npm test",
+    "art:prompts": "vite-node scripts/generate-card-art.ts --dry-run",
+    "art:generate": "vite-node scripts/generate-card-art.ts",
+    "art:test": "vite-node scripts/generate-card-art.ts --card=pleasure-01",
+    "art:optimize": "vite-node scripts/generate-card-art.ts --optimize",
+    "art:loop": "./ralph-art.sh"
   },
   "devDependencies": {
+    "sharp": "^0.35.4",
     "typescript": "^5.7.0",
     "vite": "^6.0.0",
     "vitest": "^3.0.0"

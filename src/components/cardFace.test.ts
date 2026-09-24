@@ -23,10 +23,10 @@ describe("renderCardFace", () => {
       expect(html).toContain(`${String(card.number).padStart(2, "0")}/52`);
       expect(html).toContain(escapeHtml(card.name));
       expect(html).toContain(escapeHtml(card.typeLine));
-      expect(html).toContain(`card-atmosphere--${card.territory}`);
-      // The art window was replaced by a territory atmosphere pattern; the
-      // authored art-direction string is not rendered on the face.
-      expect(html).not.toContain(escapeHtml(card.art));
+      expect(html).toContain(`card-art--${card.territory}`);
+      // The authored art direction drives the image (alt description), it is
+      // never dumped onto the face as visible paragraph text.
+      expect(html).not.toContain(`>${escapeHtml(card.art)}<`);
       expect(html).toContain(card.proof.split("\n").map(escapeHtml).join("<br>"));
       expect(html).toContain(escapeHtml(card.reward));
       expect(html).toContain(escapeHtml(card.flavor));
@@ -57,18 +57,25 @@ describe("renderCardFace", () => {
     expect(html).not.toContain(card.flavor);
   });
 
-  it("fills the atmosphere panel with flavor text instead of artwork", () => {
-    // WHY: the art window was replaced by a territory-pattern panel; flavor
-    // text now flexes into that 4:3 space, so it must render inside the panel.
+  it("renders the artwork panel with the flavor as a caption over a dark mask", () => {
+    // WHY: the flavor text is no longer free-floating; it becomes the caption
+    // pinned to the foot of the 4:3 artwork, separated from the painting by a
+    // translucent black mask, and the image is attached lazily (no eager src).
     const card = DECK[0]!;
     const html = renderCardFace(card);
-    const panel = html.slice(html.indexOf('class="card-atmosphere'), html.indexOf("</figure>"));
+    const panel = html.slice(html.indexOf('class="card-art'), html.indexOf("</figure>"));
 
-    expect(panel).toContain("card-atmosphere__sigil");
-    expect(panel).toContain("card-atmosphere__flavor");
+    expect(panel).toContain("card-art__image");
+    expect(panel).toContain(`data-art-image="${card.id}"`);
+    expect(panel).toContain('loading="lazy"');
+    expect(panel).toContain('decoding="async"');
+    expect(panel).not.toContain("src=");
+    expect(panel).toContain("card-art__mask");
+    expect(panel).toContain("card-art__caption");
     expect(panel).toContain(escapeHtml(card.flavor));
-    // No scene-art leftovers: no illustration layers or flavor footer remain.
-    expect(html).not.toContain("card-art");
+    expect(panel).toContain("card-art__sigil");
+    // The old centered flavor window is gone.
+    expect(html).not.toContain("card-atmosphere");
     expect(html).not.toContain("card-face__flavor");
   });
 

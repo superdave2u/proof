@@ -22,7 +22,7 @@ describe("card detail view", () => {
     expect(html).not.toContain(card.name);
     expect(html).not.toContain("<h3>Quest</h3>");
     expect(html).not.toContain("<h3>Proof of Life</h3>");
-    expect(html).not.toContain("card-atmosphere__flavor");
+    expect(html).not.toContain("card-art__caption");
     expect(html).not.toContain('data-action="draw"');
     expect(html).toContain('data-action="back-to-deck"');
     expect(html).not.toContain("Deposit your Proof of Life");

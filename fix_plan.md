@@ -115,6 +115,15 @@ Legend: `[ ]` incomplete · `[x]` done (verified) — prune `[x]` items periodic
 - Regressions cover mislabeled, truncated, and corrupt payloads, plus store rejection when image decode fails.
 - Verification passed: `npx tsc --noEmit && npx vitest run` (11 files, 75 tests).
 
+### Learnings — imagery pass
+
+- Canon: `specs/art/ART-DIRECTION.md` fixes the recurring heroine (the Wayfarer), six territory tonal palettes, loose watercolor technique (bleeding washes, dissolved contours, unfinished edges; no crisp graphic-novel outlines), the deterministic prompt recipe, and the lazy base64-PNG delivery contract. SPEC §3.1 + acceptance criteria 7–8 record the product requirement.
+- Domain: `src/data/cardArt.ts` is the canon as pure data (`FIGURE_BIBLE`, `ART_PALETTES`, `buildCardArtPrompt`, `cardArtAlt`); `src/data/cardImages.ts` is the lazy registry (`createCardImageLoader` over an injected `import.meta.glob` map, PNG-only, failure-tolerant). Generated artifacts live at `src/data/generated/card-images/<id>.json`.
+- UI: `src/components/cardArt.ts` renders the src-less lazy `<img>`, the black mask, and the flavor caption, and `mountLazyCardArt` attaches art on reveal/scroll; `main.ts` mounts it once on the shell. The territory pattern is the fallback.
+- Shared `escapeHtml` was consolidated into `src/util/html.ts` (was copied in cardFace/cardDetail/evidenceForm/deckShared).
+- Generator: `scripts/generate-card-art.ts` via `vite-node`; `npm run art:prompts` needs no key, `npm run art:generate` writes normalized PNG JSON. OpenRouter credentials resolve from the environment, `.env`, or `~/.local/share/opencode/auth.json` and are never logged.
+- Verification: `npm run check` green (17 files, 88 tests) and `npm run build` green. The one visual test image was removed after review; no generated card images are currently checked in.
+
 ### Unaddressed backlog — parallel audit (prioritized)
 
 - [x] P1 — Merge concurrent browser-tab updates instead of persisting full snapshots: a stale tab can overwrite newer records and evidence, losing user progress.
@@ -122,7 +131,8 @@ Legend: `[ ]` incomplete · `[x]` done (verified) — prune `[x]` items periodic
 - [ ] P2 — Keep evidence entry reachable when opened from card detail despite active deck filters: the filtered-out card can leave the form hidden, blocking the intended flow.
 - [ ] P2 — Restore focus when canceling the evidence form: removing the focused form element strands keyboard users without a predictable focus target.
 - [ ] P3 — Give evidence artifact images descriptive alt text: generic alt text does not convey the image's relevant content to screen-reader users.
-- [ ] Deferred (later update) — reintroduce rendered card artwork from the authored art-direction strings, replacing or layering over the territory atmosphere panels.
+- [x] Rendered card artwork: reintroduced as generated 4:3 watercolor art (figure bible + territory palettes + deterministic prompt), base64 PNG, lazily attached on flip/scroll over the territory fallback, flavor text as a masked caption. Canon in `specs/art/ART-DIRECTION.md`.
+- [ ] P1 — Generate and review all 52 base64 PNGs using `npm run art:loop`. The dedicated `PROMPT-ART.md`/`ralph-art.sh` selects one missing card per iteration, pins OpenRouter `inclusionai/ming-image-0.1-design`, uses the local opencode auth store when no key env is present, validates 800×600/≤512 KiB, pauses on `.ralph-art.stop` after any failure, and exits on `.ralph-art.done` when complete. No sample images are currently checked in. Do not make paid image requests outside this dedicated loop unless the operator explicitly requests them.
 
 - [x] Deck integrity pass: 52 cards verified — numbering 01–52 no gaps/duplicates, unique titles/ids, complete anatomy, 7 canon anchors exact, no placeholder content (durable audit: src/data/specDeck.test.ts + src/data/specDeck.ts)
 - [x] Data pipeline: `src/data/cards.ts` — transcribe all 52 specs into typed `Card[]`; assign rarity per SPEC §3 (5 common / 3 uncommon / 2 rare per territory; wilds canon legendary/mythic)

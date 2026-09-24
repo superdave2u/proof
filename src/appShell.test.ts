@@ -40,9 +40,14 @@ describe("app shell accessibility foundations", () => {
     }
     expect(styles).toContain(".card-section h3, .card-ability h3 {");
     expect(styles).toMatch(/\.card-section h3, \.card-ability h3 \{[^}]*color: var\(--territory-text\);/s);
-    expect(styles).toMatch(/\.card-atmosphere__flavor \{[^}]*color: var\(--territory-text\);/s);
-    expect(styles).toMatch(/\.card-atmosphere \{[^}]*width: 100%;/s);
-    expect(styles).toMatch(/\.card-atmosphere \{[^}]*aspect-ratio: 4 \/ 3;/s);
+    expect(styles).toMatch(/\.card-art__caption \{[^}]*color: var\(--territory-text\);/s);
+    expect(styles).toMatch(/\.card-art \{[^}]*width: 100%;/s);
+    expect(styles).toMatch(/\.card-art \{[^}]*aspect-ratio: 4 \/ 3;/s);
+    // WHY: the artwork is lazy (image starts transparent, src-less) and the
+    // flavor caption sits over a black transparent mask between text and image.
+    expect(styles).toMatch(/\.card-art__image \{[^}]*opacity: 0;/s);
+    expect(styles).toMatch(/\.card-art--loaded \.card-art__image \{ opacity: 1; \}/);
+    expect(styles).toMatch(/\.card-art__mask \{[^}]*linear-gradient\(to top, rgb\(0 0 0 \/ 82%\)/s);
     // WHY: the flavor window must fill the card body (not shrink to its capped
     // height), the home daily card sits in a centered column like detail, and
     // gallery/archive rows align their cards vertically.
