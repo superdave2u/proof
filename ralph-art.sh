@@ -4,7 +4,7 @@ cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 export PROMPT_FILE="${PROMPT_FILE:-PROMPT-ART.md}"
 export RALPH_MODEL="${RALPH_MODEL:-openrouter/~openai/gpt-luna-latest}"
 export IMAGE_PROVIDER=openrouter
-export IMAGE_MODEL="${IMAGE_MODEL:-inclusionai/ming-image-0.1-design}"
+export IMAGE_MODEL="${IMAGE_MODEL:-google/gemini-3.1-flash-lite-image}"
 export MAX_ITERATIONS="${MAX_ITERATIONS:-52}"
 stop_file=".ralph-art.stop"
 done_file=".ralph-art.done"

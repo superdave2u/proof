@@ -25,7 +25,7 @@ export interface ArtPalette {
 }
 
 export const FIGURE_BIBLE =
-  "The Wayfarer — a feminine adventurer archetype, late twenties to mid-thirties, " +
+  "The Wayfarer — a feminine adventurer archetype, late thirties to mid-fourties, " +
   "warm medium-light skin lightly freckled by weather, shoulder-length wavy auburn hair " +
   "loosely tied back with a few escaped strands, soft jaw, calm and observant expression. " +
   "She is shown in three-quarter view or from behind and never stares into the camera. " +
@@ -47,11 +47,19 @@ export const ART_STYLE =
 export const ART_NEGATIVE_PROMPT =
   "photorealistic, 3D render, CGI, anime, graphic novel, comic book, crisp digital painting, " +
   "cel shading, hard contour lines, heavy ink outlines, vector flatness, posterized color " +
-  "blocks, neon oversaturation, text, lettering, captions, watermarks, logos, signatures, " +
+  "blocks, neon oversaturation, text of any kind, letters, numbers, lettering, captions, " +
+  "signage, menus, labels, watermarks, logos, signatures, " +
   "borders, frames, collage, a crowd of extra characters, direct eye contact with the camera, " +
   "the heroine completing the quest literally";
 
-export const ART_ASPECT = "4:3 landscape";
+export const ART_ASPECT = "landscape 4:3 wide, 800 pixels wide by 600 pixels tall";
+
+/** ART-DIRECTION.md §4 — the figure's scale and placement within the frame. */
+export const ART_COMPOSITION =
+  "Composition: the Wayfarer is mid-ground and small, occupying roughly one-fifth to " +
+  "one-third of the frame height, never in the foreground and never dominating. Most of " +
+  "the painting is the place around her; keep generous negative space and let the scene's " +
+  "light, not the figure, be the brightest thing.";
 
 export const ART_PALETTES: Record<Territory, ArtPalette> = {
   pleasure: {
@@ -137,7 +145,7 @@ export function buildCardArtPrompt(card: Card): string {
     `Territory: ${titleCase(card.territory)} — ${territoryEnergy(card.territory)}. Palette: ${palette.description}.`,
     `Scene: ${card.art}`,
     `Mood and intention (from the card's flavor): ${card.flavor}`,
-    `Aspect: ${ART_ASPECT}.`,
+    `Aspect: ${ART_ASPECT}. ${ART_COMPOSITION}`,
     `Avoid: ${ART_NEGATIVE_PROMPT}.`,
   ].join(" ");
 }

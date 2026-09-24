@@ -14,11 +14,11 @@
  *   npm run art:optimize                # normalize previously generated JSON artifacts
  *
  * Default provider is OpenRouter's Image API (POST /api/v1/images) with
- * `inclusionai/ming-image-0.1-design`. Set IMAGE_PROVIDER=openai to use the
+ * `google/gemini-3.1-flash-lite-image`. Set IMAGE_PROVIDER=openai to use the
  * OpenAI-compatible /images/generations endpoint instead.
  *
  * Env: IMAGE_PROVIDER, IMAGE_API_KEY | OPENROUTER_API_KEY | OPENAI_API_KEY,
- *      IMAGE_API_URL, IMAGE_MODEL, IMAGE_SIZE, IMAGE_ASPECT_RATIO.
+ *      IMAGE_API_URL, IMAGE_MODEL, IMAGE_SIZE.
  */
 import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
 import { readFileSync } from "node:fs";
@@ -59,8 +59,6 @@ interface ProviderConfig {
   apiUrl: string;
   model: string;
   apiKey: string | undefined;
-  /** OpenRouter normalized ratio; omitted when the model does not advertise it. */
-  aspectRatio?: string;
 }
 
 interface GeneratedArtifact {
@@ -111,9 +109,8 @@ function resolveConfig(): ProviderConfig {
   return {
     provider,
     apiUrl: process.env.IMAGE_API_URL ?? "https://openrouter.ai/api/v1/images",
-    model: process.env.IMAGE_MODEL ?? "inclusionai/ming-image-0.1-design",
-      apiKey: openRouterApiKey,
-      aspectRatio: process.env.IMAGE_ASPECT_RATIO ?? "4:3",
+    model: process.env.IMAGE_MODEL ?? "google/gemini-3.1-flash-lite-image",
+    apiKey: openRouterApiKey,
   };
 }
 
@@ -127,36 +124,24 @@ function buildPayload(config: ProviderConfig, prompt: string): Record<string, un
       response_format: "b64_json",
     };
   }
-  const payload: Record<string, unknown> = {
+  // The output ratio is requested inside the prompt text itself; no provider
+  // parameter is sent, because some image models reject or ignore it.
+  return {
     model: config.model,
     prompt,
     n: 1,
     output_format: "png",
   };
-  if (config.aspectRatio) payload.aspect_ratio = config.aspectRatio;
-  return payload;
 }
 
 async function requestImage(config: ProviderConfig, payload: Record<string, unknown>): Promise<ImageApiResponse> {
-  const send = async (): Promise<Response> => fetch(config.apiUrl, {
+  const response = await fetch(config.apiUrl, {
     method: "POST",
     headers: { "content-type": "application/json", authorization: `Bearer ${config.apiKey}` },
     body: JSON.stringify(payload),
   });
 
-  let response = await send();
-  // Some image models do not advertise `aspect_ratio`; retry once without it so a
-  // provider that rejects the field still yields a 4:3-requested prompt.
-  if (!response.ok && "aspect_ratio" in payload && response.status === 400) {
-    const detail = await response.text();
-    if (!detail.toLowerCase().includes("aspect")) throw new Error(`image API ${response.status}: ${detail}`);
-    delete payload.aspect_ratio;
-    response = await send();
-    if (response.ok) console.warn("Provider ignored aspect_ratio; relying on the prompt's 4:3 request.");
-    else throw new Error(`image API ${response.status}: ${await response.text()}`);
-  } else if (!response.ok) {
-    throw new Error(`image API ${response.status}: ${await response.text()}`);
-  }
+  if (!response.ok) throw new Error(`image API ${response.status}: ${await response.text()}`);
   return (await response.json()) as ImageApiResponse;
 }
 

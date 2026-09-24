@@ -22,8 +22,8 @@ Brief instructions for any agent working here. Keep this file brief and current.
 - Both at once (the wheel): `npm run check`
 - Production build: `npm run build`
 - Card-art prompts (no key): `npm run art:prompts` (writes `*.prompt.txt`, gitignored)
-- Card-art smoke test: `npm run art:test` (one card, OpenRouter `inclusionai/ming-image-0.1-design`; uses env, `.env`, or opencode auth store)
-- Card-art generation: `npm run art:generate` (`-- --card=<id>` for one card; defaults to OpenRouter `inclusionai/ming-image-0.1-design`)
+- Card-art smoke test: `npm run art:test` (one card, OpenRouter `google/gemini-3.1-flash-lite-image`; uses env, `.env`, or opencode auth store)
+- Card-art generation: `npm run art:generate` (`-- --card=<id>` for one card; defaults to OpenRouter `google/gemini-3.1-flash-lite-image`)
 - Ralph card-art loop: `npm run art:loop` (one reviewed image per Ralph iteration; uses `PROMPT-ART.md`, stops on `.ralph-art.stop`)
 - Optimize existing card art offline: `npm run art:optimize` (sharp center-crops to 800×600 and palette-PNG encodes; `-- --card=<id>` for one card)
 

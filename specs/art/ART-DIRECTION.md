@@ -105,11 +105,11 @@ the provider's model/size/seed parameters; those never change the authored promp
 - **Format**: PNG, base64 data URL (`data:image/png;base64,...`). No JPEG.
 - **Dimensions**: stored output is always **800×600 (4:3)**. The default provider is
   OpenRouter's Image API (`POST https://openrouter.ai/api/v1/images`) with
-  `inclusionai/ming-image-0.1-design`; it returns a **1024×1024 square** and ignores
-  `aspect_ratio`. The generator therefore center-crops to 4:3 and resizes to 800×600
-  before storage. Keep the heroine and key scene details within the central crop-safe
-  4:3 area. The metadata records pixel dimensions read from the normalized PNG header,
-  never a claim.
+  `google/gemini-3.1-flash-lite-image`. The provider does not honor ratio parameters, so
+  the requested **landscape 4:3** dimensions are carried in the prompt text and the
+  generator center-crops to 4:3 and resizes to 800×600 before storage. Keep the heroine
+  and key scene details within the central crop-safe 4:3 area.
+  The metadata records pixel dimensions read from the normalized PNG header, never a claim.
 - **Optimization**: `sharp` re-encodes the normalized image as a high-compression
   palette PNG. Output size varies with scene detail; target ≤512 KiB per PNG so every
   lazy image chunk stays practical. Visually inspect every approved image after

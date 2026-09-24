@@ -47,7 +47,7 @@ npm run dev        # Vite dev server
 npm run check      # tsc --noEmit && vitest run — must be green before any commit
 npm run build      # production build
 npm run art:prompts    # write the deterministic art prompt for every card
-npm run art:test       # generate one card via OpenRouter (inclusionai/ming-image-0.1-design)
+npm run art:test       # generate one card via OpenRouter (google/gemini-3.1-flash-lite-image)
 npm run art:generate   # generate base64 PNGs (OpenRouter auth store or OPENROUTER_API_KEY)
 npm run art:optimize   # crop/resize/re-encode existing PNGs to compact 800x600
 npm run art:loop       # Ralph: one reviewed OpenRouter image per iteration

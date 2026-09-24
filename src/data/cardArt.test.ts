@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { DECK, territories } from "./cards";
 import {
   ART_ASPECT,
+  ART_COMPOSITION,
   ART_NEGATIVE_PROMPT,
   ART_PALETTES,
   FIGURE_BIBLE,
@@ -17,6 +18,18 @@ import {
  * reading as one hand-painted world, and this fails loudly.
  */
 describe("card art prompt canon", () => {
+  it("keeps the executable figure bible aligned with the frozen art direction", async () => {
+    const nodeFsModule: string = "node:fs";
+    const { readFileSync } = await import(nodeFsModule) as {
+      readFileSync(path: URL, encoding: "utf8"): string;
+    };
+    const artDirection = readFileSync(new URL("../../specs/art/ART-DIRECTION.md", import.meta.url), "utf8");
+
+    expect(artDirection).toContain("late thirties to mid-fourties");
+    expect(FIGURE_BIBLE).toContain("late thirties to mid-fourties");
+    expect(FIGURE_BIBLE).not.toContain("twenties");
+  });
+
   it("builds a complete, deterministic prompt for every card", () => {
     for (const card of DECK) {
       const prompt = buildCardArtPrompt(card);
@@ -25,6 +38,10 @@ describe("card art prompt canon", () => {
       expect(prompt).toContain(card.art);
       expect(prompt).toContain(card.flavor);
       expect(prompt).toContain(ART_ASPECT);
+      expect(prompt).toContain("landscape 4:3 wide");
+      expect(prompt).toContain("800 pixels wide by 600 pixels tall");
+      expect(prompt).toContain(ART_COMPOSITION);
+      expect(prompt).toContain("never dominating");
       expect(prompt).toContain(ART_NEGATIVE_PROMPT);
       expect(prompt).toContain("Let contours dissolve");
       expect(prompt).toContain("forms suggested rather than crisply described");
