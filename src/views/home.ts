@@ -1,58 +1,72 @@
 import { DECK } from "../data/cards";
-import { renderCardFace } from "../components/cardFace";
+import { renderCardBack, renderCardFace } from "../components/cardFace";
 import { DeckStorageError, type DeckStore } from "../state/store";
 import { escapeHtml, type DeckRecords } from "./deckShared";
 
-function renderDailyCard(records: DeckRecords, dailyDrawCardId?: string, dailyDrawError?: string): string {
+/**
+ * The home hero: the dealt card waits face-down like a gallery back and is
+ * flipped by tapping it. The dealt card is known before the tap (the date
+ * seeds the deal), so its back is honest about territory and number while the
+ * face stays concealed until tapped.
+ */
+function renderDailyCard(
+  records: DeckRecords,
+  dailyDrawCardId?: string,
+  dailyDrawError?: string,
+  peekCardId?: string,
+): string {
   const card = dailyDrawCardId ? DECK.find((item) => item.id === dailyDrawCardId) : undefined;
+  const peek = !card && peekCardId ? DECK.find((item) => item.id === peekCardId) : undefined;
   const hasEligibleCard = DECK.some((item) => records[item.id]?.state !== "lived");
   const message = card
     ? `Today's invitation: ${card.name}.`
-    : hasEligibleCard
-      ? "A date-seeded card, chosen once for today."
-      : "Every invitation in this deck has been Lived.";
+    : peek
+      ? "Tap the card to reveal today's invitation."
+      : hasEligibleCard
+        ? "A date-seeded card, chosen once for today."
+        : "Every invitation in this deck has been Lived.";
+  const tapCard = peek
+    ? `<button class="daily-draw__tap" type="button" data-action="daily-draw" aria-label="Reveal today's invitation">
+        <span class="daily-draw__tap-card">${renderCardBack(peek)}</span>
+        <span class="daily-draw__hint">Tap to reveal</span>
+      </button>`
+    : "";
+  // The revealed card is the link itself, exactly like a gallery preview: the
+  // full anatomy and the only deposit flow live on the card detail page.
   const revealedCard = card
-    ? `<div class="daily-draw__face" data-draw-animation="true" role="group" tabindex="-1" aria-label="Today's card: ${escapeHtml(card.name)}">${renderCardFace(card, records[card.id])}<button class="card-detail__open" type="button" data-action="open-card" data-card-id="${card.id}">Open card details</button></div>`
+    ? `<a class="daily-draw__face" data-draw-animation="true" href="#/card/${encodeURIComponent(card.id)}" aria-label="Today's card: ${escapeHtml(card.name)} — open card details">${renderCardFace(card, records[card.id], { preview: true })}</a>`
     : "";
 
   return `<section class="daily-draw" aria-labelledby="home-title">
+    ${revealedCard || tapCard}
     <div class="daily-draw__intro">
       <p class="daily-draw__eyebrow">The card of the day</p>
       <h2 id="home-title" tabindex="-1">One invitation, chosen for today.</h2>
       <p class="daily-draw__intro-copy">The date decides the card. Once revealed, today's deal stays yours across reloads.</p>
     </div>
-    <button class="daily-draw__button" type="button" data-action="daily-draw"${card || !hasEligibleCard ? " disabled" : ""}>${card ? "Today's card is revealed" : "Reveal today's invitation"}</button>
     <p class="daily-draw__message" role="status" aria-live="polite">${escapeHtml(message)}</p>
     ${dailyDrawError ? `<p class="draw-storage-error" data-draw-error="daily" role="alert" tabindex="-1">${escapeHtml(dailyDrawError)}</p>` : ""}
-    ${revealedCard ? `<div class="daily-draw__reveal">${revealedCard}</div>` : ""}
   </section>`;
 }
 
 /**
- * The home screen: the daily card and nothing else. The Gallery (whole deck,
- * filters, random deal) and the Archive are small links from here.
+ * The home screen: the daily card and its story — nothing else. Page
+ * navigation lives in the header menu.
  */
-export function renderHomeView(records: DeckRecords = {}, dailyDrawCardId?: string, dailyDrawError?: string): string {
-  return `${renderDailyCard(records, dailyDrawCardId, dailyDrawError)}
-  <nav class="home-links" aria-label="Explore the deck">
-    <button class="gallery-open" type="button" data-action="open-gallery">Open the Gallery</button>
-    <button class="archive-open" type="button" data-action="open-archive">Open the Archive</button>
-  </nav>`;
+export function renderHomeView(
+  records: DeckRecords = {},
+  dailyDrawCardId?: string,
+  dailyDrawError?: string,
+  peekCardId?: string,
+): string {
+  return renderDailyCard(records, dailyDrawCardId, dailyDrawError, peekCardId);
 }
 
 /** Mount the home screen and return its refresh hook. */
-export function mountHomeView(
-  container: HTMLElement,
-  store: DeckStore,
-  handlers: {
-    onOpenGallery: () => void;
-    onOpenArchive: () => void;
-    onOpenCard: (cardId: string) => void;
-  },
-): () => void {
+export function mountHomeView(container: HTMLElement, store: DeckStore): () => void {
   let dailyDrawError: string | undefined;
   const render = (): void => {
-    container.innerHTML = renderHomeView(store.getRecords(), store.getDailyDraw()?.id, dailyDrawError);
+    container.innerHTML = renderHomeView(store.getRecords(), store.getDailyDraw()?.id, dailyDrawError, store.peekDailyDraw()?.id);
   };
   render();
 
@@ -69,20 +83,6 @@ export function mountHomeView(
   container.addEventListener("click", (event: Event) => {
     const target = event.target;
     if (!(target instanceof Element)) return;
-
-    if (target.closest('[data-action="open-gallery"]')) {
-      handlers.onOpenGallery();
-      return;
-    }
-    if (target.closest('[data-action="open-archive"]')) {
-      handlers.onOpenArchive();
-      return;
-    }
-    const openCardButton = target.closest<HTMLButtonElement>('[data-action="open-card"]');
-    if (openCardButton?.dataset.cardId) {
-      handlers.onOpenCard(openCardButton.dataset.cardId);
-      return;
-    }
     if (!target.closest('[data-action="daily-draw"]')) return;
 
     dailyDrawError = undefined;

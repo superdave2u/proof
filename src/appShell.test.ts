@@ -49,10 +49,10 @@ describe("app shell accessibility foundations", () => {
     expect(styles).toMatch(/\.card-art--loaded \.card-art__image \{ opacity: 1; \}/);
     expect(styles).toMatch(/\.card-art__mask \{[^}]*linear-gradient\(to top, rgb\(0 0 0 \/ 82%\)/s);
     // WHY: the flavor window must fill the card body (not shrink to its capped
-    // height), the home daily card sits in a centered column like detail, and
-    // gallery/archive rows align their cards vertically.
-    expect(styles).toMatch(/\.daily-draw \{[^}]*width: min\(100%, 480px\);/s);
-    expect(styles).toMatch(/\.daily-draw \{[^}]*margin: 2\.5rem auto 0;/s);
+    // height), the home daily card is a centered, breathing hero whose tap
+    // target scales to stay above the fold, and gallery/archive rows align.
+    expect(styles).toMatch(/\.daily-draw \{[^}]*justify-items: center;/s);
+    expect(styles).toMatch(/\.daily-draw \{[^}]*--daily-card-width: min\(390px, 100%, calc\(\(100dvh - 21rem\) \* 3 \/ 4\)\);/s);
     expect(styles).toMatch(/\.deck-grid \{[^}]*align-items: stretch;/s);
     // Cards fill their track width (height-driven aspect ratio must not widen them).
     expect(styles).toMatch(/\.deck-card-back \{[^}]*width: 100%;/s);

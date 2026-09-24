@@ -3,29 +3,40 @@ import { DECK } from "../data/cards";
 import { renderHomeView } from "./home";
 
 /**
- * WHY these tests exist: the home screen is the daily ritual only. Keeping the
- * deck grid and the random deal off this page is a deliberate layout decision,
- * so these assertions pin that boundary: the daily reveal (once per day, no
- * rerolls), the small links to the Gallery and Archive, and nothing else.
+ * WHY these tests exist: the home screen is the daily ritual presented like a
+ * gallery tile — the dealt card sits face-down at the top and is flipped by
+ * tapping it, with the card-of-the-day copy below so the card stays above the
+ * fold on mobile. These assertions pin that hierarchy, the tap-only reveal
+ * (once per day, no rerolls), and the absence of page navigation (it lives in
+ * the header menu) and of the deck grid.
  */
 describe("home view", () => {
-  it("contains only the daily card plus small links — no gallery grid, no random deal", () => {
-    const html = renderHomeView();
+  it("leads with the face-down deal as a tap target and moves the copy below the card", () => {
+    const peekCard = DECK[16]!;
+    const html = renderHomeView({}, undefined, undefined, peekCard.id);
 
     expect(html).toContain('id="home-title"');
     expect(html).toContain('aria-labelledby="home-title"');
+    // The dealt card waits face-down, like a gallery back, and tapping it
+    // reveals — there is no separate reveal button.
+    expect(html).toContain("deck-card-back");
     expect(html).toContain('data-action="daily-draw"');
-    expect(html).toContain("Reveal today's invitation");
-    expect(html).toContain('data-action="open-gallery"');
-    expect(html).toContain('data-action="open-archive"');
+    expect(html).toContain('data-action="daily-draw"');
+    expect(html).toContain("Tap to reveal");
+    // The old reveal button is gone; the tap target's own aria-label names the action.
+    expect(html).not.toContain('class="daily-draw__button"');
+    // The card precedes the card-of-the-day copy.
+    expect(html.indexOf("deck-card-back")).toBeLessThan(html.indexOf('id="home-title"'));
+    // Page navigation moved to the header menu; the deck grid stays away.
+    expect(html).not.toContain('data-action="open-gallery"');
+    expect(html).not.toContain('data-action="open-archive"');
     expect(html).not.toContain('id="deck-grid"');
-    expect(html).not.toContain("deck-card-back");
-    expect(html).not.toContain("deck-card-revealed");
+    expect(html).not.toContain("home-links");
     expect(html).not.toContain('data-action="draw"');
     expect(html).not.toContain("Draw an invitation");
   });
 
-  it("keeps the revealed daily card locked for the day and linked to its detail page", () => {
+  it("shows the revealed card face-up like a gallery preview, linked to its detail page", () => {
     const card = DECK[16]!;
     const html = renderHomeView(
       { [card.id]: { state: "drawn", drawnAt: "2026-09-22T12:30:00.000Z" } },
@@ -33,10 +44,13 @@ describe("home view", () => {
     );
 
     expect(html).toContain(`Today&#39;s invitation: ${card.name.replaceAll("'", "&#39;")}.`);
-    expect(html).toContain('class="daily-draw__face" data-draw-animation="true" role="group" tabindex="-1"');
-    expect(html).toContain('data-action="daily-draw" disabled');
-    expect(html).toContain(`data-action="open-card" data-card-id="${card.id}">Open card details</button>`);
-    expect(html).toContain("Today's card is revealed");
+    expect(html).toContain('class="daily-draw__face" data-draw-animation="true"');
+    expect(html).toContain(`href="#/card/${card.id}"`);
+    expect(html).toContain(`aria-label="Today's card: ${card.name.replaceAll("'", "&#39;")} — open card details"`);
+    // The revealed preview is the link itself; the old separate button is gone.
+    expect(html).not.toContain('data-action="open-card"');
+    expect(html).not.toContain('data-action="daily-draw"');
+    expect(html).toContain("card-face--preview");
   });
 
   it("announces a failed daily deal as an escaped, focusable alert", () => {
