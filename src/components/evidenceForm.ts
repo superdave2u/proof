@@ -101,7 +101,7 @@ export async function buildEvidence(date: string, note: string, file?: File): Pr
     evidence = { ...evidence, artifact };
   }
   if (!isValidEvidence(evidence)) {
-    throw new Error("Enter a valid date and a note describing the evidence of this adventure.");
+    throw new Error("Enter a valid date and a note describing the evidence of this invitation.");
   }
   return evidence;
 }

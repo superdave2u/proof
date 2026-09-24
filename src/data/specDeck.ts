@@ -42,7 +42,7 @@ export interface SpecCard {
   title: string; // as written in the heading (uppercase)
   canon: boolean; // SPEC §4 canon anchors
   territory: Territory;
-  typeLine: string; // rendered type line: "Indulgence" | "Legendary Wild" (the specs' "Adventure • " prefix is dropped)
+  typeLine: string; // rendered type line: "Indulgence" | "Legendary Wild" (the specs' "Invitation • " prefix is dropped)
   mode: string; // text after the "•" in the authored spec type line
   rarityTag: RarityTag | null; // wilds only, from the heading suffix
   quest: string[]; // line-separated steps
@@ -130,7 +130,7 @@ const KNOWN_FIELDS: ReadonlySet<string> = new Set([
   "Type",
   "Quest",
   "Proof of Life",
-  "Special Ability",
+  "Special Stretch",
   "Legendary Ability",
   "Mythic Ability",
   "Art direction",
@@ -138,7 +138,7 @@ const KNOWN_FIELDS: ReadonlySet<string> = new Set([
 ]);
 
 const ABILITY_FIELD_KIND: Record<string, AbilityKind> = {
-  "Special Ability": "special",
+  "Special Stretch": "special",
   "Legendary Ability": "legendary",
   "Mythic Ability": "mythic",
 };
@@ -310,9 +310,9 @@ function buildCard(territory: Territory, fileBase: string, section: Section): Sp
   if (mode === "") {
     throw new Error(`${fileBase}.md: card ${number} has an empty mode`);
   }
-  // Specs author the full "Adventure • Mode" line (wilds: "Legendary Adventure
-  // • Wild"); the rendered type line drops the "Adventure • " prefix.
-  const typeLine = rawType.replace("Adventure • ", "");
+  // Specs author the full "Invitation • Mode" line (wilds: "Legendary Invitation
+  // • Wild"); the rendered type line drops the "Invitation • " prefix.
+  const typeLine = rawType.replace("Invitation • ", "");
 
   const quest = fieldLines("Quest")
     .map((line) => stripEmphasis(line).trim())

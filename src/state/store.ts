@@ -256,7 +256,7 @@ export function createDeckStore(
       throw new DeckStorageError();
     }
     // A concurrent same-day deal may already have won. Reconcile and return the
-    // persisted choice so every participating tab reveals the same adventure.
+    // persisted choice so every participating tab reveals the same invitation.
     const saved = loadDeckState(storage);
     const merged = mergeDeckStates(currentState(), saved);
     records = merged.records;

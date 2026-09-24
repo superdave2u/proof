@@ -41,7 +41,7 @@ class MemoryStorage implements KeyValueStorage {
  * merely a visual card state.
  */
 describe("deck store draw ritual", () => {
-  /** WHY: independently opened tabs hold stale snapshots. This verifies that serialized mutations re-read and merge the latest deck, and that live notifications keep each tab current instead of allowing a later snapshot to erase another adventure or its evidence. */
+  /** WHY: independently opened tabs hold stale snapshots. This verifies that serialized mutations re-read and merge the latest deck, and that live notifications keep each tab current instead of allowing a later snapshot to erase another invitation or its evidence. */
   it("merges concurrent tab updates and propagates committed records to each store", async () => {
     const storage = new MemoryStorage();
     storage.setItem(DECK_STORAGE_KEY, JSON.stringify({
@@ -95,7 +95,7 @@ describe("deck store draw ritual", () => {
     expect(secondTab.getRecords()["pleasure-01"]?.state).toBe("lived");
   });
 
-  /** WHY: the same day's deal is one shared calendar event. Concurrent tabs must converge on the first persisted daily selection rather than showing different adventures. */
+  /** WHY: the same day's deal is one shared calendar event. Concurrent tabs must converge on the first persisted daily selection rather than showing different invitations. */
   it("converges concurrent daily draws on one persisted card for the date", async () => {
     const storage = new MemoryStorage();
     const date = () => new Date("2026-09-22T12:00:00.000Z");

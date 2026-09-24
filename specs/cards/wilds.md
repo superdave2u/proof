@@ -4,7 +4,7 @@ The Wild Cards use iridescent/prismatic treatments and sit above all territory r
 
 ## 51/52 — FOLLOW THE THREAD — CANON — LEGENDARY
 
-- **Type**: Legendary Adventure • Wild
+- **Type**: Legendary Invitation • Wild
 - **Quest**:
   Leave home without choosing a destination.
   Notice what pulls at you.
@@ -20,13 +20,13 @@ The Wild Cards use iridescent/prismatic treatments and sit above all territory r
   Then the next.
   Continue for at least two hours.
 - **Proof of Life**: Return with one object that **could not possibly have entered your life if you'd planned the day.**
-- **Legendary Ability**: **Serendipity** — during this adventure, the question *"What is the point of this?"* has no power.
+- **Legendary Ability**: **Serendipity** — during this invitation, the question *"What is the point of this?"* has no power.
 - **Art direction**: a figure walking away down an unplanned street, threads of light tugging from doorways and alley mouths in different directions, prismatic light refracting off everything.
 - **Flavor**: *"You cannot discover what you refuse to wander toward."*
 
 ## 52/52 — PROOF OF LIFE — CANON — MYTHIC
 
-- **Type**: Mythic Adventure • Wild
+- **Type**: Mythic Invitation • Wild
 - **Quest**:
   Choose something that produces nothing measurable.
   It cannot advance your career.

@@ -43,7 +43,7 @@ function renderLivedRecord(card: Card, record: CardFaceRecord | undefined): stri
 
 /**
  * Render the face-down back of a card. Reveals nothing but the collector
- * number and territory — undiscovered adventures stay concealed everywhere,
+ * number and territory — undiscovered invitations stay concealed everywhere,
  * including deep links to the detail page.
  */
 export function renderCardBack(card: Card): string {
@@ -70,7 +70,7 @@ export function renderCardFace(card: Card, record?: CardFaceRecord, options?: Ca
   const quest = card.quest.map((step) => `<li>${escapeHtml(step)}</li>`).join("");
   const proof = card.proof.split("\n").map(escapeHtml).join("<br>");
   const ability = card.ability
-    ? `<aside class="card-ability"><h3>Special Ability <span>✦</span></h3><p><strong>${escapeHtml(card.ability.name)}</strong> — ${escapeHtml(card.ability.text)}</p></aside>`
+    ? `<aside class="card-ability"><h3>Special Stretch <span>✦</span></h3><p><strong>${escapeHtml(card.ability.name)}</strong> — ${escapeHtml(card.ability.text)}</p></aside>`
     : "";
   const ariaLabel = `${territoryName} card ${String(card.number).padStart(2, "0")} of 52, ${rarityLabel(card.rarity)}: ${card.name}`;
   const wildClass = isWild ? ` card-face--${card.rarity}` : "";

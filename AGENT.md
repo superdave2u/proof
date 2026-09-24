@@ -4,7 +4,7 @@ Brief instructions for any agent working here. Keep this file brief and current.
 
 ## Project
 
-**Proof of Life** — a 52-card collectible adventure game for personal development, shipped as a TypeScript + Vite web app. Specs live in `SPEC.md` (product), `DESIGN.md` (technical), and `specs/cards/*.md` (the deck).
+**Proof of Life** — a 52-card collectible game of invitations for personal development, shipped as a TypeScript + Vite web app. Specs live in `SPEC.md` (product), `DESIGN.md` (technical), and `specs/cards/*.md` (the deck).
 
 ## Content rules
 

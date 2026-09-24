@@ -20,10 +20,10 @@ export function filterArchive(cards: readonly Card[], records: ArchiveRecords): 
 export function renderArchiveView(records: ArchiveRecords = {}, cards: readonly Card[] = DECK): string {
   const archivedCards = filterArchive(cards, records);
   const entries = archivedCards.length > 0
-    ? `<div class="archive-grid" aria-label="Lived adventure cards">${archivedCards.map((card) =>
+    ? `<div class="archive-grid" aria-label="Lived invitation cards">${archivedCards.map((card) =>
       `<div class="archive-entry" data-card-id="${card.id}">${renderCardFace(card, records[card.id])}</div>`,
     ).join("")}</div>`
-    : `<p class="archive-empty">Your Archive is waiting for its first piece of evidence. When an adventure is Lived, its card and the evidence you left with it will be gathered here.</p>`;
+    : `<p class="archive-empty">Your Archive is waiting for its first piece of evidence. When an invitation is Lived, its card and the evidence you left with it will be gathered here.</p>`;
 
   return `<section class="archive-view" aria-labelledby="archive-title">
     <header class="archive-view__heading">

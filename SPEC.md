@@ -1,12 +1,12 @@
 # SPEC.md — Proof of Life
 
-**Not merely a deck of prompts. A collectible adventure game.**
+**Not merely a deck of prompts. A collectible game of invitations.**
 
 Each of the 52 missions is its own fantasy-style card with a name, territory/color, rarity, evocative flavor text, a quest mechanic, and a physical artifact required to "complete" the card. The digital app renders, deals, and archives this deck.
 
 ## 1. Purpose
 
-A real-world adventure game disguised as a collectible card game. The player is dealt adventures; completing them in physical reality produces **evidence of a life lived**. There is no score, no winner, no deadline. You do not win by getting through 52 cards fastest.
+A real-world game of invitations disguised as a collectible card game. The player is dealt invitations; completing them in physical reality produces **evidence of a life lived**. There is no score, no winner, no deadline. You do not win by getting through 52 cards fastest.
 
 The pristine deck represents the life you *could* experience. The battered deck represents the life you **actually did**. Eventually the player isn't holding 52 inspirational cards — they're holding **52 pieces of evidence that they were here**.
 
@@ -30,12 +30,12 @@ Five territories function like five schools of magic, plus two Wild Cards with p
 
 1. **CARD NAME** — dramatic, memorable title (*The Ridiculous Dessert*, *Follow the Music*, *The Road Not Taken*).
 2. **TERRITORY + SYMBOL** — color and glyph from the table above.
-3. **CARD TYPE** — `Adventure • <Mode>`. Modes: Discovery, Encounter, Indulgence, Pilgrimage, Creation, Offering, Pursuit.
+3. **CARD TYPE** — `Invitation • <Mode>`. Modes: Discovery, Encounter, Indulgence, Pilgrimage, Creation, Offering, Pursuit.
 4. **RARITY** — within each territory: 5 common, 3 uncommon, 2 rare. The Wilds sit above all: **51 = Legendary**, **52 = Mythic** (the philosophical center of the game — its Black Lotus, valuable for meaning, not money).
-5. **ARTWORK / ART DIRECTION** — a 4:3 landscape watercolor illustration of the adventure, painted in the territory's tonal range and starring the recurring heroine (the Wayfarer) inhabiting the scene — never literally showing someone completing the quest. Almost magical realism. Authored as an art-direction string (scene, mood, light) that drives generation; the full imagery canon lives in `specs/art/ART-DIRECTION.md`.
+5. **ARTWORK / ART DIRECTION** — a 4:3 landscape watercolor illustration of the invitation, painted in the territory's tonal range and starring the recurring heroine (the Wayfarer) inhabiting the scene — never literally showing someone completing the quest. Almost magical realism. Authored as an art-direction string (scene, mood, light) that drives generation; the full imagery canon lives in `specs/art/ART-DIRECTION.md`.
 6. **THE QUEST** — the actual action the player must undertake.
 7. **PROOF OF LIFE** — the physical evidence required to claim the card.
-8. **SPECIAL ABILITY** (optional) — a named rule that modifies how the quest is performed or what it yields (e.g. *Unknown Territory*, *Useless Beauty*, *Inheritance*, *Encore*, *Serendipity*, *Alive*). Abilities are experiential modifiers, never scored points.
+8. **SPECIAL STRETCH** (optional) — a named rule that modifies how the quest is performed or what it yields (e.g. *Unknown Territory*, *Useless Beauty*, *Inheritance*, *Encore*, *Serendipity*, *Alive*). Abilities are experiential modifiers, never scored points.
 9. **FLAVOR TEXT** — the philosophy woven through the game. On the rendered face it is the caption of the artwork, set at the foot of the image over a translucent black mask.
 
 ### 3.1 Imagery standard
@@ -66,7 +66,7 @@ UNDISCOVERED → DRAWN → LIVED
 ```
 
 - **UNDISCOVERED** — pristine, face-down in the deck.
-- **DRAWN** — the deal. The daily flip must feel like *"you've just been dealt an adventure"*, not "pick an activity".
+- **DRAWN** — the deal. The daily flip must feel like *"you've just been dealt an invitation"*, not "pick an activity".
 - **LIVED** — the player completed the quest and deposited Proof of Life in the **Archive**.
 
 ## 6. The Archive & the record of a life

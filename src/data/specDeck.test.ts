@@ -80,13 +80,13 @@ describe("deck integrity — structure (SPEC §2)", () => {
 });
 
 describe("deck integrity — anatomy (SPEC §3)", () => {
-  const ADVENTURE_TYPE_RE =
+  const INVITATION_TYPE_RE =
     /^(Discovery|Encounter|Indulgence|Pilgrimage|Creation|Offering|Pursuit)$/;
   const WILD_TYPE_RE = /^(Legendary|Mythic) Wild$/;
 
   it("gives every territory card a complete mode type line", () => {
     for (const card of cards.filter((c) => c.territory !== "wild")) {
-      expect(card.typeLine, card.id).toMatch(ADVENTURE_TYPE_RE);
+      expect(card.typeLine, card.id).toMatch(INVITATION_TYPE_RE);
       expect(card.mode, card.id).toBe(card.typeLine);
     }
   });
@@ -277,7 +277,7 @@ describe("deck integrity — canon anchors (SPEC §4)", () => {
         abilityKind: "legendary",
         ability: {
           name: "Serendipity",
-          text: 'during this adventure, the question "What is the point of this?" has no power.',
+          text: 'during this invitation, the question "What is the point of this?" has no power.',
         },
         art: "a figure walking away down an unplanned street, threads of light tugging from doorways and alley mouths in different directions, prismatic light refracting off everything.",
         flavor: "You cannot discover what you refuse to wander toward.",
@@ -322,9 +322,9 @@ describe("spec parser — malformed content (SPEC §3 contract)", () => {
 
 ## 01/52 — TEST CARD
 
-- **Type**: Adventure • Discovery
+- **Type**: Invitation • Discovery
 - **Quest**:
-  Take the adventure.
+  Take the invitation.
 - **Proof of Life**: Keep an artifact.
 - **Art direction**: A cinematic scene.
 - **Flavor**: "A complete sentence."
@@ -344,7 +344,7 @@ describe("spec parser — malformed content (SPEC §3 contract)", () => {
     expect(() => parse(validCard.replace("- **Proof of Life**: Keep an artifact.", "- **Proof of Life**: Keep an artifact.\n- **Proof of Life**: Again."))).toThrow(
       'repeats field "**Proof of Life**"',
     );
-    expect(() => parse(validCard.replace("- **Type**: Adventure • Discovery\n", ""))).toThrow(
+    expect(() => parse(validCard.replace("- **Type**: Invitation • Discovery\n", ""))).toThrow(
       'missing **Type**',
     );
   });
@@ -355,11 +355,11 @@ describe("spec parser — malformed content (SPEC §3 contract)", () => {
     );
     expect(() => parse(validCard.replace(
       "- **Art direction**",
-      "- **Special Ability**: **One** — a rule.\n- **Mythic Ability**: **Two** — another rule.\n- **Art direction**",
+      "- **Special Stretch**: **One** — a rule.\n- **Mythic Ability**: **Two** — another rule.\n- **Art direction**",
     ))).toThrow("more than one ability field");
     expect(() => parse(validCard.replace(
       "- **Art direction**",
-      "- **Special Ability**: **One** — \n- **Art direction**",
+      "- **Special Stretch**: **One** — \n- **Art direction**",
     ))).toThrow("empty ability name or text");
   });
 

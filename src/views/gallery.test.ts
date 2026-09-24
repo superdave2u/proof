@@ -24,7 +24,7 @@ describe("gallery view", () => {
     expect(html).not.toContain(DECK[0]?.name);
     expect(html).toContain("0 of 52 cards lived.");
     expect(html).not.toContain('data-action="draw"');
-    expect(html).not.toContain("Draw an adventure");
+    expect(html).not.toContain("Draw an invitation");
     expect(html).not.toContain("draw-ritual");
     expect(html).not.toContain("daily-draw");
     expect(html).toContain('data-action="back-to-deck"');

@@ -7,10 +7,10 @@ function renderDailyCard(records: DeckRecords, dailyDrawCardId?: string, dailyDr
   const card = dailyDrawCardId ? DECK.find((item) => item.id === dailyDrawCardId) : undefined;
   const hasEligibleCard = DECK.some((item) => records[item.id]?.state !== "lived");
   const message = card
-    ? `Today's adventure: ${card.name}.`
+    ? `Today's invitation: ${card.name}.`
     : hasEligibleCard
       ? "A date-seeded card, chosen once for today."
-      : "Every adventure in this deck has been Lived.";
+      : "Every invitation in this deck has been Lived.";
   const revealedCard = card
     ? `<div class="daily-draw__face" data-draw-animation="true" role="group" tabindex="-1" aria-label="Today's card: ${escapeHtml(card.name)}">${renderCardFace(card, records[card.id])}<button class="card-detail__open" type="button" data-action="open-card" data-card-id="${card.id}">Open card details</button></div>`
     : "";
@@ -18,10 +18,10 @@ function renderDailyCard(records: DeckRecords, dailyDrawCardId?: string, dailyDr
   return `<section class="daily-draw" aria-labelledby="home-title">
     <div class="daily-draw__intro">
       <p class="daily-draw__eyebrow">The card of the day</p>
-      <h2 id="home-title" tabindex="-1">One adventure, chosen for today.</h2>
+      <h2 id="home-title" tabindex="-1">One invitation, chosen for today.</h2>
       <p class="daily-draw__intro-copy">The date decides the card. Once revealed, today's deal stays yours across reloads.</p>
     </div>
-    <button class="daily-draw__button" type="button" data-action="daily-draw"${card || !hasEligibleCard ? " disabled" : ""}>${card ? "Today's card is revealed" : "Reveal today's adventure"}</button>
+    <button class="daily-draw__button" type="button" data-action="daily-draw"${card || !hasEligibleCard ? " disabled" : ""}>${card ? "Today's card is revealed" : "Reveal today's invitation"}</button>
     <p class="daily-draw__message" role="status" aria-live="polite">${escapeHtml(message)}</p>
     ${dailyDrawError ? `<p class="draw-storage-error" data-draw-error="daily" role="alert" tabindex="-1">${escapeHtml(dailyDrawError)}</p>` : ""}
     ${revealedCard ? `<div class="daily-draw__reveal">${revealedCard}</div>` : ""}

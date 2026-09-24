@@ -500,7 +500,7 @@ export const DECK: Card[] = [
     typeLine: "Legendary Wild", rarity: "legendary",
     quest: ["Leave home without choosing a destination.", "Notice what pulls at you.", "Follow it.", "A road.", "A smell.", "A bookstore.", "Music through an open door.", "Something strange in a shop window.", "A person saying, \"You should see…\"", "Follow the first thread.", "Then the next.", "Then the next.", "Continue for at least two hours."],
     proof: "Return with one object that could not possibly have entered your life if you'd planned the day.",
-    ability: { name: "Serendipity", text: "during this adventure, the question \"What is the point of this?\" has no power." },
+    ability: { name: "Serendipity", text: "during this invitation, the question \"What is the point of this?\" has no power." },
     art: "a figure walking away down an unplanned street, threads of light tugging from doorways and alley mouths in different directions, prismatic light refracting off everything.",
     flavor: "You cannot discover what you refuse to wander toward.",
   },

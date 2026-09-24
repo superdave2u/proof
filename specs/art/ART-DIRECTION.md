@@ -13,7 +13,7 @@ starring a single recurring heroine. The image must feel like a page torn from t
 traveler's sketchbook in every card — same woman, same wardrobe, same hand.
 
 The heroine **inhabits** the scene; she never performs the quest. As with the authored
-art direction (SPEC §3), we show the world the adventure happens _inside_, not a tick-box
+art direction (SPEC §3), we show the world the invitation happens _inside_, not a tick-box
 of its completion.
 
 ## 2. The figure — the Wayfarer (figure bible, frozen)

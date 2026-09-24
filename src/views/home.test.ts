@@ -15,14 +15,14 @@ describe("home view", () => {
     expect(html).toContain('id="home-title"');
     expect(html).toContain('aria-labelledby="home-title"');
     expect(html).toContain('data-action="daily-draw"');
-    expect(html).toContain("Reveal today's adventure");
+    expect(html).toContain("Reveal today's invitation");
     expect(html).toContain('data-action="open-gallery"');
     expect(html).toContain('data-action="open-archive"');
     expect(html).not.toContain('id="deck-grid"');
     expect(html).not.toContain("deck-card-back");
     expect(html).not.toContain("deck-card-revealed");
     expect(html).not.toContain('data-action="draw"');
-    expect(html).not.toContain("Draw an adventure");
+    expect(html).not.toContain("Draw an invitation");
   });
 
   it("keeps the revealed daily card locked for the day and linked to its detail page", () => {
@@ -32,7 +32,7 @@ describe("home view", () => {
       card.id,
     );
 
-    expect(html).toContain(`Today&#39;s adventure: ${card.name.replaceAll("'", "&#39;")}.`);
+    expect(html).toContain(`Today&#39;s invitation: ${card.name.replaceAll("'", "&#39;")}.`);
     expect(html).toContain('class="daily-draw__face" data-draw-animation="true" role="group" tabindex="-1"');
     expect(html).toContain('data-action="daily-draw" disabled');
     expect(html).toContain(`data-action="open-card" data-card-id="${card.id}">Open card details</button>`);

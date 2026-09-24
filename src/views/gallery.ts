@@ -102,7 +102,7 @@ export function renderGalleryView(
     <div class="deck-view__heading">
       <div>
         <p class="deck-view__eyebrow">The Gallery</p>
-        <h2 id="gallery-title" tabindex="-1">Every adventure waits in here.</h2>
+        <h2 id="gallery-title" tabindex="-1">Every invitation waits in here.</h2>
         <p class="deck-view__description">A card is an invitation, not an obligation. The evidence is the life that happens along the way.</p>
       </div>
       <div class="deck-view__actions">
@@ -119,7 +119,7 @@ export function renderGalleryView(
       </label>
     </div>
      <p class="deck-results" id="deck-result-summary" aria-live="polite">${resultSummary(visibleCards.length, livedCount)}</p>
-     <div class="deck-grid" id="deck-grid" aria-label="Adventure cards">${renderCards(visibleCards, records, devMode)}</div>
+     <div class="deck-grid" id="deck-grid" aria-label="Invitation cards">${renderCards(visibleCards, records, devMode)}</div>
   </section>`;
 }
 

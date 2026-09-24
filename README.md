@@ -1,6 +1,6 @@
 # Proof of Life
 
-**Not merely a deck of prompts. A collectible adventure game.**
+**Not merely a deck of prompts. A collectible game of invitations.**
 
 52 real-world missions rendered as fantasy-style collectible cards. Each card carries a quest, a Proof of Life requirement, and a philosophy: pleasure, curiosity, beauty, connection, and wonder don't have to defend their place on the calendar with productivity. Their evidence isn't what they produced — their evidence is the life that happened while pursuing them.
 
@@ -19,7 +19,7 @@ Five territories — five schools of magic — plus two prismatic Wild Cards:
 | Wonder     | Violet       | ✧      | Awe       | 41–50 |
 | Wild       | Prismatic    | ✵      | —         | 51–52 |
 
-Every card: **name · territory + symbol · type line · rarity · artwork · quest · Proof of Life · special ability · flavor text**. The Wilds sit above all — 51 _Follow the Thread_ (Legendary) and 52 _Proof of Life_ (Mythic), the philosophical center of the game.
+Every card: **name · territory + symbol · type line · rarity · artwork · quest · Proof of Life · special stretch · flavor text**. The Wilds sit above all — 51 _Follow the Thread_ (Legendary) and 52 _Proof of Life_ (Mythic), the philosophical center of the game.
 
 ### Card art
 
@@ -31,7 +31,7 @@ Each card's artwork is a **4:3 landscape watercolor** of the scene in its art di
 UNDISCOVERED → DRAWN → LIVED
 ```
 
-Draw an adventure, live it in the real world, deposit your evidence in the **Archive**. No points, no deadlines, no leaderboards — progress is measured only in evidence accumulated.
+Draw an invitation, live it in the real world, deposit your evidence in the **Archive**. No points, no deadlines, no leaderboards — progress is measured only in evidence accumulated.
 
 ## Tech
 

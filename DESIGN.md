@@ -14,12 +14,12 @@ Borrow the *feel* of a deep collectible card game. **Do not copy Magic: The Gath
 
 1. Header band: `TERRITORY NN/52` (collector line) + rarity gem + territory symbol watermark.
 2. Card name (display serif).
-3. Type line: the card's mode (small caps), e.g. `Indulgence`, `Discovery`, `Legendary Wild`. Specs author `Adventure • <Mode>`; the parser drops the `Adventure • ` prefix.
+3. Type line: the card's mode (small caps), e.g. `Indulgence`, `Discovery`, `Legendary Wild`. Specs author `Invitation • <Mode>`; the parser drops the `Invitation • ` prefix.
 4. **Artwork panel (4:3)** — the card's watercolor illustration, a 4:3 landscape base64 PNG, lazily attached on flip/scroll. Underneath (and as fallback when a card has no image yet) it shows a procedural territory atmosphere: layered washes, woven texture, and the territory sigil watermark; wilds get a prismatic sheen, mythic stays deep black with a violet edge glow. The image is cropped with `object-fit: cover`.
 5. **Flavor caption** — italic, territory-tinted, pinned to the foot of the artwork panel as a `figcaption`, over a translucent black gradient mask between the text and the painting. It is the accessible text; the image `alt` is applied only once the image loads.
 6. **Quest** block.
 7. **Proof of Life** block.
-8. **Special Ability** box (if present) — distinct background, ability name bold.
+8. **Special Stretch** box (if present) — distinct background, ability name bold.
 9. Lived overlays: date stamp, evidence note, evidence photo thumb — clean, no wear effects.
 
 Note: authored art-direction strings remain in the frozen card specs and in `Card.art`. They are not rendered as visible text on the face; they drive generation (alongside flavor, territory palette, and the figure bible) and appear only in the loaded image's `alt` description.
@@ -36,7 +36,7 @@ interface Card {
   number: number;       // 1..52
   territory: Territory;
   name: string;
-  typeLine: string;     // rendered mode, e.g. "Indulgence" / "Legendary Wild" (specs' "Adventure • " prefix dropped at transcribe time)
+  typeLine: string;     // rendered mode, e.g. "Indulgence" / "Legendary Wild" (specs' "Invitation • " prefix dropped at transcribe time)
   rarity: Rarity;       // assigned in data pass per SPEC §3
   art: string;          // authored art-direction string — preserved, NOT rendered (atmosphere panel replaces artwork this release; reintroduced later)
   quest: string[];      // line-separated steps

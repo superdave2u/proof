@@ -3,13 +3,13 @@ import { DECK } from "../data/cards";
 import { renderCardDetail } from "./cardDetail";
 
 /**
- * WHY these tests exist: card detail is where a revealed adventure becomes an
+ * WHY these tests exist: card detail is where a revealed invitation becomes an
  * invitation to act. Its contract must preserve the entire card face while
  * offering only the action that matches its lifecycle state, and keep Lived
  * evidence as a clean record rather than turning it into a worn-out trophy.
  */
 describe("card detail view", () => {
-  it("keeps undiscovered cards face-down on deep links without leaking their adventure", () => {
+  it("keeps undiscovered cards face-down on deep links without leaking their invitation", () => {
     // WHY: the daily deal is the only reveal; a shared hash link must not be
     // able to snoop a card's name, quest, or flavor before the deck deals it.
     const card = DECK[0]!;

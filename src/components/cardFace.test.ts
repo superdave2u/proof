@@ -35,7 +35,7 @@ describe("renderCardFace", () => {
       for (const step of card.quest) expect(html).toContain(escapeHtml(step));
       expect(html).toContain("<h3>Quest</h3>");
       expect(html).toContain("<h3>Proof of Life</h3>");
-      expect(html.includes("Special Ability")).toBe(Boolean(card.ability));
+      expect(html.includes("Special Stretch")).toBe(Boolean(card.ability));
       if (card.ability) {
         expect(html).toContain(escapeHtml(card.ability.name));
         expect(html).toContain(escapeHtml(card.ability.text));
@@ -44,7 +44,7 @@ describe("renderCardFace", () => {
     }
   });
 
-  it("renders a face-down back that conceals the adventure completely", () => {
+  it("renders a face-down back that conceals the invitation completely", () => {
     // WHY: undiscovered cards must be face-down everywhere (gallery tiles and
     // deep-linked detail pages) without leaking name, quest, or flavor.
     const card = DECK[0]!;
