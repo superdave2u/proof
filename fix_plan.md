@@ -133,7 +133,7 @@ Legend: `[ ]` incomplete · `[x]` done (verified) — prune `[x]` items periodic
 - [ ] P2 — Restore focus when canceling the evidence form: removing the focused form element strands keyboard users without a predictable focus target.
 - [ ] P3 — Give evidence artifact images descriptive alt text: generic alt text does not convey the image's relevant content to screen-reader users.
 - [x] Rendered card artwork: reintroduced as generated 4:3 watercolor art (figure bible + territory palettes + deterministic prompt), base64 PNG, lazily attached on flip/scroll over the territory fallback, flavor text as a masked caption. Canon in `specs/art/ART-DIRECTION.md`.
-- [ ] P1 — Generate all 52 base64 PNGs using `npm run art:loop` (46/52 structurally accepted; 6 remaining). The dedicated `PROMPT-ART.md`/`ralph-art.sh` selects one missing card per iteration, pins OpenRouter `google/gemini-3.1-flash-lite-image`, uses the local opencode auth store when no key env is present, validates 800×600/≤512 KiB, pauses on `.ralph-art.stop` after any failure, and exits on `.ralph-art.done` when complete. Do not make paid image requests outside this dedicated loop unless the operator explicitly requests them.
+- [ ] P1 — Generate all 52 base64 PNGs using `npm run art:loop` (47/52 structurally accepted; 5 remaining). The dedicated `PROMPT-ART.md`/`ralph-art.sh` selects one missing card per iteration, pins OpenRouter `google/gemini-3.1-flash-lite-image`, uses the local opencode auth store when no key env is present, validates 800×600/≤512 KiB, pauses on `.ralph-art.stop` after any failure, and exits on `.ralph-art.done` when complete. Do not make paid image requests outside this dedicated loop unless the operator explicitly requests them.
 
 ### Learnings — card-art generation iteration 1
 
@@ -364,6 +364,11 @@ Legend: `[ ]` incomplete · `[x]` done (verified) — prune `[x]` items periodic
 
 - Generated only `wonder-46` with the pinned OpenRouter model. Its artifact parsed as JSON, identified the pinned bare model id and `800x600` dimensions, and fully decoded to a valid 316,439-byte PNG, under 512 KiB.
 - Per operator policy, structural validity is the acceptance criterion; the image was not visually reviewed. Next missing card: `wonder-47`.
+
+### Learnings — card-art generation iteration 47
+
+- Generated only `wonder-47` with the pinned OpenRouter model. Its artifact parsed as JSON, identified the pinned bare model id and `800x600` dimensions, and fully decoded to a valid 273,703-byte PNG, under 512 KiB.
+- Per operator policy, structural validity is the acceptance criterion; the image was not visually reviewed. Next missing card: `wonder-48`.
 
 - [x] Deck integrity pass: 52 cards verified — numbering 01–52 no gaps/duplicates, unique titles/ids, complete anatomy, 7 canon anchors exact, no placeholder content (durable audit: src/data/specDeck.test.ts + src/data/specDeck.ts)
 - [x] Data pipeline: `src/data/cards.ts` — transcribe all 52 specs into typed `Card[]`; assign rarity per SPEC §3 (5 common / 3 uncommon / 2 rare per territory; wilds canon legendary/mythic)
