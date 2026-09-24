@@ -133,7 +133,7 @@ Legend: `[ ]` incomplete · `[x]` done (verified) — prune `[x]` items periodic
 - [ ] P2 — Restore focus when canceling the evidence form: removing the focused form element strands keyboard users without a predictable focus target.
 - [ ] P3 — Give evidence artifact images descriptive alt text: generic alt text does not convey the image's relevant content to screen-reader users.
 - [x] Rendered card artwork: reintroduced as generated 4:3 watercolor art (figure bible + territory palettes + deterministic prompt), base64 PNG, lazily attached on flip/scroll over the territory fallback, flavor text as a masked caption. Canon in `specs/art/ART-DIRECTION.md`.
-- [ ] P1 — Generate all 52 base64 PNGs using `npm run art:loop` (21/52 structurally accepted; 31 remaining). The dedicated `PROMPT-ART.md`/`ralph-art.sh` selects one missing card per iteration, pins OpenRouter `google/gemini-3.1-flash-lite-image`, uses the local opencode auth store when no key env is present, validates 800×600/≤512 KiB, pauses on `.ralph-art.stop` after any failure, and exits on `.ralph-art.done` when complete. Do not make paid image requests outside this dedicated loop unless the operator explicitly requests them.
+- [ ] P1 — Generate all 52 base64 PNGs using `npm run art:loop` (22/52 structurally accepted; 30 remaining). The dedicated `PROMPT-ART.md`/`ralph-art.sh` selects one missing card per iteration, pins OpenRouter `google/gemini-3.1-flash-lite-image`, uses the local opencode auth store when no key env is present, validates 800×600/≤512 KiB, pauses on `.ralph-art.stop` after any failure, and exits on `.ralph-art.done` when complete. Do not make paid image requests outside this dedicated loop unless the operator explicitly requests them.
 
 ### Learnings — card-art generation iteration 1
 
@@ -239,6 +239,11 @@ Legend: `[ ]` incomplete · `[x]` done (verified) — prune `[x]` items periodic
 
 - Generated only `beauty-21` with the pinned OpenRouter model. Its artifact parsed as JSON, identified the pinned model and `800x600` dimensions, and fully decoded to a valid 264,761-byte PNG, under 512 KiB.
 - Per operator policy, structural validity is the acceptance criterion; the image was not visually reviewed. Next missing card: `beauty-22`.
+
+### Learnings — card-art generation iteration 22
+
+- Generated only `beauty-22` with the pinned OpenRouter model. Its artifact parsed as JSON, identified the pinned model and `800x600` dimensions, and fully decoded to a valid 283,317-byte PNG, under 512 KiB.
+- Per operator policy, structural validity is the acceptance criterion; the image was not visually reviewed. Next missing card: `beauty-23`.
 
 - [x] Deck integrity pass: 52 cards verified — numbering 01–52 no gaps/duplicates, unique titles/ids, complete anatomy, 7 canon anchors exact, no placeholder content (durable audit: src/data/specDeck.test.ts + src/data/specDeck.ts)
 - [x] Data pipeline: `src/data/cards.ts` — transcribe all 52 specs into typed `Card[]`; assign rarity per SPEC §3 (5 common / 3 uncommon / 2 rare per territory; wilds canon legendary/mythic)
