@@ -45,6 +45,7 @@ function renderDailyCard(
   dailyDrawCardId?: string,
   dailyDrawError?: string,
   peekCardId?: string,
+  devMode = false,
 ): string {
   const card = dailyDrawCardId ? DECK.find((item) => item.id === dailyDrawCardId) : undefined;
   const peek = !card && peekCardId ? DECK.find((item) => item.id === peekCardId) : undefined;
@@ -53,8 +54,15 @@ function renderDailyCard(
   const dealt = card ?? peek;
   // "Tap to reveal" leads the bottom group; the card itself is the reveal control.
   const hint = `<div class="daily-draw__hint-slot">${peek ? '<p class="daily-draw__hint" data-action="daily-draw">Tap to reveal</p>' : '<span aria-hidden="true"></span>'}</div>`;
+  // Local development gets a middle-left toggle to flip the daily card between
+  // face-down and revealed without waiting a day. Lived is terminal, so the
+  // control disappears once the card has been deposited.
+  const devToggle = devMode && dealt && records[dealt.id]?.state !== "lived"
+    ? `<button class="daily-draw__dev" type="button" data-action="dev-toggle-daily" aria-label="${card ? "Hide" : "Reveal"} today's card now (development only)">${card ? "Hide card" : "Reveal card"}</button>`
+    : "";
 
   return `<section class="daily-draw" aria-labelledby="home-title">
+    ${devToggle}
     <div class="daily-draw__stage">${dealt ? renderDailyCardStack(dealt, !!card) : ""}</div>
     <div class="daily-draw__bottom">
       ${hint}
@@ -77,8 +85,9 @@ export function renderHomeView(
   dailyDrawCardId?: string,
   dailyDrawError?: string,
   peekCardId?: string,
+  devMode = false,
 ): string {
-  return renderDailyCard(records, dailyDrawCardId, dailyDrawError, peekCardId);
+  return renderDailyCard(records, dailyDrawCardId, dailyDrawError, peekCardId, devMode);
 }
 
 /**
@@ -130,7 +139,7 @@ function revealDailyCard(container: HTMLElement, card: Card): void {
 }
 
 /** Mount the home screen and return its refresh hook. */
-export function mountHomeView(container: HTMLElement, store: DeckStore): () => void {
+export function mountHomeView(container: HTMLElement, store: DeckStore, devMode = false): () => void {
   let dailyDrawError: string | undefined;
   let renderState: HomeCardState | undefined;
 
@@ -149,7 +158,7 @@ export function mountHomeView(container: HTMLElement, store: DeckStore): () => v
       return;
     }
 
-    container.innerHTML = renderHomeView(store.getRecords(), card?.id, dailyDrawError, peek?.id);
+    container.innerHTML = renderHomeView(store.getRecords(), card?.id, dailyDrawError, peek?.id, devMode);
     renderState = next;
   };
   render();
@@ -167,6 +176,17 @@ export function mountHomeView(container: HTMLElement, store: DeckStore): () => v
   container.addEventListener("click", (event: Event) => {
     const target = event.target;
     if (!(target instanceof Element)) return;
+
+    if (target.closest('[data-action="dev-toggle-daily"]')) {
+      // Development only: draw to reveal, hide to put the card back face-down.
+      void (async () => {
+        const revealed = store.getDailyDraw();
+        if (revealed) await store.hideCard(revealed.id);
+        else await store.drawDaily();
+      })();
+      return;
+    }
+
     if (!target.closest('[data-action="daily-draw"]')) return;
 
     dailyDrawError = undefined;

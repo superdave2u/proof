@@ -79,6 +79,30 @@ describe("home view", () => {
     expect(html).toContain('data-draw-error="daily" role="alert" tabindex="-1">Daily draw &lt;failed&gt;</p>');
     expect(html).not.toContain(">Daily draw <failed>");
   });
+
+  it("offers a localhost-only flip control that reveals the face-down daily card", () => {
+    // WHY: local development should exercise the reveal without waiting a day.
+    // The control is a dev-only affordance and never renders in production.
+    const peekCard = DECK[16]!;
+    const html = renderHomeView({}, undefined, undefined, peekCard.id, true);
+
+    expect(html).toContain('class="daily-draw__dev"');
+    expect(html).toContain('data-action="dev-toggle-daily"');
+    expect(html).toContain("Reveal card");
+    expect(renderHomeView({}, undefined, undefined, peekCard.id)).not.toContain('data-action="dev-toggle-daily"');
+  });
+
+  it("flips the dev control to hide once the daily card is revealed, and drops it when Lived", () => {
+    const card = DECK[16]!;
+    const drawn = { [card.id]: { state: "drawn" as const, drawnAt: "2026-09-22T12:30:00.000Z" } };
+    const revealed = renderHomeView(drawn, card.id, undefined, undefined, true);
+    expect(revealed).toContain('data-action="dev-toggle-daily"');
+    expect(revealed).toContain("Hide card");
+
+    // Lived is terminal, so there is nothing left to flip between.
+    const lived = { [card.id]: { state: "lived" as const, livedAt: "2026-09-22T12:30:00.000Z", evidence: { date: "2026-09-22", note: "Done." } } };
+    expect(renderHomeView(lived, card.id, undefined, undefined, true)).not.toContain('data-action="dev-toggle-daily"');
+  });
 });
 
 describe("daily draw message", () => {

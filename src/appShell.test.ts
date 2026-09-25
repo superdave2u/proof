@@ -134,6 +134,10 @@ describe("app shell accessibility foundations", () => {
     // WHY: home is the pure daily ritual — no page navigation there; the menu
     // lives on sub pages only.
     expect(styles).toMatch(/\.app-shell:has\(> #home-view:not\(\[hidden\]\)\) \.app-menu \{ display: none; \}/);
+    // WHY: the localhost-only daily flip control is plain link text pinned to
+    // the middle-left of the home screen, out of the layout flow.
+    expect(styles).toMatch(/\.daily-draw__dev \{[^}]*position: fixed;[^}]*top: 50%;/s);
+    expect(styles).toMatch(/\.daily-draw__dev \{[^}]*text-decoration: underline;[^}]*transform: translateY\(-50%\);/s);
     // WHY: the view's own top margin, not the header, was the biggest gap on
     // sub pages — gallery, Archive, and card detail hug the compact header now.
     expect(styles).toMatch(/\.deck-view \{ margin-top: clamp\(1rem, 3vw, 2rem\); \}/);

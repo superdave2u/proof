@@ -127,7 +127,7 @@ if (app) {
     };
 
     refreshArchive = mountArchiveView(archiveView, store);
-    refreshHome = mountHomeView(homeView, store);
+    refreshHome = mountHomeView(homeView, store, isLocalDevelopment());
     refreshGallery = mountGalleryView(galleryView, store, isLocalDevelopment());
     navigate = mountHashRouter(window, showRoute).navigate;
 

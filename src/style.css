@@ -241,6 +241,11 @@ button, input, textarea { font: inherit; }
 .daily-draw__tap:focus-visible { outline: 3px solid #f1e9ff; outline-offset: 4px; border-radius: 23px; }
 
 .daily-draw__message { margin: 0; color: #e4dcf5; font-size: .78rem; }
+/* Localhost-only flip control: plain link text pinned to the middle-left of the
+   home screen so the daily card can be exercised without waiting a day. */
+.daily-draw__dev { position: fixed; left: .7rem; top: 50%; z-index: 30; padding: .3rem; border: 0; background: none; color: #d2c2f5; cursor: pointer; font-size: .68rem; font-weight: 700; letter-spacing: .12em; text-decoration: underline; text-transform: uppercase; transform: translateY(-50%); }
+.daily-draw__dev:hover { color: #fff; }
+.daily-draw__dev:focus-visible { outline: 3px solid #dfd0ff; outline-offset: 3px; }
 .draw-storage-error { margin: 0; padding: .65rem .8rem; border-left: 3px solid #e58b8b; border-radius: 3px; background: rgb(145 48 48 / 16%); color: #ffd6d6; font-size: .8rem; line-height: 1.5; }
 .draw-storage-error:focus-visible { outline: 2px solid #ffd6d6; outline-offset: 3px; }
 /* The dealt card's sealed reveal: the same silhouette as the face-down back,
