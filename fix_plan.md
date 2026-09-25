@@ -11,7 +11,7 @@ Legend: `[ ]` incomplete · `[x]` done (verified) — prune `[x]` items periodic
 
 ## Completed — direct operator card-copy revision
 
-- [x] Condensed the 12 audited over-limit Quest sections to no more than three concise bullets, consolidating examples and grouped cautions without changing the invitation's intent. Updated the typed deck transcription and independent canon baselines; `specDeck.test.ts` enforces the three-bullet maximum. Card-spec edits remain outside Ralph-loop authority and require an explicit direct operator request, including for canon.
+- [x] Revised the card Quests to no more than three distinct bullets and aligned Proof with permitted Quest branches; every Proof accepts a photograph of the event or completion. Updated the typed deck transcription and canon baselines; tests enforce both requirements. Card-spec edits remain outside Ralph-loop authority and require an explicit direct operator request, including for canon.
 
 Everything below is verified and kept as the why-record. Prune freely when it stops earning its place.
 
