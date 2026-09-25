@@ -21,7 +21,7 @@ Territory energy: **Attention.** Some things should exist simply because they ma
   - Choose a window you pass often.
   - Use its edges as a frame. Notice one pleasing relationship between light, color, and shape.
   - Give the view a title for your own amusement.
-- **Proof of Life**: The photograph, printed or pinned, with a hand-written gallery label beneath it.
+- **Proof of Life**: A photograph of the view, saved or printed, with its title alongside.
 - **Special Stretch**: **Keep the Ordinary:** Include one thing you would normally crop out and see what it contributes.
 - **Art direction**: an ordinary apartment window floating alone in a gallery wall, the street beyond hung like a canvas, a small brass plaque beneath the sill.
 - **Flavor**: "Beauty is not in things. It waits in the framing."
@@ -33,7 +33,7 @@ Territory energy: **Attention.** Some things should exist simply because they ma
   - Choose flowers simply because you like them. Buy a stem within your means, use something you may responsibly pick, or spend time with flowers where they grow.
   - Place them where you will see them, or pause to enjoy them there.
   - There is no occasion to supply.
-- **Proof of Life**: Press one petal and preserve it with this card.
+- **Proof of Life**: Press one responsibly gathered petal and preserve it with this card, or photograph the flowers where they grow.
 - **Special Stretch**: **Only Your Taste:** Choose the stem or patch you personally love, even if another would look more impressive to a visitor.
 - **Art direction**: an enormous, almost enchanted flower stall appearing unexpectedly on a gray city street.
 - **Flavor**: _"Some things should exist simply because they make being alive feel like being alive."_
@@ -45,7 +45,7 @@ Territory energy: **Attention.** Some things should exist simply because they ma
   - Choose a painting, a tree, a facade, or a photograph.
   - Give it a few unhurried minutes. When attention wanders, return gently.
   - Notice a detail you missed on first looking. You do not need a clever interpretation.
-- **Proof of Life**: Sketch three details you would have sworn were not there.
+- **Proof of Life**: Photograph the subject and note one detail you missed, or sketch that detail.
 - **Special Stretch**: **Another Distance:** Shift your viewpoint if possible and let the same thing surprise you again.
 - **Art direction**: a figure standing motionless before one enormous painting in a vast gallery, the painting's colors slowly bleeding out into the room.
 - **Flavor**: "Nothing reveals itself to a passing eye."
@@ -57,7 +57,7 @@ Territory energy: **Attention.** Some things should exist simply because they ma
   - Take a slow look along a familiar route.
   - Notice discarded, fallen, or weathered things that appeal to you. Gather only what is safe, permitted, and ecologically appropriate; leave the rest in place.
   - Arrange a few objects, sketches, or remembered images as a small collection without ranking them.
-- **Proof of Life**: Photograph the collection as a whole; keep it in a dish.
+- **Proof of Life**: Photograph the collection as a whole; keep physical finds in a dish and sketches or notes together.
 - **Special Stretch**: **The Unimpressive Piece:** Give the least obviously beautiful find a place in the center and look for what drew you to it.
 - **Art direction**: a windowsill museum of leaves, sea glass, and a yellowing ticket, each item resting on a scrap of hand-lettered label.
 - **Flavor**: "The ground is a museum with no admission fee."
@@ -69,7 +69,7 @@ Territory energy: **Attention.** Some things should exist simply because they ma
   - Look at one subject at three convenient times with different light.
   - Make a quick image, sketch, or color note each time.
   - Keep the three together, with no retakes or selection of a best version.
-- **Proof of Life**: The three photographs, kept together in order.
+- **Proof of Life**: The three records — photographs, sketches, or color notes — kept together in order; a photograph of them together also counts.
 - **Special Stretch**: **The Difficult Light:** Give the least flattering version a second look. Notice something only that light reveals.
 - **Art direction**: a single tree shown in three panels — silver dawn, hard noon, molten dusk — the panels sharing one continuous horizon.
 - **Flavor**: "Nothing is seen once."
@@ -81,7 +81,7 @@ Territory energy: **Attention.** Some things should exist simply because they ma
   - Choose an errand and notice one beautiful thing along an accessible route.
   - Pause with it briefly. A pattern in pavement or light through glass is enough.
   - Continue when you are ready.
-- **Proof of Life**: Photograph the beautiful stop and keep the errand's receipt together.
+- **Proof of Life**: Photograph the beautiful pause; keep the errand receipt if there is one.
 - **Special Stretch**: **Before the Finish:** Take the pause before the errand is complete, so beauty does not have to wait for the receipt.
 - **Art direction**: a gray government-office street where one impossible garden gate glows like a portal, its light spilling across the pavement toward the queue outside.
 - **Flavor**: "Beauty does not ask to be on the way. It rewards whoever chooses the longer door."
@@ -105,7 +105,7 @@ Territory energy: **Attention.** Some things should exist simply because they ma
   - Choose one color before a walk or an exploration from where you sit.
   - Let its appearances guide what you look at and, where practical, which way you turn.
   - Stop collecting when you want. There is no quota of finds or best photograph.
-- **Proof of Life**: The photographs, kept as one grid.
+- **Proof of Life**: One or more photographs of the color, kept as a grid.
 - **Special Stretch**: **Let One Go:** Enjoy one appearance of the color without recording it. Let seeing it be sufficient.
 - **Art direction**: a gray city street where one single color — a door, a coat, a ribbon — burns in full saturation while everything else fades to pencil sketch.
 - **Flavor**: "Decide what you are hunting, and the world starts feeding you."

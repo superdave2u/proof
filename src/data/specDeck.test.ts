@@ -207,7 +207,7 @@ describe("deck integrity — canon anchors (SPEC §4)", () => {
           "If it fits your access, safety, and budget, follow their suggestion instead of your usual choice. Check practical details; leave reviews unread.",
           "Find out what the place is like without demanding that their taste match yours.",
         ],
-        proof: "Return with one artifact from the destination.",
+        proof: "Return with one artifact from the destination — a photograph counts.",
         abilityKind: "special",
         ability: {
           name: "Stay with the Difference",
@@ -223,7 +223,7 @@ describe("deck integrity — canon anchors (SPEC §4)", () => {
           "Place them where you will see them, or pause to enjoy them there.",
           "There is no occasion to supply.",
         ],
-        proof: "Press one petal and preserve it with this card.",
+        proof: "Press one responsibly gathered petal and preserve it with this card, or photograph the flowers where they grow.",
         abilityKind: "special",
         ability: {
           name: "Only Your Taste",
@@ -239,7 +239,7 @@ describe("deck integrity — canon anchors (SPEC §4)", () => {
           "If they feel like telling it, listen without steering toward a lesson.",
           "Let the story end where they want it to.",
         ],
-        proof: "Write one sentence from their story that you never want to forget.",
+        proof: "Write one sentence from their story, if shared, or photograph a detail of where you met without including them unless they agree.",
         abilityKind: "special",
         ability: {
           name: "Inheritance",
@@ -271,7 +271,7 @@ describe("deck integrity — canon anchors (SPEC §4)", () => {
           "Begin without choosing an experience to accomplish. Follow something that draws you: a sound, a color, a doorway, a recommendation.",
           "Let what you encounter suggest the next turn, then another. Continue while the time and your body allow; you can wander close to home. Return without requiring a revelation or a remarkable story.",
         ],
-        proof: "Return with one object that could not possibly have entered your life if you'd planned the day.",
+        proof: "Return with an object from the unplanned route, or a photograph of one unexpected thing you encountered.",
         abilityKind: "legendary",
         ability: {
           name: "Serendipity",
@@ -287,7 +287,7 @@ describe("deck integrity — canon anchors (SPEC §4)", () => {
           "Go do it within the circumstances of your life. You owe no output, improvement, or impressive account.",
           'Keep an ordinary reminder with the words: "I WANTED THIS. THAT WAS ENOUGH." On a later ordinary day, let it support another small choice you want without first earning it. This brings the invitation into daily life; it does not begin a streak.',
         ],
-        proof: "Bring back one artifact. Write upon it:\nI WANTED THIS.\nTHAT WAS ENOUGH.",
+        proof: "Bring back an ordinary artifact and write on or beside it: I WANTED THIS. THAT WAS ENOUGH. A photograph of the artifact and words counts.",
         abilityKind: "mythic",
         ability: {
           name: "Alive",

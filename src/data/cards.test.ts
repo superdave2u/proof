@@ -37,6 +37,15 @@ describe("application deck data", () => {
     }
   });
 
+  it("lets every Proof use a photograph of the invitation or its completion", () => {
+    // WHY: Proof must not exclude a photograph when the player wants to keep
+    // visual evidence of the invitation; this also protects alternate Quest
+    // branches from proofs that demand inaccessible physical artifacts.
+    for (const card of DECK) {
+      expect(card.proof, card.id).toMatch(/photo|image/i);
+    }
+  });
+
   it("publishes the expected territory metadata and 5/3/2 rarity distribution", () => {
     expect(territories).toHaveLength(EXPECTED_TERRITORY_META.length);
     for (const [index, meta] of territories.entries()) {

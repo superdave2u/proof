@@ -105,14 +105,14 @@ describe("renderCardFace", () => {
     expect(mythic).toContain("Proof of Life");
   });
 
-  it("renders card 52's complete proof with explicit line breaks", () => {
-    // WHY: card 52's proof includes two required statements that must remain
-    // separate lines in the card face rather than collapsing into one sentence.
+  it("renders card 52's artifact words and photo-compatible proof", () => {
+    // WHY: the mythic vow remains part of the physical artifact, while the
+    // player may also photograph the artifact and its words as evidence.
     const card52 = DECK.find((card) => card.number === 52)!;
     const html = renderCardFace(card52);
 
     expect(html).toContain(
-      '<section class="card-section card-section--proof"><h3>Proof</h3><p>Bring back one artifact. Write upon it:<br>I WANTED THIS.<br>THAT WAS ENOUGH.</p></section>',
+      '<section class="card-section card-section--proof"><h3>Proof</h3><p>Bring back an ordinary artifact and write on or beside it: I WANTED THIS. THAT WAS ENOUGH. A photograph of the artifact and words counts.</p></section>',
     );
   });
 
