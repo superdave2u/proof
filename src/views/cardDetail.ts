@@ -10,7 +10,7 @@ import type { Card } from "../data/cards";
 import type { Evidence } from "../state/evidence";
 import { escapeHtml } from "../util/html";
 
-export type CardDetailAction = "open-evidence" | "open-archive" | "back-to-deck";
+export type CardDetailAction = "open-archive";
 
 /**
  * Evidence entry state is owned by the application (not the mount) so an
@@ -30,13 +30,15 @@ export interface CardDetailHandlers {
   onSubmitEvidence(cardId: string, evidence: Evidence): Promise<boolean>;
 }
 
-function renderPrimaryAction(cardId: string, state: CardFaceRecord["state"]): string {
-  const escapedId = escapeHtml(cardId);
+function renderPrimaryAction(card: Card, state: CardFaceRecord["state"]): string {
+  const escapedId = escapeHtml(card.id);
   switch (state) {
     case "drawn":
-      return `<button class="card-detail__primary" type="button" data-action="open-evidence" data-card-id="${escapedId}">Deposit your Proof of Life</button>`;
+      // The Gallery hop sits beside the primary action; the deposit flow stays
+      // the only Save Proof.
+      return `<button class="card-detail__primary" type="button" data-action="open-evidence" data-card-id="${escapedId}">Save Proof</button><a class="card-detail__gallery card-detail__gallery--${card.territory}" href="#/gallery">Gallery</a>`;
     case "lived":
-      return `<button class="card-detail__primary" type="button" data-action="open-archive" data-card-id="${escapedId}">View in the Archive</button>`;
+      return `<button class="card-detail__primary" type="button" data-action="open-archive" data-card-id="${escapedId}">View Archive</button>`;
     case "undiscovered":
       // The daily deal is the only way a card is revealed; no manual action here.
       return "";
@@ -67,13 +69,10 @@ export function renderCardDetail(
     : renderCardFace(card, record);
 
   return `<section class="card-detail" data-card-id="${escapedId}" data-state="${state}" aria-label="${territoryName} card ${collectorNumber} of 52, ${state}" tabindex="-1">
-    <nav class="card-detail__navigation" aria-label="Card detail navigation">
-      <button type="button" data-action="back-to-deck">Return to the deck</button>
-    </nav>
     <div class="card-detail__face">${face}</div>
     ${evidenceSection}
     ${evidence.message && !evidence.open ? renderEvidenceSuccess(evidence.message) : ""}
-    ${evidence.open ? "" : `<div class="card-detail__actions" aria-label="Card actions">${renderPrimaryAction(card.id, state)}</div>`}
+    ${evidence.open ? "" : `<div class="card-detail__actions" aria-label="Card actions">${renderPrimaryAction(card, state)}</div>`}
   </section>`;
 }
 
@@ -114,7 +113,7 @@ export function mountCardDetail(
     if (!(target instanceof Element)) return;
 
     const action = target.closest<HTMLButtonElement>("button[data-action]")?.dataset.action;
-    if (action === "open-archive" || action === "back-to-deck") {
+    if (action === "open-archive") {
       handlers.onAction(action, card);
     } else if (action === "open-evidence") {
       openEvidence();

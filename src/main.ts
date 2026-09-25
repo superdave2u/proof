@@ -89,13 +89,7 @@ if (app) {
         card,
         store.getRecords()[cardId],
         {
-          onAction: (action: CardDetailAction) => {
-            if (action === "open-archive") {
-              navigate("archive");
-            } else {
-              navigate("deck");
-            }
-          },
+          onAction: (_action: CardDetailAction) => navigate("archive"),
           onSubmitEvidence: (cardIdToSubmit, evidence) => store.submitEvidence(cardIdToSubmit, evidence),
         },
         detailEvidence,

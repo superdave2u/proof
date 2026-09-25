@@ -24,7 +24,8 @@ describe("card detail view", () => {
     expect(html).not.toContain("<h3>Proof of Life</h3>");
     expect(html).not.toContain("card-art__caption");
     expect(html).not.toContain('data-action="draw"');
-    expect(html).toContain('data-action="back-to-deck"');
+    expect(html).not.toContain('data-action="back-to-deck"');
+    expect(html).not.toContain('class="card-detail__navigation"');
     expect(html).not.toContain("Deposit your Proof of Life");
   });
 
@@ -33,7 +34,9 @@ describe("card detail view", () => {
     const html = renderCardDetail(card, { state: "drawn", drawnAt: "2026-09-22T12:30:00.000Z" });
 
     expect(html).toContain('data-state="drawn"');
-    expect(html).toContain('data-action="open-evidence" data-card-id="pleasure-01">Deposit your Proof of Life</button>');
+    expect(html).toContain('data-action="open-evidence" data-card-id="pleasure-01">Save Proof</button>');
+    expect(html).toContain('<a class="card-detail__gallery card-detail__gallery--pleasure" href="#/gallery">Gallery</a>');
+    expect(html.indexOf('class="card-detail__gallery')).toBeGreaterThan(html.indexOf('data-action="open-evidence"'));
     expect(html).not.toContain('data-action="draw"');
     expect(html).not.toContain('data-action="open-archive"');
   });
@@ -49,8 +52,9 @@ describe("card detail view", () => {
     expect(html).toContain('data-state="lived"');
     expect(html).toContain("Entered in the Archive");
     expect(html).toContain("A &lt;petal&gt; &amp; a quiet hour.");
-    expect(html).toContain('data-action="open-archive" data-card-id="beauty-23">View in the Archive</button>');
-    expect(html).toContain('data-action="back-to-deck"');
+    expect(html).toContain('data-action="open-archive" data-card-id="beauty-23">View Archive</button>');
+    expect(html).not.toContain('data-action="back-to-deck"');
+    expect(html).not.toContain('class="card-detail__navigation"');
     expect(html).not.toContain("weathering");
     expect(html).not.toContain("scuffed");
     expect(html).not.toContain('data-action="open-evidence"');

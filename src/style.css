@@ -270,14 +270,22 @@ button, input, textarea { font: inherit; }
 
 .card-detail { margin: clamp(1rem, 3vw, 2rem) auto 0; }
 .card-detail:focus-visible { outline: 3px solid #e4c987; outline-offset: 7px; border-radius: 8px; }
-.card-detail__navigation { width: min(100%, 390px); margin: 0 auto .8rem; }
 .card-detail__error { width: min(100%, 390px); margin: 0 auto .8rem; }
-.card-detail__navigation button, .card-detail__open, .card-detail__primary { min-height: 2.8rem; padding: .6rem .95rem; border: 1px solid #85765c; border-radius: 99px; background: #25232a; color: #f6efdf; cursor: pointer; font-size: .76rem; font-weight: 700; }
-.card-detail__navigation button:hover, .card-detail__open:hover { background: #34313a; }
-.card-detail__navigation button:focus-visible, .card-detail__open:focus-visible, .card-detail__primary:focus-visible { outline: 3px solid #e4c987; outline-offset: 3px; }
+.card-detail__open, .card-detail__primary { min-height: 2.8rem; padding: .6rem .95rem; border: 1px solid #85765c; border-radius: 99px; background: #25232a; color: #f6efdf; cursor: pointer; font-size: .76rem; font-weight: 700; }
+.card-detail__open:hover { background: #34313a; }
+.card-detail__open:focus-visible, .card-detail__primary:focus-visible { outline: 3px solid #e4c987; outline-offset: 3px; }
 .card-detail__face { display: flex; justify-content: center; }
-.card-detail__actions { display: flex; justify-content: center; margin-top: 1.2rem; }
+.card-detail__actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: .75rem; margin-top: 1.2rem; }
 .card-detail__primary { min-height: 3rem; padding-inline: 1.25rem; border-color: #dfc789; background: linear-gradient(130deg, #d7b86b, #a77d38); color: #17151a; }
+.card-detail__gallery { --gallery-territory: var(--pleasure); display: inline-flex; min-height: 3rem; align-items: center; justify-content: center; padding-inline: 1.25rem; border: 1px solid color-mix(in srgb, var(--gallery-territory), transparent 15%); border-radius: 99px; background: transparent; color: color-mix(in srgb, var(--gallery-territory), white 38%); font-size: .76rem; font-weight: 700; text-decoration: none; }
+.card-detail__gallery--pleasure { --gallery-territory: var(--pleasure); }
+.card-detail__gallery--curiosity { --gallery-territory: var(--curiosity); }
+.card-detail__gallery--beauty { --gallery-territory: var(--beauty); }
+.card-detail__gallery--connection { --gallery-territory: var(--connection); }
+.card-detail__gallery--wonder { --gallery-territory: var(--wonder); }
+.card-detail__gallery--wild { --gallery-territory: var(--wild); }
+.card-detail__gallery:hover { background: color-mix(in srgb, var(--gallery-territory), transparent 88%); }
+.card-detail__gallery:focus-visible { outline: 3px solid color-mix(in srgb, var(--gallery-territory), white 35%); outline-offset: 3px; }
 
 @keyframes deal-flip {
   0% { opacity: 0; transform: translateY(-1.75rem) rotateY(88deg) scale(.94); }

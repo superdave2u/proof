@@ -131,6 +131,17 @@ describe("app shell accessibility foundations", () => {
     expect(styles).toMatch(/\.deck-view \{ margin-top: clamp\(1rem, 3vw, 2rem\); \}/);
     expect(styles).toMatch(/\.archive-view \{ margin-top: clamp\(1rem, 3vw, 2rem\); \}/);
     expect(styles).toMatch(/\.card-detail \{ margin: clamp\(1rem, 3vw, 2rem\) auto 0; \}/);
+    // WHY: card detail dropped its "Return to the deck" nav entirely — page
+    // navigation now belongs to the header menu, so the detail page leads with
+    // the card and only the state actions remain.
+    expect(styles).not.toContain("card-detail__navigation");
+    // WHY: the Gallery link next to Save Proof is an outline in the card's
+    // territory tone, so it remains secondary to the primary action.
+    expect(styles).toMatch(/\.card-detail__gallery \{[^}]*background: transparent;[^}]*color: color-mix\(in srgb, var\(--gallery-territory\), white 38%\);/s);
+    for (const territory of ["pleasure", "curiosity", "beauty", "connection", "wonder", "wild"]) {
+      expect(styles).toContain(`.card-detail__gallery--${territory} { --gallery-territory: var(--${territory}); }`);
+    }
+    expect(styles).toMatch(/\.card-detail__actions \{[^}]*gap: \.75rem;/s);
     expect(styles).toContain("@media (prefers-reduced-motion: reduce)");
     expect(styles).toContain("animation-duration: .01ms !important");
     expect(styles).toContain("transition-duration: .01ms !important");
