@@ -103,10 +103,10 @@ Each loop is logged to `logs/`. Rules of the house: search the codebase before a
 ## Status
 
 - [x] Baseline spec + design (`SPEC.md`, `DESIGN.md`)
-- [x] Complete 52-card deck seeded and **frozen** (operator content)
+- [x] Complete 52-card deck seeded; card specs are frozen during Ralph loops and editable only under direct operator instruction
 - [x] Data pipeline + schema integrity tests
 - [x] All 52 card-art PNGs generated and committed
 - [x] App: home daily deal, gallery, card detail, archive, evidence flow
 - [ ] Polish backlog — see `fix_plan.md` (evidence-form focus restore, artifact alt text)
 
-Content rules: the 52 cards in `specs/cards/` are frozen — code transcribes them, never rewrites them.
+Content rules: Ralph loops must leave `specs/cards/` untouched, including canon. In a direct session, edit card text only when the operator explicitly requests it; an explicit request can include canon.

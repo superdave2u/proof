@@ -9,9 +9,9 @@ Legend: `[ ]` incomplete · `[x]` done (verified) — prune `[x]` items periodic
 - [ ] **P2 — Restore focus when canceling the evidence form.** `closeEvidence()` in `src/views/cardDetail.ts` re-renders the detail view after "Keep this card drawn" / "Dismiss unsaved entry" without moving focus, so keyboard focus falls to `<body>`. Return focus to the card's primary action (or the detail section) after closing, and test it.
 - [ ] **P3 — Give evidence artifact images descriptive alt text.** `renderArtifact()` in `src/components/cardFace.ts` renders `alt="Evidence artifact"` for every deposited photo. That conveys nothing; derive a description from the evidence (date/note) or mark the image decorative, and test the chosen behavior.
 
-## Operator follow-up — card copy (outside Ralph loops)
+## Completed — direct operator card-copy revision
 
-- [ ] Condense Quest instructions to the new SPEC §3 maximum of three bullets on these 12 existing cards: `pleasure-01` (4), `pleasure-02` (4), `pleasure-03` (4), `pleasure-09` (4), `curiosity-12` (4), `curiosity-13` (4), `curiosity-14` (4), `beauty-23` (6), `connection-32` (4), `connection-35` (4), `wild-51` (13), `wild-52` (7). This is operator-only content work: Ralph loops must leave all `specs/cards/*.md` files unchanged; a direct, explicit operator request authorizes the edits, including canon.
+- [x] Condensed the 12 audited over-limit Quest sections to no more than three concise bullets, consolidating examples and grouped cautions without changing the invitation's intent. Updated the typed deck transcription and independent canon baselines; `specDeck.test.ts` enforces the three-bullet maximum. Card-spec edits remain outside Ralph-loop authority and require an explicit direct operator request, including for canon.
 
 Everything below is verified and kept as the why-record. Prune freely when it stops earning its place.
 

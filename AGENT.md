@@ -9,7 +9,7 @@ Brief instructions for any agent working here. Keep this file brief and current.
 ## Content rules
 
 - **During Ralph loop runs, the 52-card deck in `specs/cards/*.md` is frozen** — never edit card text, including canon; record requested content changes for the operator instead. In a direct operator session, an explicit request from the operator authorizes editing the affected card text, including canon.
-- Each card's Quest should contain no more than three concise instruction bullets (SPEC §3); consolidate related actions into the same bullet where it stays clear. Existing over-limit cards are tracked for direct operator follow-up in `fix_plan.md`.
+- Each card's Quest should contain no more than three concise instruction bullets (SPEC §3); consolidate related actions into the same bullet where it stays clear. Track any legacy over-limit cards in `fix_plan.md`; Ralph loops report these for the operator, while an explicit direct-session request authorizes content edits.
 - Rarity is assigned in the data pass, not in specs (SPEC §3: 5 common / 3 uncommon / 2 rare per territory; wilds canon legendary/mythic).
 - **Card art is generated, not hand-authored.** The imagery canon lives in `specs/art/ART-DIRECTION.md`; its executable form is `src/data/cardArt.ts` (figure bible, territory palettes, deterministic prompt builder). Never rewrite the frozen scene/flavor strings into a prompt.
 - Generated artifacts are base64 PNGs at `src/data/generated/card-images/<id>.json`, committed so the Pages build ships them; they are loaded lazily and the atmosphere panel is the fallback when absent.
@@ -48,5 +48,5 @@ GitHub Pages via `.github/workflows/deploy.yml` — runs on push to `main`/tags:
 - Tests live next to source (`*.test.ts`), with a docblock explaining WHY the test exists.
 - Vitest runs in node and stubs CSS imports; stylesheet assertions should read `src/style.css` from disk, as `appShell.test.ts` does.
 - Deck data is typed in `src/data/`; schema tests assert 52 cards (10 per territory + 2 wilds), unique ids/numbers/names, complete anatomy, and canon text preserved verbatim.
-- `src/data/specDeck.ts` parses the frozen `specs/cards/*.md` via vite `?raw` imports; `specDeck.test.ts` is the permanent deck-integrity audit. If it fails, the frozen deck was edited — escalate in fix_plan.md, never edit the specs. The parser strips emphasis/quote markup but preserves verbatim words and line structure.
+- `src/data/specDeck.ts` parses `specs/cards/*.md` via vite `?raw` imports; `specDeck.test.ts` is the permanent deck-integrity audit. Ralph loops must treat failures as operator escalations, never edit the specs. In direct sessions, explicit operator-requested edits require updating `cards.ts` and the independent canon baseline. The parser strips emphasis/quote markup but preserves words and line structure.
 - One fix_plan item per loop. See `PROMPT.md`.
