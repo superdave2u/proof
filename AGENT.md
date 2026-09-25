@@ -8,7 +8,8 @@ Brief instructions for any agent working here. Keep this file brief and current.
 
 ## Content rules
 
-- **The 52-card deck in `specs/cards/*.md` is frozen operator content** — never edit card text; code transcribes it.
+- **During Ralph loop runs, the 52-card deck in `specs/cards/*.md` is frozen** — never edit card text, including canon; record requested content changes for the operator instead. In a direct operator session, an explicit request from the operator authorizes editing the affected card text, including canon.
+- Each card's Quest should contain no more than three concise instruction bullets (SPEC §3); consolidate related actions into the same bullet where it stays clear. Existing over-limit cards are tracked for direct operator follow-up in `fix_plan.md`.
 - Rarity is assigned in the data pass, not in specs (SPEC §3: 5 common / 3 uncommon / 2 rare per territory; wilds canon legendary/mythic).
 - **Card art is generated, not hand-authored.** The imagery canon lives in `specs/art/ART-DIRECTION.md`; its executable form is `src/data/cardArt.ts` (figure bible, territory palettes, deterministic prompt builder). Never rewrite the frozen scene/flavor strings into a prompt.
 - Generated artifacts are base64 PNGs at `src/data/generated/card-images/<id>.json`, committed so the Pages build ships them; they are loaded lazily and the atmosphere panel is the fallback when absent.

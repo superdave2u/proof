@@ -33,7 +33,7 @@ Five territories function like five schools of magic, plus two Wild Cards with p
 3. **CARD TYPE** — `Invitation • <Mode>`. Modes: Discovery, Encounter, Indulgence, Pilgrimage, Creation, Offering, Pursuit.
 4. **RARITY** — within each territory: 5 common, 3 uncommon, 2 rare. The Wilds sit above all: **51 = Legendary**, **52 = Mythic** (the philosophical center of the game — its Black Lotus, valuable for meaning, not money).
 5. **ARTWORK / ART DIRECTION** — a 4:3 landscape watercolor illustration of the invitation, painted in the territory's tonal range and starring the recurring heroine (the Wayfarer) inhabiting the scene — never literally showing someone completing the quest. Almost magical realism. Authored as an art-direction string (scene, mood, light) that drives generation; the full imagery canon lives in `specs/art/ART-DIRECTION.md`.
-6. **THE QUEST** — the actual action the player must undertake.
+6. **THE QUEST** — the actual action the player must undertake, expressed in no more than three concise instruction bullets. Consolidate related actions into one bullet where clarity is preserved.
 7. **PROOF OF LIFE** — the physical evidence required to claim the card.
 8. **SPECIAL STRETCH** (optional) — a named rule that modifies how the quest is performed or what it yields (e.g. *Unknown Territory*, *Useless Beauty*, *Inheritance*, *Encore*, *Serendipity*, *Alive*). Abilities are experiential modifiers, never scored points.
 9. **FLAVOR TEXT** — the philosophy woven through the game. On the rendered face it is the caption of the artwork, set at the foot of the image over a translucent black mask.
@@ -111,3 +111,4 @@ That record is shown on the **card detail page**, which each tile links to; the 
 7. Every card resolves an art prompt from its flavor, art direction, territory palette, and the fixed figure bible; prompts are deterministic and cover all 52 cards.
 8. Rendered art is a base64 PNG, 4:3, lazily attached on reveal/scroll, and captions the flavor text over a dark mask at the image's foot; the territory atmosphere panel is the fallback when art is absent.
 9. The Gallery and the Archive render the **same preview-shaped card tile** for every state of progress; an undiscovered tile conceals its name, mode, and flavor but keeps the revealed card's silhouette. Evidence records are shown on the card detail page, not in the grids.
+10. Every Quest contains no more than three concise instruction bullets (§3).
