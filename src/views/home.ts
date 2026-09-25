@@ -42,7 +42,6 @@ function renderDailyCard(
     <div class="daily-draw__intro">
       <p class="daily-draw__eyebrow">The card of the day</p>
       <h2 id="home-title" tabindex="-1">One invitation, chosen for today.</h2>
-      <p class="daily-draw__intro-copy">The date decides the card. Once revealed, today's deal stays yours across reloads.</p>
     </div>
     <p class="daily-draw__message" role="status" aria-live="polite">${escapeHtml(message)}</p>
     ${dailyDrawError ? `<p class="draw-storage-error" data-draw-error="daily" role="alert" tabindex="-1">${escapeHtml(dailyDrawError)}</p>` : ""}
