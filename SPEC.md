@@ -35,7 +35,7 @@ Five territories function like five schools of magic, plus two Wild Cards with p
 5. **ARTWORK / ART DIRECTION** — a 4:3 landscape watercolor illustration of the invitation, painted in the territory's tonal range and starring the recurring heroine (the Wayfarer) inhabiting the scene — never literally showing someone completing the quest. Almost magical realism. Authored as an art-direction string (scene, mood, light) that drives generation; the full imagery canon lives in `specs/art/ART-DIRECTION.md`.
 6. **THE QUEST** — the actual action the player must undertake, expressed in no more than three concise instruction bullets. Consolidate related actions into one bullet where clarity is preserved.
 7. **PROOF OF LIFE** — the physical evidence required to claim the card.
-8. **SPECIAL STRETCH** (optional) — a named rule that modifies how the quest is performed or what it yields (e.g. *Unknown Territory*, *Useless Beauty*, *Inheritance*, *Encore*, *Serendipity*, *Alive*). Abilities are experiential modifiers, never scored points.
+8. **SPECIAL STRETCH** (optional) — a named rule that modifies how the quest is performed or what it yields (e.g. *Stay with the Difference*, *Only Your Taste*, *Inheritance*, *Encore*). Wilds may carry one beside their Legendary/Mythic ability (e.g. *The Thread You Would Edit Out*, *Permission Survives*). Abilities are experiential modifiers, never scored points.
 9. **FLAVOR TEXT** — the philosophy woven through the game. On the rendered face it is the caption of the artwork, set at the foot of the image over a translucent black mask.
 
 ### 3.1 Imagery standard
@@ -48,7 +48,7 @@ Five territories function like five schools of magic, plus two Wild Cards with p
 
 ## 4. Canon exemplar cards
 
-Seven cards are **CANON** — authored by the operator and captured verbatim in `specs/cards/`. They set the style bar; all other cards must meet it. Canon cards must never be edited:
+Seven cards are **CANON** — authored by the operator and captured in `specs/cards/`. They set the style bar; all other cards must meet it. Ralph loops must never edit canon (or any card) text; in a direct operator session, an explicit request from the operator authorizes editing card text, including canon. Any such edit updates the typed transcription and the independent canon baseline in `specDeck.test.ts` in the same change:
 
 - `specs/cards/pleasure.md` — 01/52 **The Ridiculous Dessert**
 - `specs/cards/curiosity.md` — 17/52 **Follow the Stranger's Map**
