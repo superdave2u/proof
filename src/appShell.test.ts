@@ -58,6 +58,9 @@ describe("app shell accessibility foundations", () => {
     expect(styles).toMatch(/\.deck-card-back \{[^}]*width: 100%;/s);
     expect(styles).toMatch(/\.deck-card-back \{[^}]*height: 100%;/s);
     expect(styles).toMatch(/\.archive-grid \{[^}]*align-items: stretch;/s);
+    // WHY: Gallery and Archive share one tile component, so both grids render
+    // the same centered card face for every state.
+    expect(styles).toMatch(/\.card-tile \.card-face \{ margin-inline: auto; \}/);
   });
 
   it("preserves visible keyboard focus, narrow-screen layout, and reduced-motion overrides", () => {
@@ -72,6 +75,12 @@ describe("app shell accessibility foundations", () => {
     expect(styles).toContain("@media (max-width: 360px)");
     // WHY: the gallery must be a single column on phones, not two cards wide.
     expect(styles).toMatch(/@media \(max-width: 520px\) \{[^@]*\.deck-grid \{ grid-template-columns: minmax\(0, 1fr\);/s);
+    // WHY: on phones the gallery and Archive show one card per row. Hidden backs
+    // must sit centered at the revealed face's width and be inset from every
+    // edge, otherwise a face-down card hugs the screen edge and shifts on reveal.
+    expect(styles).toMatch(/@media \(max-width: 520px\) \{[^@]*\.archive-grid \{ grid-template-columns: minmax\(0, 1fr\);[^}]*justify-items: center;[^}]*\}/s);
+    expect(styles).toMatch(/@media \(max-width: 520px\) \{[^@]*\.deck-grid \{[^}]*padding: 1rem clamp\(/s);
+    expect(styles).toMatch(/\.deck-grid > \*, \.archive-grid > \* \{ width: 100%; max-width: 22rem; margin-inline: auto; \}/);
     expect(styles).toContain("@media (prefers-reduced-motion: reduce)");
     expect(styles).toContain("animation-duration: .01ms !important");
     expect(styles).toContain("transition-duration: .01ms !important");

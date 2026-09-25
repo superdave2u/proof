@@ -5,19 +5,19 @@ import { renderGalleryView } from "./gallery";
 
 /**
  * WHY these tests exist: the Gallery is the dedicated page for the whole deck —
- * the random deal ritual plus all 52 cards with their territory/lifecycle
- * filters. These assertions keep the once-per-day logic off this page, keep the
- * concealed/unconcealed boundary intact, protect the face-up preview links into
- * card detail, and preserve the deck-wide lived count so the deck never becomes
- * a score.
+ * all 52 cards as concealed preview-shaped tiles that share the Archive's
+ * silhouette, with territory/state filters. These assertions keep the
+ * once-per-day logic off this page, keep the concealed/unconcealed boundary
+ * intact, protect the face-up preview links into card detail, and preserve the
+ * deck-wide lived count so the deck never becomes a score.
  */
 describe("gallery view", () => {
-  it("shows the full deck as 52 territory-marked backs without leaking undiscovered names", () => {
+  it("shows the full deck as 52 concealed preview faces without leaking undiscovered names", () => {
     const html = renderGalleryView();
 
     expect(html).toContain('<h2 id="gallery-title" tabindex="-1">');
-    expect((html.match(/class="deck-card-back /g) ?? [])).toHaveLength(52);
-    expect((html.match(/data-card-id=/g) ?? [])).toHaveLength(52);
+    expect((html.match(/card-face--concealed/g) ?? [])).toHaveLength(52);
+    expect((html.match(/class="card-tile/g) ?? [])).toHaveLength(52);
     expect(html).toContain("Pleasure");
     expect(html).toContain("Wild");
     expect(html).toContain("✵");
@@ -51,19 +51,20 @@ describe("gallery view", () => {
     expect(livedHtml).not.toContain('data-action="hide-card"');
   });
 
-  it("keeps the lived count deck-wide and shows face-up records as compact preview links", () => {    const records: DeckRecords = {
+  it("keeps the lived count deck-wide and shows face-up records as compact preview links", () => {
+    const records: DeckRecords = {
       "pleasure-01": { state: "drawn" },
       "beauty-23": { state: "lived", livedAt: "2026-09-22", evidence: { date: "2026-09-22", note: "Found a quiet color." } },
     };
     const html = renderGalleryView(records);
 
     expect(html).toContain("1 of 52 cards lived.");
-    expect(html).toContain('<div class="deck-card-revealed" data-card-id="pleasure-01" data-state="drawn">');
+    expect(html).toContain('class="card-tile" data-card-id="pleasure-01" data-state="drawn"');
     // WHY: a face-up card implies "Drawn"; "Lived" is not implied and stays labeled.
-    expect(html).not.toContain("deck-card-revealed__state\">Drawn");
+    expect(html).not.toContain("card-tile__state\">Drawn");
     expect(html).toContain("Lived · in the Archive");
     // Previews stop at the flavor window and link to the detail page.
-    expect(html).toContain('class="deck-card-revealed__link" href="#/card/pleasure-01"');
+    expect(html).toContain('class="card-tile__link" href="#/card/pleasure-01"');
     expect(html).toContain("card-face--preview");
     expect(html).not.toContain("<h3>Quest</h3>");
     expect(html).not.toContain("data-evidence-form=");
@@ -93,7 +94,7 @@ describe("gallery view", () => {
 
     expect(html).toContain("1 of 52 cards lived.");
     expect(html).toContain("Flowers for No Occasion");
-    // Evidence notes live on the detail page; the gallery preview stays compact.
+    // Evidence lives on the detail page; the gallery tile stays compact.
     expect(html).not.toContain("Found a quiet color.");
     expect(html).toContain('href="#/card/beauty-23"');
     expect(html).not.toContain("The Ridiculous Dessert");

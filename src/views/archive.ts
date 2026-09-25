@@ -1,5 +1,6 @@
 import { DECK, type Card } from "../data/cards";
-import { renderCardFace, type CardFaceRecord } from "../components/cardFace";
+import { renderCardTile } from "../components/cardTile";
+import type { CardFaceRecord } from "../components/cardFace";
 import type { DeckStore } from "../state/store";
 
 export type ArchiveRecords = Readonly<Record<string, CardFaceRecord | undefined>>;
@@ -21,7 +22,7 @@ export function renderArchiveView(records: ArchiveRecords = {}, cards: readonly 
   const archivedCards = filterArchive(cards, records);
   const entries = archivedCards.length > 0
     ? `<div class="archive-grid" aria-label="Lived invitation cards">${archivedCards.map((card) =>
-      `<div class="archive-entry" data-card-id="${card.id}">${renderCardFace(card, records[card.id])}</div>`,
+      renderCardTile(card, { record: records[card.id] }),
     ).join("")}</div>`
     : `<p class="archive-empty">Your Archive is waiting for its first piece of evidence. When an invitation is Lived, its card and the evidence you left with it will be gathered here.</p>`;
 

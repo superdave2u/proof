@@ -4,9 +4,10 @@ import { filterArchive, renderArchiveView, type ArchiveRecords } from "./archive
 
 /**
  * WHY these tests exist: the Archive is the player's durable record of life
- * lived, not a second deck or a progress scoreboard. These checks ensure only
- * complete Lived evidence is collected, the newest evidence is easy to find,
- * and dates, notes, and optional artifacts remain visible and safely rendered.
+ * lived, not a second deck or a progress scoreboard. It renders the same
+ * preview-shaped tiles as the Gallery, newest evidence first; the date, note,
+ * and artifact themselves live on the card detail page. These checks ensure
+ * only complete Lived records are collected and no evidence leaks into the grid.
  */
 describe("archive view", () => {
   it("collects only Lived records with evidence, newest evidence first", () => {
@@ -27,10 +28,11 @@ describe("archive view", () => {
     // Page navigation moved to the header menu.
     expect(html).not.toContain('data-action="back-to-deck"');
     expect(html).not.toContain("0 / 52");
+    expect(html).not.toContain("card-tile");
     expect(html).not.toContain("deck-card-back");
   });
 
-  it("renders each lived card with escaped evidence, date, and its optional artifact", () => {
+  it("renders each lived card as the same preview tile as the gallery, linked to its detail record", () => {
     const card = DECK.find((item) => item.id === "beauty-23")!;
     const html = renderArchiveView({
       [card.id]: {
@@ -44,11 +46,15 @@ describe("archive view", () => {
       },
     });
 
-    expect(html).toContain('<div class="archive-entry" data-card-id="beauty-23">');
-    expect(html).toContain("2026-09-22");
-    expect(html).toContain("Pressed &lt;petal&gt; &amp; kept it.");
-    expect(html).toContain('<img class="lived-artifact" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg=="');
+    expect(html).toContain('<div class="card-tile" data-card-id="beauty-23" data-state="lived">');
+    expect(html).toContain("Lived · in the Archive");
+    expect(html).toContain('class="card-tile__link" href="#/card/beauty-23"');
+    expect(html).toContain("card-face--preview");
     expect(html).toContain("Flowers for No Occasion");
+    expect(html).not.toContain("<h3>Quest</h3>");
+    // The evidence record (date, note, artifact) lives on the card detail page.
+    expect(html).not.toContain("Pressed");
+    expect(html).not.toContain("lived-artifact");
     expect(html).not.toContain("weathering");
   });
 });

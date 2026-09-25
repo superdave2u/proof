@@ -116,20 +116,19 @@ button, input, textarea { font: inherit; }
 .deck-card-back__number span { color: #b9b0a2; font-family: ui-sans-serif, system-ui, sans-serif; font-size: .68rem; }
 .deck-card-back__state { margin-top: 1rem; padding: .3rem .55rem; border: 1px solid rgb(255 255 255 / 20%); border-radius: 99px; color: #e1d9cd; font-size: .6rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
 .deck-card-back { width: 100%; max-width: 390px; height: 100%; }
-/* Development-only manual flip: a dashed control under each undiscovered back. */
-.deck-card-dev { min-width: 0; display: flex; flex-direction: column; gap: .5rem; }
-.deck-card-dev__flip { padding: .5rem .75rem; border: 1px dashed color-mix(in srgb, #e4c987, transparent 35%); border-radius: 10px; background: rgb(228 201 135 / 10%); color: #e4c987; cursor: pointer; font: inherit; font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
-.deck-card-dev__flip:hover { background: rgb(228 201 135 / 18%); }
-.deck-card-dev__flip:focus-visible { outline: 3px solid #e4c987; outline-offset: 2px; }
-.deck-card-dev__flip:disabled { opacity: .55; cursor: progress; }
-.deck-card-revealed { min-width: 0; display: flex; flex-direction: column; }
-.deck-card-revealed__state { margin: 0 0 .5rem; color: #d1c7b6; font-size: .65rem; font-weight: 700; letter-spacing: .12em; text-align: center; text-transform: uppercase; }
-.deck-card-revealed .card-face { height: 100%; margin-inline: auto; }
-/* The compact face-up preview is one big link to the card's detail page,
-   where the full anatomy and the only deposit flow live. */
-.deck-card-revealed__link { display: block; height: 100%; color: inherit; text-decoration: none; border-radius: 23px; transition: transform .2s ease; }
-.deck-card-revealed__link:hover { transform: translateY(-2px); }
-.deck-card-revealed__link:focus-visible { outline: 3px solid #e4c987; outline-offset: 3px; }
+/* Shared Gallery/Archive card tile: one preview-shaped face for every state,
+   with any state-specific control or label sitting beneath the card. */
+.card-tile { min-width: 0; display: flex; flex-direction: column; }
+.card-tile__state { margin: .6rem 0 0; color: #d1c7b6; font-size: .65rem; font-weight: 700; letter-spacing: .12em; text-align: center; text-transform: uppercase; }
+.card-tile .card-face { margin-inline: auto; }
+.card-tile__link { display: block; color: inherit; text-decoration: none; border-radius: 23px; transition: transform .2s ease; }
+.card-tile__link:hover { transform: translateY(-2px); }
+.card-tile__link:focus-visible { outline: 3px solid #e4c987; outline-offset: 3px; }
+/* Development-only manual flip/hide control under each tile. */
+.card-tile__dev { display: block; margin: .75rem auto 0; padding: .5rem .75rem; border: 1px dashed color-mix(in srgb, #e4c987, transparent 35%); border-radius: 10px; background: rgb(228 201 135 / 10%); color: #e4c987; cursor: pointer; font: inherit; font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.card-tile__dev:hover { background: rgb(228 201 135 / 18%); }
+.card-tile__dev:focus-visible { outline: 3px solid #e4c987; outline-offset: 2px; }
+.card-tile__dev:disabled { opacity: .55; cursor: progress; }
 .deck-empty { grid-column: 1 / -1; margin: 0; padding: 2.5rem 1rem; border: 1px dashed #55505a; border-radius: 12px; color: #d1c7b6; line-height: 1.6; text-align: center; }
 
 .archive-view { margin-top: clamp(3.5rem, 9vw, 6.5rem); }
@@ -139,8 +138,6 @@ button, input, textarea { font: inherit; }
 .archive-view__heading h2:focus-visible { outline: 3px solid #d2c2f5; outline-offset: 5px; border-radius: 2px; }
 .archive-view__description { max-width: 39rem; margin: .65rem 0 0; color: var(--muted); font-size: .91rem; line-height: 1.6; }
 .archive-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); align-items: stretch; gap: clamp(1.3rem, 2.6vw, 2rem); }
-.archive-entry { min-width: 0; height: 100%; }
-.archive-entry .card-face { height: 100%; margin-inline: auto; }
 .archive-empty { margin: 0; padding: clamp(2rem, 6vw, 4rem) 1rem; border: 1px dashed #625979; border-radius: 14px; background: rgb(122 63 201 / 5%); color: #d4cbe5; font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif; font-size: 1.1rem; line-height: 1.7; text-align: center; }
 
 .draw-ritual { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .75rem 2rem; margin: 2.5rem 0 0; padding: clamp(1.1rem, 3vw, 1.8rem); border: 1px solid rgb(220 201 161 / 24%); border-radius: 16px; background: linear-gradient(120deg, rgb(201 162 39 / 9%), rgb(122 63 201 / 7%) 58%, rgb(30 79 200 / 7%)); }
@@ -203,9 +200,6 @@ button, input, textarea { font: inherit; }
 .card-detail__face { display: flex; justify-content: center; }
 .card-detail__actions { display: flex; justify-content: center; margin-top: 1.2rem; }
 .card-detail__primary { min-height: 3rem; padding-inline: 1.25rem; border-color: #dfc789; background: linear-gradient(130deg, #d7b86b, #a77d38); color: #17151a; }
-.deck-card-revealed__actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; margin: .75rem 0; }
-.deck-card-revealed > .card-detail__open { display: block; margin: .75rem auto; }
-.deck-card-revealed > .deck-card-dev__flip { display: block; margin: .75rem auto 0; }
 
 @keyframes deal-flip {
   0% { opacity: 0; transform: translateY(-1.75rem) rotateY(88deg) scale(.94); }
@@ -239,7 +233,12 @@ button, input, textarea { font: inherit; }
   .archive-view__heading { align-items: start; flex-direction: column; gap: 1rem; }
   .deck-view__lived-count { font-size: .64rem; }
   .deck-view__lived-count span { font-size: 1.55rem; }
-  .deck-grid { grid-template-columns: minmax(0, 1fr); gap: .75rem; }
+  /* Gallery and Archive on phones: one card per row, inset from every edge so
+     the deck breathes. Hidden backs share the revealed face's width and
+     centering, so a card keeps its shape and does not shift when it is dealt. */
+  .deck-grid { grid-template-columns: minmax(0, 1fr); gap: 1.4rem; justify-items: center; padding: 1rem clamp(.85rem, 4vw, 1.35rem); }
+  .archive-grid { grid-template-columns: minmax(0, 1fr); gap: 1.4rem; justify-items: center; padding: 1rem clamp(.85rem, 4vw, 1.35rem); }
+  .deck-grid > *, .archive-grid > * { width: 100%; max-width: 22rem; margin-inline: auto; }
   .deck-card-back { border-radius: 12px; padding: .65rem; }
   .deck-card-back__territory { font-size: .58rem; letter-spacing: .1em; }
   .deck-card-back__sigil { font-size: 3.25rem; }

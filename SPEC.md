@@ -71,13 +71,15 @@ UNDISCOVERED → DRAWN → LIVED
 
 ## 6. The Archive & the record of a life
 
-The Archive is the collection of Lived cards. When a card becomes Lived, the player's record grows:
+The Archive is the collection of Lived cards, newest evidence first. It renders the **same preview-shaped tiles as the Gallery** — one card silhouette in every state of progress — so the Archive reads as the collected deck, not a second, different card design.
+
+When a card becomes Lived, the player's record grows:
 
 - the date it was completed,
 - the evidence note (a sentence, a recipe, a list of names),
 - the artifact — receipt, ticket, photograph — recorded against the card.
 
-**The physical deck transforms as described above; the digital app does not simulate wear.** Lived cards are presented cleanly — with their date, note, and evidence attached — with no procedural weathering, stains, tape, bent corners, or simulated handwriting effects. The pristine deck is potential; the lived record is the life that happened. The evidence itself carries the transformation, not the pixels.
+That record is shown on the **card detail page**, which each tile links to; the grid itself stays card-only. **The physical deck transforms as described above; the digital app does not simulate wear.** Lived cards are presented cleanly — with their date, note, and evidence attached on the detail page — with no procedural weathering, stains, tape, bent corners, or simulated handwriting effects. The pristine deck is potential; the lived record is the life that happened. The evidence itself carries the transformation, not the pixels.
 
 ## 7. Mechanics
 
@@ -108,3 +110,4 @@ The Archive is the collection of Lived cards. When a card becomes Lived, the pla
 6. `npm run check` green at every commit.
 7. Every card resolves an art prompt from its flavor, art direction, territory palette, and the fixed figure bible; prompts are deterministic and cover all 52 cards.
 8. Rendered art is a base64 PNG, 4:3, lazily attached on reveal/scroll, and captions the flavor text over a dark mask at the image's foot; the territory atmosphere panel is the fallback when art is absent.
+9. The Gallery and the Archive render the **same preview-shaped card tile** for every state of progress; an undiscovered tile conceals its name, mode, and flavor but keeps the revealed card's silhouette. Evidence records are shown on the card detail page, not in the grids.

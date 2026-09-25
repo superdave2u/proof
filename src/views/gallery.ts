@@ -1,58 +1,22 @@
 import { DECK, territories, type Card } from "../data/cards";
-import { renderCardBack, renderCardFace } from "../components/cardFace";
+import { renderCardTile } from "../components/cardTile";
 import type { DeckStore } from "../state/store";
 import {
   DEFAULT_FILTERS,
   filterDeck,
   stateFor,
-  territoryLabel,
   type DeckFilters,
   type DeckRecords,
   type DeckStateFilter,
   type DeckTerritoryFilter,
 } from "./deckShared";
 
-function renderCardTile(card: Card, records: DeckRecords, devMode: boolean): string {
-  const record = records[card.id];
-  const state = stateFor(card, records);
-  const collectorNumber = String(card.number).padStart(2, "0");
-
-  if (state === "undiscovered") {
-    // Local development gets a manual flip so card states can be exercised
-    // without waiting for the once-per-day deal; production ships only the back.
-    if (!devMode) return renderCardBack(card);
-    return `<div class="deck-card-dev" data-card-id="${card.id}">
-      ${renderCardBack(card)}
-      <button class="deck-card-dev__flip" type="button" data-action="flip-card" data-card-id="${card.id}" aria-label="Reveal ${territoryLabel(card)} card ${collectorNumber} of 52 now (development only)">Flip card</button>
-    </div>`;
-  }
-
-  // Face-up cards are compact previews: nothing below the flavor window. The
-  // full anatomy and the only deposit flow live on the card detail page, which
-  // the whole preview links to.
-  // "Drawn" is implied by a face-up card; "Lived" is not, so it stays labeled.
-  const stateNote = state === "lived" ? '<p class="deck-card-revealed__state">Lived · in the Archive</p>' : "";
-  // Development-only hide control: the manual flip works both ways so card
-  // states can be re-exercised; Lived is terminal and production ships neither control.
-  const hideControl = devMode && state === "drawn"
-    ? `<button class="deck-card-dev__flip" type="button" data-action="hide-card" data-card-id="${card.id}" aria-label="Hide ${territoryLabel(card)} card ${collectorNumber} of 52 again (development only)">Hide card</button>`
-    : "";
-
-  return `<div class="deck-card-revealed" data-card-id="${card.id}" data-state="${state}">
-    ${stateNote}
-    <a class="deck-card-revealed__link" href="#/card/${encodeURIComponent(card.id)}" aria-label="${territoryLabel(card)} card ${collectorNumber} of 52: ${card.name} — open card details">
-      ${renderCardFace(card, record, { preview: true })}
-    </a>
-    ${hideControl}
-  </div>`;
-}
-
 function renderCards(cards: readonly Card[], records: DeckRecords, devMode: boolean): string {
   if (cards.length === 0) {
     return '<p class="deck-empty">No cards match these filters. The rest of the deck is still here when you are ready.</p>';
   }
 
-  return cards.map((card) => renderCardTile(card, records, devMode)).join("");
+  return cards.map((card) => renderCardTile(card, { record: records[card.id], devMode })).join("");
 }
 
 function resultSummary(visible: number, lived: number): string {
@@ -150,7 +114,7 @@ export function mountGalleryView(
       flipButton.disabled = true;
       void (async () => {
         if (await store.revealCard(flipCardId)) {
-          container.querySelector<HTMLElement>(`.deck-card-revealed[data-card-id="${flipCardId}"] a`)?.focus();
+          container.querySelector<HTMLElement>(`.card-tile[data-card-id="${flipCardId}"] .card-tile__link`)?.focus();
         } else {
           render();
         }
@@ -166,7 +130,7 @@ export function mountGalleryView(
         if (await store.hideCard(hideCardId)) {
           // The store subscription re-rendered the grid; put focus on the
           // restored face-down tile's flip control.
-          container.querySelector<HTMLElement>(`.deck-card-dev[data-card-id="${hideCardId}"] .deck-card-dev__flip`)?.focus();
+          container.querySelector<HTMLElement>(`.card-tile[data-card-id="${hideCardId}"] .card-tile__dev`)?.focus();
         } else {
           render();
         }

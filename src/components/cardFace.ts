@@ -59,20 +59,53 @@ export function renderCardBack(card: Card): string {
   </article>`;
 }
 
+function territoryNameOf(card: Card): string {
+  return card.territory.charAt(0).toUpperCase() + card.territory.slice(1);
+}
+
+function symbolOf(card: Card): string {
+  return territories.find((territory) => territory.territory === card.territory)?.symbol ?? "";
+}
+
+function renderCardHeader(card: Card, showRarity: boolean): string {
+  const collectorNumber = String(card.number).padStart(2, "0");
+  const rarity = rarityLabel(card.rarity);
+  const rarityMark = showRarity
+    ? `<span class="rarity rarity--${card.rarity}" aria-label="${rarity} rarity" title="${rarity}"><span class="rarity__gem" aria-hidden="true">◆</span><span class="rarity__name">${rarity}</span></span>`
+    : "";
+  return `<header class="card-face__header">
+      <div class="card-face__collector"><span class="card-face__territory">${territoryNameOf(card)}</span><span aria-hidden="true">${collectorNumber}/52</span></div>
+      ${rarityMark}
+      <span class="card-face__sigil" aria-hidden="true">${symbolOf(card)}</span>
+    </header>`;
+}
+
+/**
+ * The concealed face shared by Gallery/Archive tiles: the exact shape of the
+ * revealed preview (header, title slot, mode line, 4:3 artwork) with the name,
+ * mode, and flavor withheld. An undiscovered card keeps the revealed card's
+ * silhouette instead of presenting a different, portrait-only back.
+ */
+export function renderConcealedCardFace(card: Card): string {
+  const wildClass = card.territory === "wild" ? ` card-face--${card.rarity}` : "";
+  const collectorNumber = String(card.number).padStart(2, "0");
+  return `<article class="card-face card-face--preview card-face--concealed card-face--${card.territory}${wildClass}" aria-label="${territoryNameOf(card)} ${collectorNumber} of 52, undiscovered card" data-card-id="${escapeHtml(card.id)}">
+    ${renderCardHeader(card, false)}
+    <div class="card-face__body">
+      <figure class="card-art card-art--${card.territory}" aria-hidden="true"><span class="card-art__sigil" aria-hidden="true">${symbolOf(card)}</span><figcaption class="card-art__caption">Undiscovered</figcaption></figure>
+    </div>
+  </article>`;
+}
+
 /** Render one complete card face. All authored card text is escaped before entering HTML. */
 export function renderCardFace(card: Card, record?: CardFaceRecord, options?: CardFaceOptions): string {
-  const territoryMeta = territories.find((territory) => territory.territory === card.territory);
-  if (!territoryMeta) throw new Error(`Missing territory metadata for ${card.territory}.`);
-
-  const territoryName = card.territory.charAt(0).toUpperCase() + card.territory.slice(1);
-  const symbol = territoryMeta.symbol;
   const isWild = card.territory === "wild";
   const quest = card.quest.map((step) => `<li>${escapeHtml(step)}</li>`).join("");
   const proof = card.proof.split("\n").map(escapeHtml).join("<br>");
   const ability = card.ability
     ? `<aside class="card-ability"><h3>Special Stretch <span>✦</span></h3><p><strong>${escapeHtml(card.ability.name)}</strong> — ${escapeHtml(card.ability.text)}</p></aside>`
     : "";
-  const ariaLabel = `${territoryName} card ${String(card.number).padStart(2, "0")} of 52, ${rarityLabel(card.rarity)}: ${card.name}`;
+  const ariaLabel = `${territoryNameOf(card)} card ${String(card.number).padStart(2, "0")} of 52, ${rarityLabel(card.rarity)}: ${card.name}`;
   const wildClass = isWild ? ` card-face--${card.rarity}` : "";
   // Preview faces stop at the flavor window; the full anatomy lives on the detail page.
   const details = options?.preview
@@ -83,11 +116,7 @@ export function renderCardFace(card: Card, record?: CardFaceRecord, options?: Ca
       ${renderLivedRecord(card, record)}`;
 
   return `<article class="card-face card-face--${card.territory}${wildClass}${options?.preview ? " card-face--preview" : ""}" aria-label="${escapeHtml(ariaLabel)}" data-card-id="${escapeHtml(card.id)}">
-    <header class="card-face__header">
-      <div class="card-face__collector"><span class="card-face__territory">${territoryName}</span><span aria-hidden="true">${String(card.number).padStart(2, "0")}/52</span></div>
-      <span class="rarity rarity--${card.rarity}" aria-label="${rarityLabel(card.rarity)} rarity" title="${rarityLabel(card.rarity)}"><span class="rarity__gem" aria-hidden="true">◆</span><span class="rarity__name">${rarityLabel(card.rarity)}</span></span>
-      <span class="card-face__sigil" aria-hidden="true">${symbol}</span>
-    </header>
+    ${renderCardHeader(card, true)}
     <div class="card-face__body">
       <h2 class="card-face__name">${escapeHtml(card.name)}</h2>
       <p class="card-face__type">${escapeHtml(card.typeLine)}</p>

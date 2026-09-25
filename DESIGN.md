@@ -66,9 +66,9 @@ interface CardImageSource { load(cardId: string): Promise<string | undefined> }
 ## 5. Screens / UX flow
 
 1. **Home** (`#/deck`) — the daily card only: the date-seeded reveal (deterministic, shown once per day). Page navigation lives in the header menu. Nothing else lives here.
-2. **Gallery** (`#/gallery`) — the whole deck on its own page, modeled on the Archive: all 52 cards (backs pristine, fronts by state) with territory/state filters, the deck-wide lived count, and rows whose cards align vertically with their peers. There is no manual draw button anywhere — the daily deal is the only reveal. Local development is the exception: the dev server and localhost show a per-card "Flip card" control (`store.revealCard`) so states can be exercised without waiting a day.
-3. **Card detail** (`#/card/<id>`) — revealed cards show the full anatomy with their state action (`Deposited my Proof of Life` for drawn → evidence form; `View in the Archive` for lived). Undiscovered cards stay face-down on deep links: the page shows the card back (territory, number, Undiscovered) and a status note — never the name, quest, or flavor. The artwork panel fills the card body width; the flavor is its caption.
-4. **Archive** (`#/archive`) — Lived cards with their evidence; the collected-evidence gallery. The emotional payoff screen.
+2. **Gallery** (`#/gallery`) — the whole deck on its own page: all 52 cards as preview-shaped tiles (`renderCardTile`), concealed at the same silhouette until dealt, with territory/state filters, the deck-wide lived count, and rows whose cards align vertically with their peers. There is no manual draw button anywhere — the daily deal is the only reveal. Local development is the exception: the dev server and localhost show a per-card "Flip card" control (`store.revealCard`) so states can be exercised without waiting a day.
+3. **Card detail** (`#/card/<id>`) — revealed cards show the full anatomy with their state action (`Deposited my Proof of Life` for drawn → evidence form; `View in the Archive` for lived) and the Lived evidence record (date, note, artifact). Undiscovered cards stay face-down on deep links: the page shows the card back (territory, number, Undiscovered) and a status note — never the name, quest, or flavor. The artwork panel fills the card body width; the flavor is its caption.
+4. **Archive** (`#/archive`) — Lived cards as the **same preview-shaped tiles as the Gallery**, newest evidence first. Each tile links to its card detail page, where the date, note, and artifact are shown. The emotional payoff screen.
 
 The home page holds only the daily card in a centered column (like the detail view's card column); the daily flip is the sole entry into DRAWN.
 
@@ -103,7 +103,8 @@ src/
 │   ├── archive.ts     # archive page: Lived evidence collection
 │   └── *.test.ts
 ├── components/
-│   ├── cardFace.ts    # renders Card + CardRecord (preview + full faces)
+│   ├── cardFace.ts    # renders Card + CardRecord (preview + full faces) and the concealed face
+│   ├── cardTile.ts    # shared Gallery/Archive tile: concealed, preview link, lived label, dev controls
 │   ├── cardArt.ts     # artwork figure (image + caption + mask) and lazy hydration
 │   ├── appMenu.ts     # header's hidden page-navigation popout
 │   └── evidenceForm.ts # deposit form markup + evidence assembly/validation
@@ -119,6 +120,7 @@ Vanilla TS + template literals (fast wheel). Framework adoption is a deliberate 
 - **cards.test.ts** — the deck is the product; schema is the contract (52, uniqueness, anatomy completeness, canon text preserved verbatim).
 - **cardArt.test.ts** — the imagery canon is a contract too: every card resolves a deterministic prompt that carries the figure bible, its frozen scene and flavor, its territory palette, the 4:3 aspect, and the negative list; wilds get the prismatic palette.
 - **cardImages.test.ts** — lazy delivery can't misbehave: a missing module loads `undefined`, an invalid/non-PNG payload is rejected, a valid base64 PNG data URL loads, and a throwing loader degrades to `undefined` instead of crashing the face.
+- **cardTile.test.ts** — Gallery and Archive share one tile: an undiscovered tile is the concealed preview shape (no name/mode/flavor leak, no link), revealed tiles link to detail, only Lived is labeled, and flip/hide controls are dev-only.
 - **store.test.ts** — state machine can't cheat: no skipping states, no un-living, daily draw deterministic per date.
 - Wheel: `npm run check` (tsc strict + vitest) before every commit.
 
