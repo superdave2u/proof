@@ -91,9 +91,10 @@ describe("app shell accessibility foundations", () => {
     expect(styles).toMatch(/@keyframes card-enter/);
     expect(styles).toMatch(/\.card-face--sealed::after \{[^}]*animation: invite-glint/s);
     expect(styles).toMatch(/\.daily-draw__bottom \{[^}]*flex: 0 0 auto;/s);
-    // WHY: the sealed daily face has the same 3:4 silhouette as the back and
-    // scales to fit, so neither the stage nor the page needs to scroll.
-    expect(styles).toMatch(/\.daily-draw__stage \{[^}]*overflow: hidden;/s);
+    // WHY: the dealt card is sized to fit the leftover stage height, and its
+    // glow must not be clipped into a hard line above the bottom group while
+    // the card wobbles; the stage must not clip its overflowing children.
+    expect(styles).not.toMatch(/\.daily-draw__stage \{[^}]*overflow: hidden;/s);
     expect(styles).toMatch(/\.deck-grid \{[^}]*align-items: stretch;/s);
     // Cards fill their track width (height-driven aspect ratio must not widen them).
     expect(styles).toMatch(/\.deck-card-back \{[^}]*width: 100%;/s);

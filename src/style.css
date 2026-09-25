@@ -180,16 +180,15 @@ button, input, textarea { font: inherit; }
   flex: 1 1 0;
   flex-direction: column;
   align-items: center;
-  overflow: hidden;
   min-height: 0;
   --daily-card-margin: clamp(.6rem, 2vh, 1.1rem);
 }
 /* The card fills the largest 3:4 box that fits the leftover stage height or its
    width, with a breathing margin. Sized on the stage's flex children (where
    100cqh resolves to the stage container and 100% to its definite width), then
-   inherited by the card itself. Auto block margins center a fitting card and
-   let a taller one scroll inside the stage instead of clipping or scrolling
-   the page. */
+   inherited by the card itself. Because the card can never exceed that box, the
+   stage stays unclipped — clipping here would cut the card's glow into a hard
+   line above the bottom group as it wobbles. */
 .daily-draw__card {
   position: relative;
   flex-shrink: 0;

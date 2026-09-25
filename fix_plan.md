@@ -57,6 +57,7 @@ Everything below is verified and kept as the why-record. Prune freely when it st
 - [x] Localhost-only middle-left text control flips the daily card between Reveal card and Hide card (`data-action="dev-toggle-daily"`), hidden once the card is Lived.
 - [x] Legendary and Mythic share one foil (the near-black/violet Mythic skin and blurred prismatic foil are gone); Mythic adds a quiet sparkle layer (`card-face__sparkles`, `sparkle-twinkle`) rendered on the detail, sealed daily, and gallery preview faces.
 - [x] Layout: deck given more room; route-focus outlines gated on `:focus-visible`.
+- [x] Dropped `overflow: hidden` from the home stage: the card is sized by the leftover-height formula so it always fits, and the stage must not clip the wobbling card's glow into a hard line above the bottom group.
 
 ## Engineering standards (unchanged, mandatory)
 
