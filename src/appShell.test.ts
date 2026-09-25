@@ -69,6 +69,14 @@ describe("app shell accessibility foundations", () => {
     // page, so the card fits the stage without scrolling.
     expect(styles).toMatch(/\.card-face--sealed \.card-art \{[^}]*max-height: none;/s);
     expect(styles).toMatch(/\.card-face__reveal \{[^}]*position: absolute;/s);
+    // WHY: legendary and mythic share one foil — the mythic card is the
+    // legendary look plus a quiet sparkle layer, so no separate mythic card
+    // skin (near-black body, violet edge, blurred foil) remains.
+    expect(styles).toMatch(/\.card-face--legendary, \.card-face--mythic \{ background: linear-gradient\(145deg, #27222f, #15151a 60%, #332641\); \}/);
+    expect(styles).not.toMatch(/(^|\n)\.card-face--mythic \{/);
+    expect(styles).toMatch(/\.card-face__sparkles \{[^}]*pointer-events: none;/s);
+    expect(styles).toMatch(/\.card-face__sparkles span \{[^}]*clip-path: polygon\(/s);
+    expect(styles).toMatch(/@keyframes sparkle-twinkle/);
     // WHY: the dealt card keeps the deal's idle motion after it is revealed.
     // The wobble and the entrance fade sit on the card container, and the flip
     // is an inner layer, so revealing swaps the preloaded faces without tearing

@@ -85,6 +85,12 @@ function renderCardHeader(card: Card, showRarity: boolean): string {
     </header>`;
 }
 
+/** The one thing that makes the mythic card different from the legendary: a quiet sparkle layer. */
+function renderMythicSparkles(card: Card): string {
+  if (card.rarity !== "mythic") return "";
+  return `<span class="card-face__sparkles" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></span>`;
+}
+
 /**
  * The concealed face shared by Gallery/Archive tiles: the exact shape of the
  * revealed preview (header, title slot, mode line, 4:3 artwork) with the name,
@@ -99,6 +105,7 @@ export function renderConcealedCardFace(card: Card): string {
     <div class="card-face__body">
       <figure class="card-art card-art--${card.territory}" aria-hidden="true"><span class="card-art__sigil" aria-hidden="true">${symbolOf(card)}</span><figcaption class="card-art__caption">Undiscovered</figcaption></figure>
     </div>
+    ${renderMythicSparkles(card)}
   </article>`;
 }
 
@@ -126,6 +133,7 @@ export function renderSealedCardFace(card: Card): string {
         <a class="card-face__reveal" href="#/card/${encodeURIComponent(card.id)}">Reveal instructions</a>
       </div>
     </div>
+    ${renderMythicSparkles(card)}
   </article>`;
 }
 
@@ -161,5 +169,6 @@ export function renderCardFace(card: Card, record?: CardFaceRecord, options?: Ca
       ${renderCardArt(card)}
       ${details}
     </div>
+    ${renderMythicSparkles(card)}
   </article>`;
 }

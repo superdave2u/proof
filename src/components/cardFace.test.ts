@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { DECK } from "../data/cards";
-import { renderCardBack, renderCardFace, renderSealedCardFace } from "./cardFace";
+import { renderCardBack, renderCardFace, renderConcealedCardFace, renderSealedCardFace } from "./cardFace";
 
 function escapeHtml(value: string): string {
   return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
@@ -103,6 +103,21 @@ describe("renderCardFace", () => {
     expect(mythic).toContain("card-face--mythic");
     expect(mythic).toContain("✵");
     expect(mythic).toContain("Proof of Life");
+  });
+
+  it("layers the sparkle over the mythic face only, on every face shape", () => {
+    // WHY: the mythic card shares the legendary foil and is distinguished only
+    // by its sparkle layer, so legendary must render none and mythic must
+    // sparkle on the detail face, the sealed daily face, and the gallery preview.
+    const legendary = DECK.find((card) => card.number === 51)!;
+    const mythic = DECK.find((card) => card.number === 52)!;
+
+    expect(renderCardFace(legendary)).not.toContain("card-face__sparkles");
+    expect(renderCardFace(mythic)).toContain('class="card-face__sparkles" aria-hidden="true"');
+    expect(renderSealedCardFace(mythic)).toContain("card-face__sparkles");
+    expect(renderSealedCardFace(legendary)).not.toContain("card-face__sparkles");
+    expect(renderConcealedCardFace(mythic)).toContain("card-face__sparkles");
+    expect(renderConcealedCardFace(legendary)).not.toContain("card-face__sparkles");
   });
 
   it("renders card 52's artifact words and photo-compatible proof", () => {

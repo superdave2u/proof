@@ -55,6 +55,7 @@ Everything below is verified and kept as the why-record. Prune freely when it st
 - [x] Daily card flips on tap; the peek is deterministic; card-of-the-day copy sits below the card.
 - [x] Daily reveal no longer rebuilds the card: the back and sealed front are preloaded in one stack, the container owns the idle wobble and the inner layer owns the 3D flip, so revealing flips the already-loaded card in place. The card fades in already wobbling on first paint; the hidden face stays inert (`shouldFlipInPlace`, `dailyDrawMessage`).
 - [x] Localhost-only middle-left text control flips the daily card between Reveal card and Hide card (`data-action="dev-toggle-daily"`), hidden once the card is Lived.
+- [x] Legendary and Mythic share one foil (the near-black/violet Mythic skin and blurred prismatic foil are gone); Mythic adds a quiet sparkle layer (`card-face__sparkles`, `sparkle-twinkle`) rendered on the detail, sealed daily, and gallery preview faces.
 - [x] Layout: deck given more room; route-focus outlines gated on `:focus-visible`.
 
 ## Engineering standards (unchanged, mandatory)

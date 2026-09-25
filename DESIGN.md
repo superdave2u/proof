@@ -7,7 +7,7 @@ Borrow the *feel* of a deep collectible card game. **Do not copy Magic: The Gath
 - **Territory palette** (CSS custom properties): `--pleasure: #c81e4f` (crimson/rose), `--curiosity: #1e4fc8` (cobalt), `--beauty: #c9a227` (gold), `--connection: #1e8a5a` (emerald), `--wonder: #7a3fc9` (violet), wild = animated prismatic gradient.
 - **Symbols**: ♥ ◉ ✦ ∞ ✧ as large watermark sigils; ✵ for wilds.
 - Typography: display serif for card names, humanist sans for body, small-caps for type lines. Vertical banner layout with a rounded-corner dark frame; territory color as a header band and inner border glow.
-- Rarity gems in the header row; Legendary/Mythic get foil shimmer.
+- Rarity gems in the header row; Legendary/Mythic share one foil, and Mythic adds a twinkle sparkle layer.
 - **Card artwork**: a 4:3 landscape watercolor in the territory's tonal range, starring the recurring heroine (the Wayfarer). Generated offline per `specs/art/ART-DIRECTION.md`, stored as base64 PNG per card, lazily attached on reveal/scroll. The flavor text is its caption, over a black translucent mask at the image's foot. The territory atmosphere pattern remains the fallback when art is absent or still loading.
 
 ## 2. Card face layout (top to bottom)
@@ -15,7 +15,7 @@ Borrow the *feel* of a deep collectible card game. **Do not copy Magic: The Gath
 1. Header band: `TERRITORY NN/52` (collector line) + rarity gem + territory symbol watermark.
 2. Card name (display serif).
 3. Type line: the card's mode (small caps), e.g. `Indulgence`, `Discovery`, `Legendary Wild`. Specs author `Invitation • <Mode>`; the parser drops the `Invitation • ` prefix.
-4. **Artwork panel (4:3)** — the card's watercolor illustration, a 4:3 landscape base64 PNG, lazily attached on flip/scroll. Underneath (and as fallback when a card has no image yet) it shows a procedural territory atmosphere: layered washes, woven texture, and the territory sigil watermark; wilds get a prismatic sheen, mythic stays deep black with a violet edge glow. The image is cropped with `object-fit: cover`.
+4. **Artwork panel (4:3)** — the card's watercolor illustration, a 4:3 landscape base64 PNG, lazily attached on flip/scroll. Underneath (and as fallback when a card has no image yet) it shows a procedural territory atmosphere: layered washes, woven texture, and the territory sigil watermark; wilds get a prismatic sheen (legendary and mythic share one foil — the mythic card adds only a quiet sparkle layer). The image is cropped with `object-fit: cover`.
 5. **Flavor caption** — italic, territory-tinted, pinned to the foot of the artwork panel as a `figcaption`, over a translucent black gradient mask between the text and the painting. It is the accessible text; the image `alt` is applied only once the image loads.
 6. **Quest** block.
 7. **Proof of Life** block.
