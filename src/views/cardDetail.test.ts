@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { DECK } from "../data/cards";
-import { renderCardDetail } from "./cardDetail";
+import { evidenceCloseFocusSelector, renderCardDetail } from "./cardDetail";
 
 /**
  * WHY these tests exist: card detail is where a revealed invitation becomes an
@@ -110,6 +110,24 @@ describe("card detail view", () => {
 
     expect(html).toContain("is now Lived. Your evidence is in the Archive.");
     expect(html).toContain('data-action="open-archive"');
+  });
+
+  it("returns focus to the state's primary action when the evidence form closes", () => {
+    // WHY: closing "Keep this card drawn" / "Dismiss unsaved entry" re-renders
+    // the detail view, destroying the control that had focus; without an
+    // explicit target, keyboard focus falls to <body> and the next Tab starts
+    // from the top of the page. The close path must aim at the primary action
+    // so keyboard flow continues from the card.
+    expect(evidenceCloseFocusSelector("drawn")).toBe('[data-action="open-evidence"]');
+    expect(evidenceCloseFocusSelector("lived")).toBe('[data-action="open-archive"]');
+  });
+
+  it("falls back to the focusable detail section when no primary action exists", () => {
+    // WHY: undiscovered cards render no action button, so the close-focus
+    // fallback must be the detail section itself — which only works if the
+    // section stays programmatically focusable.
+    expect(evidenceCloseFocusSelector("undiscovered")).toBe(".card-detail");
+    expect(renderCardDetail(DECK[0]!)).toMatch(/class="card-detail"[^>]*tabindex="-1"/);
   });
 
   it("escapes authored identifiers as well as relying on the card face's escaped copy", () => {

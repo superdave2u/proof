@@ -30,19 +30,49 @@ export interface CardDetailHandlers {
   onSubmitEvidence(cardId: string, evidence: Evidence): Promise<boolean>;
 }
 
-function renderPrimaryAction(card: Card, state: CardFaceRecord["state"]): string {
-  const escapedId = escapeHtml(card.id);
+interface PrimaryAction {
+  action: "open-evidence" | "open-archive";
+  label: string;
+}
+
+/**
+ * Single source of truth mapping a card's lifecycle state to its primary
+ * action. The face renders this as a button; the close-evidence path returns
+ * focus to it.
+ */
+function primaryActionFor(state: CardFaceRecord["state"]): PrimaryAction | undefined {
   switch (state) {
     case "drawn":
-      // The Gallery hop sits beside the primary action; the deposit flow stays
-      // the only Save Proof.
-      return `<button class="card-detail__primary" type="button" data-action="open-evidence" data-card-id="${escapedId}">Save Proof</button><a class="card-detail__gallery card-detail__gallery--${card.territory}" href="#/gallery">Gallery</a>`;
+      return { action: "open-evidence", label: "Save Proof" };
     case "lived":
-      return `<button class="card-detail__primary" type="button" data-action="open-archive" data-card-id="${escapedId}">View Archive</button>`;
+      return { action: "open-archive", label: "View Archive" };
     case "undiscovered":
       // The daily deal is the only way a card is revealed; no manual action here.
-      return "";
+      return undefined;
   }
+}
+
+function renderPrimaryAction(card: Card, state: CardFaceRecord["state"]): string {
+  const primary = primaryActionFor(state);
+  if (!primary) return "";
+
+  const escapedId = escapeHtml(card.id);
+  const button = `<button class="card-detail__primary" type="button" data-action="${primary.action}" data-card-id="${escapedId}">${primary.label}</button>`;
+  // The Gallery hop sits beside the primary action; the deposit flow stays the
+  // only Save Proof.
+  return primary.action === "open-evidence"
+    ? `${button}<a class="card-detail__gallery card-detail__gallery--${card.territory}" href="#/gallery">Gallery</a>`
+    : button;
+}
+
+/**
+ * Where focus belongs after the evidence form closes: the state's primary
+ * action, or the focusable detail section when there is none. Re-rendering
+ * destroys the control that had focus, so the caller must move it explicitly.
+ */
+export function evidenceCloseFocusSelector(state: CardFaceRecord["state"]): string {
+  const action = primaryActionFor(state)?.action;
+  return action ? `[data-action="${action}"]` : ".card-detail";
 }
 
 /** Render one complete card face with state-specific actions and the deposit flow. */
@@ -106,6 +136,9 @@ export function mountCardDetail(
     evidence.draft = undefined;
     evidence.file = undefined;
     render();
+    container
+      .querySelector<HTMLElement>(evidenceCloseFocusSelector(currentRecord?.state ?? "undiscovered"))
+      ?.focus();
   };
 
   const handleClick = (event: Event): void => {

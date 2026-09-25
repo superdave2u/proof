@@ -6,8 +6,11 @@ Legend: `[ ]` incomplete · `[x]` done (verified) — prune `[x]` items periodic
 
 ## Next up — the only incomplete work
 
-- [ ] **P2 — Restore focus when canceling the evidence form.** `closeEvidence()` in `src/views/cardDetail.ts` re-renders the detail view after "Keep this card drawn" / "Dismiss unsaved entry" without moving focus, so keyboard focus falls to `<body>`. Return focus to the card's primary action (or the detail section) after closing, and test it.
 - [ ] **P3 — Give evidence artifact images descriptive alt text.** `renderArtifact()` in `src/components/cardFace.ts` renders `alt="Evidence artifact"` for every deposited photo. That conveys nothing; derive a description from the evidence (date/note) or mark the image decorative, and test the chosen behavior.
+
+## Completed — evidence-form focus restore
+
+- [x] `closeEvidence()` now moves focus after re-rendering: `evidenceCloseFocusSelector(state)` is the single source that maps a state to its primary action (`drawn` → `open-evidence`, `lived` → `open-archive`, else the focusable `.card-detail` section). `primaryActionFor` now backs both the rendered button and the close-focus target so the mapping cannot drift; unit tests pin both the mapping and the section's `tabindex="-1"` fallback.
 
 ## Completed — direct operator card-copy revision
 

@@ -107,6 +107,6 @@ Each loop is logged to `logs/`. Rules of the house: search the codebase before a
 - [x] Data pipeline + schema integrity tests
 - [x] All 52 card-art PNGs generated and committed
 - [x] App: home daily deal, gallery, card detail, archive, evidence flow
-- [ ] Polish backlog — see `fix_plan.md` (evidence-form focus restore, artifact alt text)
+- [ ] Polish backlog — see `fix_plan.md` (artifact alt text)
 
 Content rules: Ralph loops must leave `specs/cards/` untouched, including canon. In a direct session, edit card text only when the operator explicitly requests it; an explicit request can include canon.
