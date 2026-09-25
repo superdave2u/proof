@@ -53,6 +53,7 @@ Everything below is verified and kept as the why-record. Prune freely when it st
 - [x] Card copy: "adventure" → "invitation"; "Special Ability" → "Special Stretch"; Reward line removed from the anatomy; SUBHEADLINE = "Each card is an invitation back to living."
 - [x] Navigation moved into the header's hidden popout menu (`src/components/appMenu.ts`); home holds only the daily card.
 - [x] Daily card flips on tap; the peek is deterministic; card-of-the-day copy sits below the card.
+- [x] Daily reveal no longer rebuilds the card: the back and sealed front are preloaded in one stack, the container owns the idle wobble and the inner layer owns the 3D flip, so revealing flips the already-loaded card in place. The card fades in already wobbling on first paint; the hidden face stays inert (`shouldFlipInPlace`, `dailyDrawMessage`).
 - [x] Layout: deck given more room; route-focus outlines gated on `:focus-visible`.
 
 ## Engineering standards (unchanged, mandatory)

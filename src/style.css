@@ -190,15 +190,37 @@ button, input, textarea { font: inherit; }
    inherited by the card itself. Auto block margins center a fitting card and
    let a taller one scroll inside the stage instead of clipping or scrolling
    the page. */
-.daily-draw__tap,
-.daily-draw__face {
+.daily-draw__card {
+  position: relative;
   flex-shrink: 0;
   margin-block: auto;
   width: min(
     calc(100% - 2 * var(--daily-card-margin)),
     calc((100cqh - 2 * var(--daily-card-margin)) * 3 / 4)
   );
+  aspect-ratio: 3 / 4;
+  perspective: 1400px;
+  /* The wobble and the entrance fade sit on the whole card, so the face flip
+     inside never interrupts them: the card is already bobbing as it fades in. */
+  animation: card-enter .55s ease-out both, invite-bob 3.6s ease-in-out infinite;
 }
+/* The flip turns the preloaded faces as one card — the face-down back rotates
+   away and the sealed front rotates into view — without replacing the DOM, so
+   the idle bob keeps running underneath. */
+.daily-draw__flip {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform .82s cubic-bezier(.2, .75, .25, 1);
+}
+.daily-draw__card.is-revealed .daily-draw__flip { transform: rotateY(180deg); }
+.daily-draw__side {
+  position: absolute;
+  inset: 0;
+  border-radius: 23px;
+  backface-visibility: hidden;
+}
+.daily-draw__side--front { transform: rotateY(180deg); }
 .daily-draw__bottom { display: flex; flex: 0 0 auto; flex-direction: column; align-items: center; gap: .7rem; }
 .daily-draw__hint-slot { display: flex; min-height: 2rem; align-items: center; justify-content: center; }
 .daily-draw__eyebrow { margin: 0 0 .4rem; color: #d2c2f5; font-size: .65rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; }
@@ -207,8 +229,8 @@ button, input, textarea { font: inherit; }
 
 /* The face-down deal invites the tap: a slow bob and a periodic glint that
    reduced-motion preferences silence globally. */
-.daily-draw__tap { display: block; padding: 0; border: 0; background: none; cursor: pointer; font: inherit; }
-.daily-draw__tap-card { display: block; width: 100%; animation: invite-bob 3.6s ease-in-out infinite; }
+.daily-draw__tap { display: block; width: 100%; height: 100%; padding: 0; border: 0; background: none; cursor: pointer; font: inherit; }
+.daily-draw__tap-card { display: block; width: 100%; height: 100%; }
 /* The daily card may exceed the deck's default 390px cap to fill the stage. */
 .daily-draw__tap-card .deck-card-back { max-width: none; }
 .daily-draw__tap-card .deck-card-back::before { animation: invite-glint 3.6s ease-in-out infinite; }
@@ -224,8 +246,7 @@ button, input, textarea { font: inherit; }
 /* The dealt card's sealed reveal: the same silhouette as the face-down back,
    with the single-card layout and everything under the artwork withheld behind
    tonal censor bars until the player opens the card's detail page. */
-.daily-draw__face { display: block; min-height: 0; aspect-ratio: 3 / 4; margin-inline: auto; border-radius: 23px; transform-origin: center; animation: deal-flip .82s cubic-bezier(.2, .75, .25, 1) both, invite-bob 3.6s ease-in-out .82s infinite; }
-.daily-draw__face .card-face { width: 100%; max-width: none; height: 100%; }
+.daily-draw__side--front .card-face { width: 100%; max-width: none; height: 100%; }
 .card-face--sealed { display: flex; flex-direction: column; }
 .card-face--sealed .card-face__body { display: flex; flex: 1 1 auto; flex-direction: column; min-height: 0; }
 .card-face--sealed .card-art { flex: 1 1 0; min-height: 3rem; max-height: none; margin-bottom: 0; }
@@ -296,6 +317,12 @@ button, input, textarea { font: inherit; }
 @keyframes invite-bob {
   0%, 100% { transform: translateY(0) rotate(-1.2deg); }
   50% { transform: translateY(-.45rem) rotate(1.2deg); }
+}
+
+/* The last thing on first paint: the card (already bobbing) fades in. */
+@keyframes card-enter {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes invite-glint {
@@ -625,5 +652,5 @@ button, input, textarea { font: inherit; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
-  .draw-reveal__face, .daily-draw__face { animation: none; }
+  .draw-reveal__face, .daily-draw__card { animation: none; }
 }

@@ -57,22 +57,30 @@ describe("app shell accessibility foundations", () => {
     // The card must fit the leftover height (minus a margin), not a fixed cap,
     // so it scales up into the stage instead of sitting centered and small.
     // 100cqh is used on the stage's descendants, where it resolves correctly.
-    expect(styles).toMatch(/\.daily-draw__tap,\s*\.daily-draw__face \{[^}]*width: min\(/s);
+    expect(styles).toMatch(/\.daily-draw__card \{[^}]*width: min\(/s);
     expect(styles).toMatch(/100cqh - 2 \* var\(--daily-card-margin\)/);
     expect(styles).toMatch(/\.daily-draw__tap-card \.deck-card-back \{ max-width: none; \}/);
     // The dealt card keeps the back's 3:4 silhouette, so flipping never resizes
     // it and the page never scrolls.
-    expect(styles).toMatch(/\.daily-draw__face \{ display: block; min-height: 0; aspect-ratio: 3 \/ 4;/);
-    expect(styles).toMatch(/\.daily-draw__face \.card-face \{ width: 100%; max-width: none; height: 100%; \}/);
+    expect(styles).toMatch(/\.daily-draw__card \{[^}]*aspect-ratio: 3 \/ 4;/s);
+    expect(styles).toMatch(/\.daily-draw__side--front \.card-face \{ width: 100%; max-width: none; height: 100%; \}/);
     // WHY: the dealt invitation is sealed — the text under the artwork is
     // censored behind tonal bars and a button over the bars opens the detail
     // page, so the card fits the stage without scrolling.
     expect(styles).toMatch(/\.card-face--sealed \.card-art \{[^}]*max-height: none;/s);
     expect(styles).toMatch(/\.card-face__reveal \{[^}]*position: absolute;/s);
-    // WHY: the dealt card keeps the deal's idle motion after it is revealed —
-    // the same bob and glint that invited the tap now invite the read, and
-    // reduced-motion preferences silence both globally.
-    expect(styles).toMatch(/\.daily-draw__face \{[^}]*animation: deal-flip [^;]*both, invite-bob 3\.6s ease-in-out \.82s infinite;/s);
+    // WHY: the dealt card keeps the deal's idle motion after it is revealed.
+    // The wobble and the entrance fade sit on the card container, and the flip
+    // is an inner layer, so revealing swaps the preloaded faces without tearing
+    // down the bob; the card fades in already wobbling on first paint.
+    expect(styles).toMatch(/\.daily-draw__card \{[^}]*animation: card-enter [^;]*both, invite-bob 3\.6s ease-in-out infinite;/s);
+    expect(styles).toMatch(/\.daily-draw__card \{[^}]*perspective:/s);
+    expect(styles).toMatch(/\.daily-draw__flip \{[^}]*transform-style: preserve-3d;/s);
+    expect(styles).toMatch(/\.daily-draw__flip \{[^}]*transition: transform/s);
+    expect(styles).toMatch(/\.daily-draw__side \{[^}]*backface-visibility: hidden;/s);
+    expect(styles).toMatch(/\.daily-draw__side--front \{ transform: rotateY\(180deg\); \}/);
+    expect(styles).toMatch(/\.daily-draw__card\.is-revealed \.daily-draw__flip \{ transform: rotateY\(180deg\); \}/);
+    expect(styles).toMatch(/@keyframes card-enter/);
     expect(styles).toMatch(/\.card-face--sealed::after \{[^}]*animation: invite-glint/s);
     expect(styles).toMatch(/\.daily-draw__bottom \{[^}]*flex: 0 0 auto;/s);
     // WHY: the sealed daily face has the same 3:4 silhouette as the back and
@@ -145,5 +153,8 @@ describe("app shell accessibility foundations", () => {
     expect(styles).toContain("@media (prefers-reduced-motion: reduce)");
     expect(styles).toContain("animation-duration: .01ms !important");
     expect(styles).toContain("transition-duration: .01ms !important");
+    // The idle bob and entrance fade are silenced entirely so the reduced-motion
+    // card is simply visible, never stuck at the entrance's starting opacity.
+    expect(styles).toMatch(/\.draw-reveal__face, \.daily-draw__card \{ animation: none; \}/);
   });
 });
