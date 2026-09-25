@@ -34,7 +34,10 @@ describe("renderCardFace", () => {
       expect(html).toContain(escapeHtml(card.flavor));
       for (const step of card.quest) expect(html).toContain(escapeHtml(step));
       expect(html).toContain("<h3>Quest</h3>");
-      expect(html).toContain("<h3>Proof of Life</h3>");
+      expect(html).toContain("<h3>Proof</h3>");
+       const proofIndex = html.indexOf('<section class="card-section card-section--proof">');
+       const abilityIndex = html.indexOf('<aside class="card-ability">');
+       if (card.ability) expect(proofIndex).toBeGreaterThan(abilityIndex);
       expect(html.includes("Special Stretch")).toBe(Boolean(card.ability));
       if (card.ability) {
         expect(html).toContain(escapeHtml(card.ability.name));
@@ -99,7 +102,7 @@ describe("renderCardFace", () => {
     const html = renderCardFace(card52);
 
     expect(html).toContain(
-      '<section class="card-section card-section--proof"><h3>Proof of Life</h3><p>Bring back one artifact. Write upon it:<br>I WANTED THIS.<br>THAT WAS ENOUGH.</p></section>',
+      '<section class="card-section card-section--proof"><h3>Proof</h3><p>Bring back one artifact. Write upon it:<br>I WANTED THIS.<br>THAT WAS ENOUGH.</p></section>',
     );
   });
 

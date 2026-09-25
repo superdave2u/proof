@@ -138,8 +138,8 @@ export function renderCardFace(card: Card, record?: CardFaceRecord, options?: Ca
   const details = options?.preview
     ? ""
     : `<section class="card-section card-section--quest"><h3>Quest</h3><ol>${quest}</ol></section>
-      <section class="card-section card-section--proof"><h3>Proof of Life</h3><p>${proof}</p></section>
       ${ability}
+      <section class="card-section card-section--proof"><h3>Proof</h3><p>${proof}</p></section>
       ${renderLivedRecord(card, record)}`;
 
   return `<article class="card-face card-face--${card.territory}${wildClass}${options?.preview ? " card-face--preview" : ""}" aria-label="${escapeHtml(ariaLabel)}" data-card-id="${escapeHtml(card.id)}">
