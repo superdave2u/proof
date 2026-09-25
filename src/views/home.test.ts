@@ -21,8 +21,14 @@ describe("home view", () => {
     // reveals — there is no separate reveal button.
     expect(html).toContain("deck-card-back");
     expect(html).toContain('data-action="daily-draw"');
-    expect(html).toContain('data-action="daily-draw"');
     expect(html).toContain("Tap to reveal");
+    // The card sits in the full-height stage; the hint leads the bottom group
+    // (hint, title, message) that stays pinned to the device screen.
+    expect(html).toContain('class="daily-draw__stage"');
+    expect(html).toContain('class="daily-draw__bottom"');
+    expect(html).toContain('class="daily-draw__hint-slot"');
+    expect(html.indexOf('class="daily-draw__stage"')).toBeLessThan(html.indexOf('class="daily-draw__bottom"'));
+    expect(html.indexOf("Tap to reveal")).toBeLessThan(html.indexOf('id="home-title"'));
     // The old reveal button is gone; the tap target's own aria-label names the action.
     expect(html).not.toContain('class="daily-draw__button"');
     // The card precedes the card-of-the-day copy.
@@ -36,7 +42,7 @@ describe("home view", () => {
     expect(html).not.toContain("Draw an invitation");
   });
 
-  it("shows the revealed card face-up like a gallery preview, linked to its detail page", () => {
+  it("shows the dealt card sealed with a button that opens its detail page", () => {
     const card = DECK[16]!;
     const html = renderHomeView(
       { [card.id]: { state: "drawn", drawnAt: "2026-09-22T12:30:00.000Z" } },
@@ -45,12 +51,19 @@ describe("home view", () => {
 
     expect(html).toContain(`Today&#39;s invitation: ${card.name.replaceAll("'", "&#39;")}.`);
     expect(html).toContain('class="daily-draw__face" data-draw-animation="true"');
-    expect(html).toContain(`href="#/card/${card.id}"`);
-    expect(html).toContain(`aria-label="Today's card: ${card.name.replaceAll("'", "&#39;")} — open card details"`);
-    // The revealed preview is the link itself; the old separate button is gone.
+    expect(html).toContain('<div class="daily-draw__hint-slot"><span aria-hidden="true"></span></div>');
+    // The old separate button is gone; the dealt face is not itself a link.
     expect(html).not.toContain('data-action="open-card"');
     expect(html).not.toContain('data-action="daily-draw"');
-    expect(html).toContain("card-face--preview");
+    // WHY: the dealt invitation shows the single-card layout, but everything
+    // under the artwork is censored behind tonal bars; a button over the bars
+    // opens the card detail page, where the quest/proof and deposit flow live.
+    expect(html).toContain("card-face--sealed");
+    expect(html).toContain(card.name.replaceAll("'", "&#39;"));
+    expect(html).toContain(`class="card-face__reveal" href="#/card/${card.id}"`);
+    expect(html).toContain("Reveal instructions");
+    expect(html).not.toContain("<h3>Quest</h3>");
+    expect(html).not.toContain(card.quest[0]!);
   });
 
   it("announces a failed daily deal as an escaped, focusable alert", () => {

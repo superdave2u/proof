@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { DECK } from "../data/cards";
-import { renderCardBack, renderCardFace } from "./cardFace";
+import { renderCardBack, renderCardFace, renderSealedCardFace } from "./cardFace";
 
 function escapeHtml(value: string): string {
   return value.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
@@ -128,5 +128,30 @@ describe("renderCardFace", () => {
     expect(html).toContain("I WANTED THIS.");
     expect(html).toContain("THAT WAS ENOUGH.");
     expect(html).toContain("The walk was enough.");
+  });
+});
+
+describe("renderSealedCardFace", () => {
+  it("shows the single-card layout with everything under the artwork sealed", () => {
+    // WHY: the daily reveal presents the dealt invitation at full size but
+    // withholds its instructions: the name and artwork show, the text under
+    // the artwork is replaced by tonal censor bars, and a button over the bars
+    // opens the card detail page where the quest, proof, and deposit flow live.
+    const card = DECK[0]!;
+    const html = renderSealedCardFace(card);
+
+    expect(html).toContain("card-face--sealed");
+    expect(html).toContain(escapeHtml(card.name));
+    expect(html).toContain(escapeHtml(card.typeLine));
+    expect(html).toContain("card-art__caption");
+    expect(html).toContain(escapeHtml(card.flavor));
+    expect((html.match(/card-face__censor-bar/g) ?? []).length).toBeGreaterThanOrEqual(3);
+    expect(html).toContain('class="card-face__reveal" href="#/card/pleasure-01"');
+    expect(html).toContain("Reveal instructions");
+    // Nothing under the artwork may leak: no quest, proof, or stretch text.
+    expect(html).not.toContain("<h3>Quest</h3>");
+    expect(html).not.toContain("<h3>Proof of Life</h3>");
+    for (const step of card.quest) expect(html).not.toContain(escapeHtml(step));
+    expect(html).not.toContain(card.proof.split("\n")[0]!);
   });
 });

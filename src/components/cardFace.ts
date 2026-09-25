@@ -97,6 +97,33 @@ export function renderConcealedCardFace(card: Card): string {
   </article>`;
 }
 
+/**
+ * The dealt card's sealed face: the single-card layout with everything under
+ * the artwork withheld behind tonal censor bars. "Reveal instructions" opens
+ * the card detail page, where the quest, proof, and deposit flow live.
+ */
+export function renderSealedCardFace(card: Card): string {
+  const wildClass = card.territory === "wild" ? ` card-face--${card.rarity}` : "";
+  const ariaLabel = `${territoryNameOf(card)} card ${String(card.number).padStart(2, "0")} of 52, ${rarityLabel(card.rarity)}: ${card.name}`;
+  return `<article class="card-face card-face--sealed card-face--${card.territory}${wildClass}" aria-label="${escapeHtml(ariaLabel)}" data-card-id="${escapeHtml(card.id)}">
+    ${renderCardHeader(card, true)}
+    <div class="card-face__body card-face__body--sealed">
+      <h2 class="card-face__name">${escapeHtml(card.name)}</h2>
+      <p class="card-face__type">${escapeHtml(card.typeLine)}</p>
+      ${renderCardArt(card)}
+      <div class="card-face__sealed-zone">
+        <div class="card-face__censor" aria-hidden="true">
+          <span class="card-face__censor-bar"></span>
+          <span class="card-face__censor-bar"></span>
+          <span class="card-face__censor-bar"></span>
+          <span class="card-face__censor-bar"></span>
+        </div>
+        <a class="card-face__reveal" href="#/card/${encodeURIComponent(card.id)}">Reveal instructions</a>
+      </div>
+    </div>
+  </article>`;
+}
+
 /** Render one complete card face. All authored card text is escaped before entering HTML. */
 export function renderCardFace(card: Card, record?: CardFaceRecord, options?: CardFaceOptions): string {
   const isWild = card.territory === "wild";

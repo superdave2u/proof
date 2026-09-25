@@ -1,5 +1,5 @@
 import { DECK } from "../data/cards";
-import { renderCardBack, renderCardFace } from "../components/cardFace";
+import { renderCardBack, renderSealedCardFace } from "../components/cardFace";
 import { DeckStorageError, type DeckStore } from "../state/store";
 import { escapeHtml, type DeckRecords } from "./deckShared";
 
@@ -28,23 +28,29 @@ function renderDailyCard(
   const tapCard = peek
     ? `<button class="daily-draw__tap" type="button" data-action="daily-draw" aria-label="Reveal today's invitation">
         <span class="daily-draw__tap-card">${renderCardBack(peek)}</span>
-        <span class="daily-draw__hint">Tap to reveal</span>
       </button>`
     : "";
-  // The revealed card is the link itself, exactly like a gallery preview: the
-  // full anatomy and the only deposit flow live on the card detail page.
+  // "Tap to reveal" leads the bottom group; the card itself is the reveal control.
+  const hint = `<div class="daily-draw__hint-slot">${peek ? '<p class="daily-draw__hint" data-action="daily-draw">Tap to reveal</p>' : '<span aria-hidden="true"></span>'}</div>`;
+  // The revealed card keeps the dealt card's silhouette and shows the
+  // single-card layout with everything under the artwork sealed behind tonal
+  // censor bars; "Reveal instructions" opens the card detail page, where the
+  // quest, proof, and deposit flow live.
   const revealedCard = card
-    ? `<a class="daily-draw__face" data-draw-animation="true" href="#/card/${encodeURIComponent(card.id)}" aria-label="Today's card: ${escapeHtml(card.name)} — open card details">${renderCardFace(card, records[card.id], { preview: true })}</a>`
+    ? `<div class="daily-draw__face" data-draw-animation="true">${renderSealedCardFace(card)}</div>`
     : "";
 
   return `<section class="daily-draw" aria-labelledby="home-title">
-    ${revealedCard || tapCard}
-    <div class="daily-draw__intro">
-      <p class="daily-draw__eyebrow">The card of the day</p>
-      <h2 id="home-title" tabindex="-1">One invitation, chosen for today.</h2>
+    <div class="daily-draw__stage">${revealedCard || tapCard}</div>
+    <div class="daily-draw__bottom">
+      ${hint}
+      <div class="daily-draw__intro">
+        <p class="daily-draw__eyebrow">The card of the day</p>
+        <h2 id="home-title" tabindex="-1">One invitation, chosen for today.</h2>
+      </div>
+      <p class="daily-draw__message" role="status" aria-live="polite">${escapeHtml(message)}</p>
+      ${dailyDrawError ? `<p class="draw-storage-error" data-draw-error="daily" role="alert" tabindex="-1">${escapeHtml(dailyDrawError)}</p>` : ""}
     </div>
-    <p class="daily-draw__message" role="status" aria-live="polite">${escapeHtml(message)}</p>
-    ${dailyDrawError ? `<p class="draw-storage-error" data-draw-error="daily" role="alert" tabindex="-1">${escapeHtml(dailyDrawError)}</p>` : ""}
   </section>`;
 }
 
@@ -93,7 +99,7 @@ export function mountHomeView(container: HTMLElement, store: DeckStore): () => v
           return;
         }
         render();
-        container.querySelector<HTMLElement>(".daily-draw__face")?.focus();
+        container.querySelector<HTMLElement>(".daily-draw__face .card-face__reveal")?.focus();
       } catch (error) {
         if (!(error instanceof DeckStorageError)) throw error;
         dailyDrawError = error.message;

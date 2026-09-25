@@ -49,10 +49,35 @@ describe("app shell accessibility foundations", () => {
     expect(styles).toMatch(/\.card-art--loaded \.card-art__image \{ opacity: 1; \}/);
     expect(styles).toMatch(/\.card-art__mask \{[^}]*linear-gradient\(to top, rgb\(0 0 0 \/ 82%\)/s);
     // WHY: the flavor window must fill the card body (not shrink to its capped
-    // height), the home daily card is a centered, breathing hero whose tap
-    // target scales to stay above the fold, and gallery/archive rows align.
-    expect(styles).toMatch(/\.daily-draw \{[^}]*justify-items: center;/s);
-    expect(styles).toMatch(/\.daily-draw \{[^}]*--daily-card-width: min\(390px, 100%, calc\(\(100dvh - 21rem\) \* 3 \/ 4\)\);/s);
+    // height); the home daily hero is a full-height stage whose card scales to
+    // the leftover height (cqh) with the hint/title/message bottom-aligned; and
+    // gallery/archive rows align.
+    expect(styles).toMatch(/\.app-shell:has\(> #home-view:not\(\[hidden\]\)\) \{[^}]*min-height: 100dvh;/s);
+    expect(styles).toMatch(/\.daily-draw__stage \{[^}]*container-type: size;/s);
+    // The card must fit the leftover height (minus a margin), not a fixed cap,
+    // so it scales up into the stage instead of sitting centered and small.
+    // 100cqh is used on the stage's descendants, where it resolves correctly.
+    expect(styles).toMatch(/\.daily-draw__tap,\s*\.daily-draw__face \{[^}]*width: min\(/s);
+    expect(styles).toMatch(/100cqh - 2 \* var\(--daily-card-margin\)/);
+    expect(styles).toMatch(/\.daily-draw__tap-card \.deck-card-back \{ max-width: none; \}/);
+    // The dealt card keeps the back's 3:4 silhouette, so flipping never resizes
+    // it and the page never scrolls.
+    expect(styles).toMatch(/\.daily-draw__face \{ display: block; min-height: 0; aspect-ratio: 3 \/ 4;/);
+    expect(styles).toMatch(/\.daily-draw__face \.card-face \{ width: 100%; max-width: none; height: 100%; \}/);
+    // WHY: the dealt invitation is sealed — the text under the artwork is
+    // censored behind tonal bars and a button over the bars opens the detail
+    // page, so the card fits the stage without scrolling.
+    expect(styles).toMatch(/\.card-face--sealed \.card-art \{[^}]*max-height: none;/s);
+    expect(styles).toMatch(/\.card-face__reveal \{[^}]*position: absolute;/s);
+    // WHY: the dealt card keeps the deal's idle motion after it is revealed —
+    // the same bob and glint that invited the tap now invite the read, and
+    // reduced-motion preferences silence both globally.
+    expect(styles).toMatch(/\.daily-draw__face \{[^}]*animation: deal-flip [^;]*both, invite-bob 3\.6s ease-in-out \.82s infinite;/s);
+    expect(styles).toMatch(/\.card-face--sealed::after \{[^}]*animation: invite-glint/s);
+    expect(styles).toMatch(/\.daily-draw__bottom \{[^}]*flex: 0 0 auto;/s);
+    // WHY: the sealed daily face has the same 3:4 silhouette as the back and
+    // scales to fit, so neither the stage nor the page needs to scroll.
+    expect(styles).toMatch(/\.daily-draw__stage \{[^}]*overflow: hidden;/s);
     expect(styles).toMatch(/\.deck-grid \{[^}]*align-items: stretch;/s);
     // Cards fill their track width (height-driven aspect ratio must not widen them).
     expect(styles).toMatch(/\.deck-card-back \{[^}]*width: 100%;/s);
