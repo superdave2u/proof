@@ -106,6 +106,31 @@ describe("app shell accessibility foundations", () => {
     expect(styles).toMatch(/@media \(max-width: 520px\) \{[^@]*\.archive-grid \{ grid-template-columns: minmax\(0, 1fr\);[^}]*justify-items: center;[^}]*\}/s);
     expect(styles).toMatch(/@media \(max-width: 520px\) \{[^@]*\.deck-grid \{[^}]*padding: 1rem clamp\(/s);
     expect(styles).toMatch(/\.deck-grid > \*, \.archive-grid > \* \{ width: 100%; max-width: 22rem; margin-inline: auto; \}/);
+    // WHY: the menu is a plain text control anchored to the header's right edge on
+// every page — opposite the left-aligned sub-page title, never on top of it —
+// and its popout opens beneath that same edge.
+    expect(styles).toMatch(/\.app-menu \{ position: absolute; top: -\.25rem; right: 0; \}/);
+    expect(styles).toMatch(/\.app-menu__toggle \{[^}]*border: 0; background: none;/s);
+    expect(styles).toMatch(/\.app-menu__popout \{[^}]*right: 0;/s);
+    // WHY: sub pages keep a compact header row (title left, menu right) with a
+    // small title and a slim top inset, so the least significant element takes
+    // minimal vertical space and content starts higher. The tagline and
+    // subheadline are home-only.
+    expect(styles).toMatch(/\.app-shell:has\(> #home-view\[hidden\]\) \{ padding-top: clamp\(1rem, 3vh, 1\.75rem\); \}/);
+    expect(styles).toMatch(/\.app-shell:has\(> #home-view\[hidden\]\) \.app-intro \{ max-width: none; margin-bottom: \.75rem; text-align: left; \}/);
+    expect(styles).toMatch(/\.app-shell:has\(> #home-view\[hidden\]\) \.app-intro h1 \{ margin: 0; font-size: clamp\(1\.15rem, 4vw, 1\.5rem\); \}/);
+    expect(styles).toMatch(/\.app-shell:has\(> #home-view\[hidden\]\) \.app-menu \{ top: \.15rem; \}/);
+    expect(styles).toMatch(/\.app-shell:has\(> #home-view\[hidden\]\) \.app-menu__toggle \{ min-height: 1\.8rem; padding: \.25rem 0; font-size: \.68rem; \}/);
+    expect(styles).toMatch(/\.app-shell:has\(> #home-view\[hidden\]\) \.app-intro__eyebrow \{ display: none; \}/);
+    expect(styles).toMatch(/\.app-shell:has\(> #home-view\[hidden\]\) \.app-intro__copy \{ display: none; \}/);
+    // WHY: home is the pure daily ritual — no page navigation there; the menu
+    // lives on sub pages only.
+    expect(styles).toMatch(/\.app-shell:has\(> #home-view:not\(\[hidden\]\)\) \.app-menu \{ display: none; \}/);
+    // WHY: the view's own top margin, not the header, was the biggest gap on
+    // sub pages — gallery, Archive, and card detail hug the compact header now.
+    expect(styles).toMatch(/\.deck-view \{ margin-top: clamp\(1rem, 3vw, 2rem\); \}/);
+    expect(styles).toMatch(/\.archive-view \{ margin-top: clamp\(1rem, 3vw, 2rem\); \}/);
+    expect(styles).toMatch(/\.card-detail \{ margin: clamp\(1rem, 3vw, 2rem\) auto 0; \}/);
     expect(styles).toContain("@media (prefers-reduced-motion: reduce)");
     expect(styles).toContain("animation-duration: .01ms !important");
     expect(styles).toContain("transition-duration: .01ms !important");
