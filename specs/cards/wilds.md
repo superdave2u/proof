@@ -6,41 +6,29 @@ The Wild Cards use iridescent/prismatic treatments and sit above all territory r
 
 - **Type**: Legendary Invitation • Wild
 - **Quest**:
-  Leave home without choosing a destination.
-  Notice what pulls at you.
-  Follow it.
-  A road.
-  A smell.
-  A bookstore.
-  Music through an open door.
-  Something strange in a shop window.
-  A person saying, "You should see…"
-  Follow the first thread.
-  Then the next.
-  Then the next.
-  Continue for at least two hours.
+  - Make room for an unplanned stretch of time, perhaps two hours, with a comfortable budget, access needs, and a way home settled.
+  - Begin without choosing an experience to accomplish. Follow something that draws you: a sound, a color, a doorway, a recommendation.
+  - Let what you encounter suggest the next turn, then another. Continue while the time and your body allow; you can wander close to home. Return without requiring a revelation or a remarkable story.
 - **Proof of Life**: Return with one object that **could not possibly have entered your life if you'd planned the day.**
-- **Legendary Ability**: **Serendipity** — during this invitation, the question *"What is the point of this?"* has no power.
+- **Legendary Ability**: **Serendipity** — during this invitation, the question _"What is the point of this?"_ has no power.
+- **Special Stretch**: **The Thread You Would Edit Out:** When a harmless possibility appeals but seems too ordinary to include in a good story, follow it anyway. Let the day lose its need for a plot.
 - **Art direction**: a figure walking away down an unplanned street, threads of light tugging from doorways and alley mouths in different directions, prismatic light refracting off everything.
-- **Flavor**: *"You cannot discover what you refuse to wander toward."*
+- **Flavor**: _"You cannot discover what you refuse to wander toward."_
 
 ## 52/52 — PROOF OF LIFE — CANON — MYTHIC
 
 - **Type**: Mythic Invitation • Wild
 - **Quest**:
-  Choose something that produces nothing measurable.
-  It cannot advance your career.
-  It cannot make you more efficient.
-  It cannot solve a problem.
-  It cannot be chosen primarily because someone else will admire it.
-  You must still want it **if nobody ever knows you did it.**
-  Go do it.
+  - Choose something you want to experience even if nobody ever hears about it. Let desire be the reason, whether or not incidental benefits follow.
+  - Go do it within the circumstances of your life. You owe no output, improvement, or impressive account.
+  - Keep an ordinary reminder with the words: "I WANTED THIS. THAT WAS ENOUGH." On a later ordinary day, let it support another small choice you want without first earning it. This brings the invitation into daily life; it does not begin a streak.
 - **Proof of Life**: Bring back one artifact. Write upon it:
   **I WANTED THIS.**
   **THAT WAS ENOUGH.**
 - **Mythic Ability**: **Alive** — this card cannot be completed for points. It cannot be optimized. It cannot be compared with another player's experience. Once lived, place it somewhere you will encounter it again.
+- **Special Stretch**: **Permission Survives:** When guilt or the need for justification returns, try: "I can want this even while that feeling is here." Make room for one workable choice without waiting to become a different person.
 - **Art direction**: hands holding a small ordinary object — a stone, a shell, a pressed leaf — glowing softly as if lit from within, the rest of the world dimmed away.
-- **Flavor**: *"That space is not outside the work. It is what keeps the work human."*
+- **Flavor**: _"That space is not outside the work. It is what keeps the work human."_
 
 ---
 

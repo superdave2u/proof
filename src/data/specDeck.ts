@@ -1,16 +1,16 @@
 /**
- * specDeck.ts — the frozen-deck reader.
+ * specDeck.ts — the authored-deck reader.
  *
- * WHY this exists: specs/cards/*.md is frozen operator content and the single
- * source of truth for all 52 cards. Build loops must transcribe it, never
- * rewrite it. This module turns those markdown files into typed, deterministic
- * data so deck integrity (SPEC §2–§4) can be enforced mechanically by
- * src/data/specDeck.test.ts: if anyone edits a frozen card, the wheel goes red.
+ * WHY this exists: specs/cards/*.md is the source of truth for all 52 cards.
+ * Ralph loops must not rewrite card content; a direct, explicit operator
+ * request may revise it. This module turns the Markdown into typed,
+ * deterministic data so deck integrity (SPEC §2–§4) can be enforced by
+ * src/data/specDeck.test.ts, including the independent canon text baseline.
  *
- * Presentation-only markup in the specs (wrapping `*` on flavor lines, inline
- * `**bold**`/`*italic*` emphasis, quotes around flavor) is stripped so
- * consumers receive the verbatim WORDS. Structure is preserved: quests and
- * multi-line proofs keep their line breaks.
+ * Presentation-only markup in the specs (wrapping `*` or `_` around emphasis,
+ * and quotes around flavor) is stripped so consumers receive the authored
+ * words. Structure is preserved: each Quest bullet is a distinct step and
+ * multiline proof text keeps its line breaks.
  */
 
 import beautyRaw from "../../specs/cards/beauty.md?raw";
@@ -49,6 +49,8 @@ export interface SpecCard {
   proof: string;
   abilityKind: AbilityKind | null;
   ability?: SpecAbility;
+  /** Wilds only: a Special Stretch may accompany the rarity ability. */
+  stretch?: SpecAbility;
   art: string;
   flavor: string;
 }
@@ -117,12 +119,14 @@ export const CANON_CARDS: readonly CanonCard[] = [
   { number: 52, title: "PROOF OF LIFE", territory: "wild" },
 ];
 
-// Byte-verified punctuation in the specs: em dash (—), middle dot (·),
-// en dash in ranges (–), bullet (•), straight apostrophes/quotes.
+// Spec punctuation includes em/en dashes, middle dots, bullets, territory
+// glyphs, and both straight and curly apostrophes/quotes.
 const TERRITORY_HEADER_RE = /^# ([A-Z]+) — (.+?) · cards (\d+)–(\d+)\s*$/;
 const CARD_HEADING_RE = /^## (\d{2})\/52 — (.+)$/;
 const FIELD_RE = /^- \*\*([^*]+)\*\*: ?(.*)$/;
-const ABILITY_VALUE_RE = /^\*\*(.+?)\*\*\s+—\s*(.*)$/;
+const ABILITY_EM_DASH_RE = /^\*\*(.+?)\*\*\s+—\s*(.*)$/;
+const ABILITY_COLON_RE = /^\*\*(.+?):\*\*\s*(.*)$/;
+const LIST_ITEM_RE = /^[-*+]\s+/;
 const HEADING_ANY_RE = /^#{1,6}\s/;
 const RULE_RE = /^---+\s*$/;
 
@@ -153,7 +157,9 @@ interface Section {
 }
 
 const stripBold = (text: string): string => text.replace(/\*\*(.+?)\*\*/g, "$1");
-const stripItalic = (text: string): string => text.replace(/\*(.+?)\*/g, "$1");
+// Flavor and ability text wrap emphasis in either asterisks or underscores.
+const stripItalic = (text: string): string =>
+  text.replace(/\*(.+?)\*/g, "$1").replace(/_(.+?)_/g, "$1");
 const stripEmphasis = (text: string): string => stripItalic(stripBold(text));
 
 /** Flavor lines wrap their sentence in optional asterisks and straight quotes. */
@@ -274,7 +280,7 @@ export function parseSpecFile(
           `${fileBase}.md: card ${current.number} has an indented line before any field`,
         );
       }
-      current.fields.get(lastName)!.push(line.trim());
+      current.fields.get(lastName)!.push(line.trim().replace(LIST_ITEM_RE, ""));
       continue;
     }
     if (line.trim() === "") continue;
@@ -329,31 +335,49 @@ function buildCard(territory: Territory, fileBase: string, section: Section): Sp
   if (flavor === "") throw new Error(`${fileBase}.md: card ${number} has empty Flavor`);
 
   let ability: SpecAbility | undefined;
+  let stretch: SpecAbility | undefined;
   let abilityKind: AbilityKind | null = null;
   const abilityFields = fieldOrder.filter((name) => name in ABILITY_FIELD_KIND);
-  if (abilityFields.length > 1) {
+  // Wilds may carry both their canon rarity ability (Legendary/Mythic Ability)
+  // and a Special Stretch; the rarity ability is the signature one and the
+  // stretch is carried separately. Every other card holds at most one ability
+  // field, which is its Special Stretch.
+  const rarityFields = abilityFields.filter((name) => name !== "Special Stretch");
+  const conflicting = territory === "wild"
+    ? abilityFields.length - rarityFields.length > 1 || rarityFields.length > 1
+    : abilityFields.length > 1;
+  if (conflicting) {
     throw new Error(`${fileBase}.md: card ${number} has more than one ability field`);
   }
-  const abilityField = abilityFields[0];
-  if (abilityField) {
-    abilityKind = ABILITY_FIELD_KIND[abilityField]!;
+  const abilityField = territory === "wild"
+    ? rarityFields[0]
+    : abilityFields[0];
+  const stretchField = territory === "wild" ? "Special Stretch" : undefined;
+  const parseAbility = (fieldName: string): SpecAbility => {
     // The ability value keeps its **Name** marker until parsed, so do not
     // strip emphasis here — the regex below needs the markers to find the
-    // name; name/text are cleaned afterwards.
-    const value = fieldLines(abilityField).join("\n").trim();
-    const match = value.match(ABILITY_VALUE_RE);
+    // name; name/text are cleaned afterwards. Specs use either the older
+    // "**Name** — text" or the newer "**Name:** text" form.
+    const value = fieldLines(fieldName).join("\n").trim();
+    const match = value.match(ABILITY_EM_DASH_RE) ?? value.match(ABILITY_COLON_RE);
     if (!match) {
       throw new Error(
         `${fileBase}.md: card ${number} has malformed ability text: "${value}"`,
       );
     }
-    ability = {
-      name: match[1]!.trim(),
-      text: stripEmphasis(match[2]!).trim(),
-    };
-    if (ability.name === "" || ability.text === "") {
+    const parsed = { name: match[1]!.trim(), text: stripEmphasis(match[2]!).trim() };
+    if (parsed.name === "" || parsed.text === "") {
       throw new Error(`${fileBase}.md: card ${number} has an empty ability name or text`);
     }
+    return parsed;
+  };
+
+  if (abilityField) {
+    abilityKind = ABILITY_FIELD_KIND[abilityField]!;
+    ability = parseAbility(abilityField);
+  }
+  if (stretchField !== undefined && fieldOrder.includes(stretchField)) {
+    stretch = parseAbility(stretchField);
   }
 
   return {
@@ -369,6 +393,7 @@ function buildCard(territory: Territory, fileBase: string, section: Section): Sp
     proof,
     abilityKind,
     ...(ability ? { ability } : {}),
+    ...(stretch ? { stretch } : {}),
     art,
     flavor,
   };

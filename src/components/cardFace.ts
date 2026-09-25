@@ -19,6 +19,11 @@ function rarityLabel(rarity: Card["rarity"]): string {
   return rarity.charAt(0).toUpperCase() + rarity.slice(1);
 }
 
+/** The rarity ability keeps its authored heading; Special Stretches share one. */
+function abilityHeading(card: Card): string {
+  return card.rarity === "legendary" ? "Legendary Ability" : card.rarity === "mythic" ? "Mythic Ability" : "Special Stretch";
+}
+
 function renderArtifact(artifact: string | undefined): string {
   if (!artifact || !isValidArtifactDataUrl(artifact)) {
     return "";
@@ -130,7 +135,12 @@ export function renderCardFace(card: Card, record?: CardFaceRecord, options?: Ca
   const quest = card.quest.map((step) => `<li>${escapeHtml(step)}</li>`).join("");
   const proof = card.proof.split("\n").map(escapeHtml).join("<br>");
   const ability = card.ability
-    ? `<aside class="card-ability"><h3>Special Stretch <span>✦</span></h3><p><strong>${escapeHtml(card.ability.name)}</strong> — ${escapeHtml(card.ability.text)}</p></aside>`
+    ? `<aside class="card-ability"><h3>${escapeHtml(abilityHeading(card))} <span>✦</span></h3><p><strong>${escapeHtml(card.ability.name)}</strong> — ${escapeHtml(card.ability.text)}</p></aside>`
+    : "";
+  // Wilds carry both their rarity ability and a Special Stretch; render the
+  // stretch in its own box so both authored blocks reach the player.
+  const stretch = card.stretch
+    ? `<aside class="card-ability card-ability--stretch"><h3>Special Stretch <span>✦</span></h3><p><strong>${escapeHtml(card.stretch.name)}</strong> — ${escapeHtml(card.stretch.text)}</p></aside>`
     : "";
   const ariaLabel = `${territoryNameOf(card)} card ${String(card.number).padStart(2, "0")} of 52, ${rarityLabel(card.rarity)}: ${card.name}`;
   const wildClass = isWild ? ` card-face--${card.rarity}` : "";
@@ -139,6 +149,7 @@ export function renderCardFace(card: Card, record?: CardFaceRecord, options?: Ca
     ? ""
     : `<section class="card-section card-section--quest"><h3>Quest</h3><ol>${quest}</ol></section>
       ${ability}
+      ${stretch}
       <section class="card-section card-section--proof"><h3>Proof</h3><p>${proof}</p></section>
       ${renderLivedRecord(card, record)}`;
 

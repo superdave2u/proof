@@ -43,6 +43,16 @@ describe("renderCardFace", () => {
         expect(html).toContain(escapeHtml(card.ability.name));
         expect(html).toContain(escapeHtml(card.ability.text));
       }
+      // Wilds carry both their rarity ability and a Special Stretch, so both
+      // authored blocks must reach the face.
+      expect(html.includes("Special Stretch")).toBe(
+        Boolean(card.ability && card.rarity !== "legendary" && card.rarity !== "mythic") || Boolean(card.stretch),
+      );
+      if (card.stretch) {
+        expect(html).toContain('class="card-ability card-ability--stretch"');
+        expect(html).toContain(escapeHtml(card.stretch.name));
+        expect(html).toContain(escapeHtml(card.stretch.text));
+      }
       expect(html).toContain(`rarity--${card.rarity}`);
     }
   });

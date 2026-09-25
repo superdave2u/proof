@@ -9,18 +9,19 @@ import {
 } from "./specDeck";
 
 /**
- * WHY this suite exists: the deck IS the product and specs/cards/*.md is
- * frozen operator content. This is the deck integrity pass from fix_plan.md,
+ * WHY this suite exists: the deck IS the product and specs/cards/*.md is its
+ * authored source of truth. This is the deck integrity pass from fix_plan.md,
  * kept as a permanent audit: before (and after) any data pipeline or UI
  * consumes the deck, it proves the source deck is structurally sound —
  * exactly 52 cards, numbering 01–52 with no gaps or duplicates, 10 cards per
  * territory + 2 wilds, globally unique titles and ids, complete anatomy on
- * every card (SPEC §3), the 7 canon anchors present and marked at their exact
- * numbers and titles (SPEC §4), and no placeholder or stub content anywhere.
+ * every card (SPEC §3), Quest lists capped at three bullets, the 7 canon
+ * anchors present and marked at their exact numbers and titles (SPEC §4), and
+ * no placeholder or stub content anywhere.
  *
- * If any of this fails, the frozen deck was edited or corrupted. That is an
- * operator escalation: report it in fix_plan.md — never "fix" card content in
- * code and never edit the specs.
+ * Ralph loops must not alter the card specs and must report discrepancies in
+ * fix_plan.md. Direct operator sessions may revise card text when explicitly
+ * requested; when that happens, update this independent canon baseline too.
  */
 const deck = loadSpecDeck();
 const cards: readonly SpecCard[] = deck.cards;
@@ -95,6 +96,15 @@ describe("deck integrity — anatomy (SPEC §3)", () => {
     for (const card of cards.filter((c) => c.territory === "wild")) {
       expect(card.typeLine, card.id).toMatch(WILD_TYPE_RE);
       expect(card.mode, card.id).toBe("Wild");
+    }
+  });
+
+  it("keeps every Quest to no more than three instruction bullets", () => {
+    // WHY: concise, distinct steps keep the invitation clear and actionable;
+    // grouped examples or cautions belong in one bullet rather than becoming
+    // extra steps.
+    for (const card of cards) {
+      expect(card.quest.length, `${card.id} quest bullets`).toBeLessThanOrEqual(3);
     }
   });
 
@@ -177,29 +187,31 @@ describe("deck integrity — canon anchors (SPEC §4)", () => {
       1: {
         typeLine: "Indulgence",
         quest: [
-          "Find a dessert you would normally talk yourself out of ordering.",
-          "Order it.",
-          "No sharing required.",
-          "Eat it slowly enough to actually experience it.",
+          "Choose a dessert because you want its taste. A small portion, a homemade one, or a familiar favorite counts.",
+          "Give the first few bites your attention: taste, texture, temperature.",
+          "Stop or continue according to what feels good. There is no portion you have to finish.",
         ],
         proof: "Keep the receipt, wrapper, menu, or photograph the first bite.",
-        abilityKind: null,
-        ability: undefined,
+        abilityKind: "special",
+        ability: {
+          name: "Enough Is Yours",
+          text: "Leave a bite if you have had enough, or enjoy the last one without calling yourself good or bad.",
+        },
         art: "candlelit European café, extravagant chocolate cake sitting alone on a tiny marble table, evening rain outside, warm amber light, almost magical realism.",
         flavor: "Pleasure does not have to earn its place in your life.",
       },
       17: {
         typeLine: "Discovery",
         quest: [
-          'Ask someone: "If I had one free hour around here, where would you send me?"',
-          "If their answer is safe and reasonably possible, go.",
-          "You may not research it first.",
+          'Set aside a free hour or a workable opening. Ask someone: "Where nearby would you send me to see something you love?"',
+          "If it fits your access, safety, and budget, follow their suggestion instead of your usual choice. Check practical details; leave reviews unread.",
+          "Find out what the place is like without demanding that their taste match yours.",
         ],
         proof: "Return with one artifact from the destination.",
         abilityKind: "special",
         ability: {
-          name: "Unknown Territory",
-          text: "if you've never heard of the place they recommend, the card gains +1 Wonder.",
+          name: "Stay with the Difference",
+          text: "If it is not your kind of place, spend a few comfortable minutes finding what might matter to someone else before leaving.",
         },
         art: "a woman standing at a nighttime crossroads while a stranger sketches directions onto the back of a receipt. One road seems to glow faintly.",
         flavor: "Curiosity begins when you stop needing to know where you're going.",
@@ -207,18 +219,15 @@ describe("deck integrity — canon anchors (SPEC §4)", () => {
       23: {
         typeLine: "Offering",
         quest: [
-          "Buy flowers.",
-          "There may be no birthday.",
-          "No anniversary.",
-          "No dinner party.",
-          "No reason.",
-          "Choose entirely by beauty.",
+          "Choose flowers simply because you like them. Buy a stem within your means, use something you may responsibly pick, or spend time with flowers where they grow.",
+          "Place them where you will see them, or pause to enjoy them there.",
+          "There is no occasion to supply.",
         ],
         proof: "Press one petal and preserve it with this card.",
         abilityKind: "special",
         ability: {
-          name: "Useless Beauty",
-          text: "you may not explain or justify the purchase.",
+          name: "Only Your Taste",
+          text: "Choose the stem or patch you personally love, even if another would look more impressive to a visitor.",
         },
         art: "an enormous, almost enchanted flower stall appearing unexpectedly on a gray city street.",
         flavor: "Some things should exist simply because they make being alive feel like being alive.",
@@ -226,16 +235,15 @@ describe("deck integrity — canon anchors (SPEC §4)", () => {
       32: {
         typeLine: "Encounter",
         quest: [
-          "Find someone older than you.",
-          "Ask: \"What's a story from your life you don't think I've ever heard?\"",
-          "Then don't steer the conversation.",
-          "Listen.",
+          'Ask someone older than you, or someone whose past you know little about: "What’s a story from your life I might never have heard?"',
+          "If they feel like telling it, listen without steering toward a lesson.",
+          "Let the story end where they want it to.",
         ],
         proof: "Write one sentence from their story that you never want to forget.",
         abilityKind: "special",
         ability: {
           name: "Inheritance",
-          text: "if the story changes something you believed about this person, write that beneath the first sentence.",
+          text: 'Ask, "What do you remember most vividly about that day?" Follow the detail they choose.',
         },
         art: "two people across a kitchen table, late-afternoon sunlight, old photographs scattered between them, with scenes from another lifetime almost ghostlike in the background.",
         flavor: "Some treasures can only be inherited by asking.",
@@ -243,15 +251,15 @@ describe("deck integrity — canon anchors (SPEC §4)", () => {
       43: {
         typeLine: "Pursuit",
         quest: [
-          "Find live music you did not originally plan to hear.",
-          "Follow it.",
-          "Stay for three songs.",
+          "During time you can freely use, notice live music you had not planned to hear. If none appears, keep the invitation for another day.",
+          "When access and cost work for you, pause or change one nonessential plan and stay for a few songs.",
+          "Give the performance your attention without needing to know the artist or explain your taste.",
         ],
         proof: "Bring back a ticket, coaster, napkin, flyer, photograph, or other artifact.",
         abilityKind: "special",
         ability: {
           name: "Encore",
-          text: "if you lose track of time, remain until you naturally want to leave.",
+          text: "When your intended departure arrives, check what you want. If you can and wish to stay, let one more song change the plan again.",
         },
         art: "narrow cobblestone alley at night, music represented by glowing golden particles drifting from a doorway.",
         flavor: "Wonder rarely sends a calendar invitation.",
@@ -259,19 +267,9 @@ describe("deck integrity — canon anchors (SPEC §4)", () => {
       51: {
         typeLine: "Legendary Wild",
         quest: [
-          "Leave home without choosing a destination.",
-          "Notice what pulls at you.",
-          "Follow it.",
-          "A road.",
-          "A smell.",
-          "A bookstore.",
-          "Music through an open door.",
-          "Something strange in a shop window.",
-          'A person saying, "You should see…"',
-          "Follow the first thread.",
-          "Then the next.",
-          "Then the next.",
-          "Continue for at least two hours.",
+          "Make room for an unplanned stretch of time, perhaps two hours, with a comfortable budget, access needs, and a way home settled.",
+          "Begin without choosing an experience to accomplish. Follow something that draws you: a sound, a color, a doorway, a recommendation.",
+          "Let what you encounter suggest the next turn, then another. Continue while the time and your body allow; you can wander close to home. Return without requiring a revelation or a remarkable story.",
         ],
         proof: "Return with one object that could not possibly have entered your life if you'd planned the day.",
         abilityKind: "legendary",
@@ -285,13 +283,9 @@ describe("deck integrity — canon anchors (SPEC §4)", () => {
       52: {
         typeLine: "Mythic Wild",
         quest: [
-          "Choose something that produces nothing measurable.",
-          "It cannot advance your career.",
-          "It cannot make you more efficient.",
-          "It cannot solve a problem.",
-          "It cannot be chosen primarily because someone else will admire it.",
-          "You must still want it if nobody ever knows you did it.",
-          "Go do it.",
+          "Choose something you want to experience even if nobody ever hears about it. Let desire be the reason, whether or not incidental benefits follow.",
+          "Go do it within the circumstances of your life. You owe no output, improvement, or impressive account.",
+          'Keep an ordinary reminder with the words: "I WANTED THIS. THAT WAS ENOUGH." On a later ordinary day, let it support another small choice you want without first earning it. This brings the invitation into daily life; it does not begin a streak.',
         ],
         proof: "Bring back one artifact. Write upon it:\nI WANTED THIS.\nTHAT WAS ENOUGH.",
         abilityKind: "mythic",
@@ -380,7 +374,10 @@ describe("deck integrity — no stubs (SPEC §10 acceptance)", () => {
    * reach players through the data pipeline.
    */
   const PLACEHOLDER_RE =
-    /\b(TODO|TBD|TBC|FIXME|XXX|WIP|DRAFT|PLACEHOLDER|LOREM|IPSUM|UNFINISHED|COMING SOON|FILL IN|FILL ME|TO BE (DECIDED|DEFINED|DETERMINED|WRITTEN|ADDED)|N\/A)\b|\?\?\?|<<[^>]*>>/i;
+    /\b(TODO|TBD|TBC|FIXME|XXX|WIP|DRAFT|PLACEHOLDER|LOREM|IPSUM|COMING SOON|FILL IN|FILL ME|TO BE (DECIDED|DEFINED|DETERMINED|WRITTEN|ADDED)|N\/A)\b|\?\?\?|<<[^>]*>>/i;
+  // "unfinished" is now ordinary authored vocabulary; only the shouted stub
+  // marker is a defect.
+  const UNFINISHED_STUB_RE = /\bUNFINISHED\b/;
 
   const textOf = (card: SpecCard): string[] => {
     const parts = [
@@ -400,6 +397,7 @@ describe("deck integrity — no stubs (SPEC §10 acceptance)", () => {
     for (const card of cards) {
       for (const text of textOf(card)) {
         expect(text, `${card.id}: "${text}"`).not.toMatch(PLACEHOLDER_RE);
+        expect(text, `${card.id}: "${text}"`).not.toMatch(UNFINISHED_STUB_RE);
       }
     }
   });

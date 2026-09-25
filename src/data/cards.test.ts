@@ -31,6 +31,9 @@ describe("application deck data", () => {
       expect(card.art, card.id).toBe(spec.art);
       expect(card.flavor, card.id).toBe(spec.flavor);
       expect(card.ability, card.id).toEqual(spec.ability);
+      // Wilds carry a Special Stretch beside their rarity ability; it must
+      // survive transcription or the app never shows it.
+      expect(card.stretch, card.id).toEqual(spec.stretch);
     }
   });
 
