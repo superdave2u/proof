@@ -65,7 +65,7 @@ interface CardImageSource { load(cardId: string): Promise<string | undefined> }
 
 ## 5. Screens / UX flow
 
-1. **Home** (`#/deck`) — the daily card only: the date-seeded reveal (deterministic, shown once per day) plus small links to the Gallery and the Archive. Nothing else lives here.
+1. **Home** (`#/deck`) — the daily card only: the date-seeded reveal (deterministic, shown once per day). Page navigation lives in the header menu. Nothing else lives here.
 2. **Gallery** (`#/gallery`) — the whole deck on its own page, modeled on the Archive: all 52 cards (backs pristine, fronts by state) with territory/state filters, the deck-wide lived count, and rows whose cards align vertically with their peers. There is no manual draw button anywhere — the daily deal is the only reveal. Local development is the exception: the dev server and localhost show a per-card "Flip card" control (`store.revealCard`) so states can be exercised without waiting a day.
 3. **Card detail** (`#/card/<id>`) — revealed cards show the full anatomy with their state action (`Deposited my Proof of Life` for drawn → evidence form; `View in the Archive` for lived). Undiscovered cards stay face-down on deep links: the page shows the card back (territory, number, Undiscovered) and a status note — never the name, quest, or flavor. The artwork panel fills the card body width; the flavor is its caption.
 4. **Archive** (`#/archive`) — Lived cards with their evidence; the collected-evidence gallery. The emotional payoff screen.
@@ -80,8 +80,8 @@ The physical deck weathers (SPEC §6); **the digital app does not simulate wear*
 
 ```
 src/
-├── main.ts            # bootstrap, screen router (hash-based: deck/gallery/archive/card)
-├── router.ts          # hash router + route resolution
+├── main.ts            # bootstrap, app shell, header menu wiring, route→view switching
+├── router.ts          # hash router + route resolution (deck/gallery/archive/card)
 ├── app.ts             # app title/metadata
 ├── style.css          # design tokens, territory palette, card face, lived overlays
 ├── data/
@@ -97,15 +97,19 @@ src/
 │   └── *.test.ts
 ├── views/
 │   ├── deckShared.ts  # deck domain types, filterDeck, shared view helpers
-│   ├── home.ts        # home page: daily card + links to Gallery/Archive
-│   ├── gallery.ts     # gallery page: random deal + full deck grid + filters
+│   ├── home.ts        # home page: the daily card (only reveal in production)
+│   ├── gallery.ts     # gallery page: full deck grid + filters + dev-only flip/hide
 │   ├── cardDetail.ts  # card detail page: full face + the only deposit flow
 │   ├── archive.ts     # archive page: Lived evidence collection
 │   └── *.test.ts
-└── components/
-    ├── cardFace.ts    # renders Card + CardRecord (preview + full faces)
-    ├── cardArt.ts     # artwork figure (image + caption + mask) and lazy hydration
-    └── evidenceForm.ts # deposit form markup + evidence assembly/validation
+├── components/
+│   ├── cardFace.ts    # renders Card + CardRecord (preview + full faces)
+│   ├── cardArt.ts     # artwork figure (image + caption + mask) and lazy hydration
+│   ├── appMenu.ts     # header's hidden page-navigation popout
+│   └── evidenceForm.ts # deposit form markup + evidence assembly/validation
+└── util/
+    ├── html.ts        # shared escapeHtml
+    └── devMode.ts     # isLocalDevelopment (Vite dev / localhost only)
 ```
 
 Vanilla TS + template literals (fast wheel). Framework adoption is a deliberate later decision, not a default.

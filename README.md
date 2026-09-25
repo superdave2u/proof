@@ -104,8 +104,9 @@ Each loop is logged to `logs/`. Rules of the house: search the codebase before a
 
 - [x] Baseline spec + design (`SPEC.md`, `DESIGN.md`)
 - [x] Complete 52-card deck seeded and **frozen** (operator content)
-- [ ] Data pipeline + schema tests
-- [x] App: deck view, draw ritual, daily draw, evidence flow
-- [ ] App: card detail, Archive
+- [x] Data pipeline + schema integrity tests
+- [x] All 52 card-art PNGs generated and committed
+- [x] App: home daily deal, gallery, card detail, archive, evidence flow
+- [ ] Polish backlog — see `fix_plan.md` (evidence-form focus restore, artifact alt text)
 
 Content rules: the 52 cards in `specs/cards/` are frozen — code transcribes them, never rewrites them.
